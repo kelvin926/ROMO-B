@@ -27,6 +27,29 @@ Nav2 uses a custom `NavigateThroughPoses` behavior tree containing only repeated
 planning and path following. It has no spin, reverse, or backup recovery action.
 The waypoint manager publishes the YAML `default_speed_mps` as an absolute Nav2
 speed limit before submitting each route.
+
+## Live field navigation
+
+After the measured-speed calibration passes, start the complete stack with:
+
+```bash
+./scripts/run_field_navigation.sh
+```
+
+In RViz, set the initial pose, add points with `Publish Point`, save them, then
+execute only after the platform status is healthy:
+
+```bash
+ros2 service call /romo_b/waypoints/save std_srvs/srv/Trigger '{}'
+ros2 service call /romo_b/arm std_srvs/srv/SetBool '{data: true}'
+ros2 service call /romo_b/waypoints/execute std_srvs/srv/Trigger '{}'
+```
+
+Disarm after the route:
+
+```bash
+ros2 service call /romo_b/arm std_srvs/srv/SetBool '{data: false}'
+```
 The command path is fixed as Nav2/teleop → twist_mux → velocity smoother →
 Collision Monitor → serial bridge.
 

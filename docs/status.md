@@ -34,9 +34,10 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   `/dev/romo_b_pcu`; receive-only validation decoded 199 valid PCU frames at
   19.88 Hz over 10 seconds with no Alive gaps.
 - The physical bridge completed its zero-speed Manual/Auto handshake and
-  disarmed cleanly. A first ground command moved forward but faster than the
-  requested 0.05 m/s and ended in PCU `Hi_E-ST`; physical command scaling is
-  therefore not accepted for navigation yet.
+  disarmed cleanly. A first 0.05 m/s ground command moved forward. The observed
+  `Hi_E-ST` was the expected HLV E-stop after the command publisher stopped and
+  the 0.15-second watchdog expired, not an overspeed error. Command encoding is
+  confirmed as Big Endian `m/s * 100`; a guarded measured-speed run remains.
 - The Mid-360 is reachable at `192.168.1.113` through USB Ethernet
   `enxc84d44208014` with host `192.168.1.5`. Raw and filtered point clouds are
   stable at 10 Hz and the IMU at 200 Hz.
@@ -65,6 +66,9 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   preflight planned 87.73 m and 106.71 m forward-only paths with zero reverse
   segments, clamped a 0.5 m/s input to 0.2 m/s, and stopped for three obstacle
   points. All automated checks pass.
+- `scripts/run_field_navigation.sh` now starts the complete live Mid-360, EKF,
+  PCD localization, Nav2, collision-monitor, waypoint, and RViz stack. The
+  bridge remains disarmed until the explicit arm service is called.
 
 ## Host actions still required
 
@@ -75,8 +79,8 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 
 ## Waiting for hardware validation
 
-- Resolve the physical velocity scaling that caused the unexpectedly fast
-  0.05 m/s ground test, then verify steering raw scale and left/right sign.
+- Run the guarded 0.01 m/s measured-speed calibration and verify steering raw
+  scale and left/right sign.
 - Verify RViz initial-pose recovery at several locations on the live platform.
 - Repeat planning and collision checks with live localization and PointCloud
   before any autonomous ground run.

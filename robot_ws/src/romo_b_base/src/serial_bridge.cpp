@@ -440,7 +440,13 @@ private:
         const bool auto_transition_timed_out = auto_request_sent_ && !auto_confirmed_ &&
           steady_now - auto_request_time_ > auto_transition_timeout_;
         if (command_timed_out_ || feedback_timed_out_ || auto_transition_timed_out) {
-          if (auto_transition_timed_out) {
+          if (command_timed_out_) {
+            RCLCPP_ERROR(
+              get_logger(), "Command watchdog expired after %.3f s; latching HLV E-stop",
+              std::chrono::duration<double>(steady_now - last_command_time_).count());
+          } else if (feedback_timed_out_) {
+            RCLCPP_ERROR(get_logger(), "PCU feedback watchdog expired; latching HLV E-stop");
+          } else if (auto_transition_timed_out) {
             RCLCPP_ERROR(get_logger(), "PCU did not confirm the Auto transition in time");
           }
           software_estop_ = true;
@@ -599,6 +605,9 @@ private:
     diagnostic_msgs::msg::DiagnosticStatus serial_status;
     bool auto_confirmed = false;
     bool manual_zero_sent = false;
+    double desired_speed_mps = 0.0;
+    double desired_steer_deg = 0.0;
+    double command_age_sec = 0.0;
     status.header.stamp = now();
     status.header.frame_id = base_frame_;
     diagnostics.header = status.header;
@@ -623,11 +632,21 @@ private:
       status.feedback_timed_out = feedback_timed_out_;
       auto_confirmed = auto_confirmed_;
       manual_zero_sent = manual_zero_sent_;
+      desired_speed_mps = desired_control_.speed_mps;
+      desired_steer_deg = desired_control_.pcu_steer_deg;
+      command_age_sec = std::chrono::duration<double>(
+        std::chrono::steady_clock::now() - last_command_time_).count();
     }
 
     if (!status.connected || status.estop || status.command_timed_out || status.feedback_timed_out) {
       serial_status.level = diagnostic_msgs::msg::DiagnosticStatus::ERROR;
-      serial_status.message = status.estop ? "E-stop active" : "Serial/timeout fault";
+      if (status.command_timed_out) {
+        serial_status.message = "Command timeout E-stop";
+      } else if (status.feedback_timed_out) {
+        serial_status.message = "PCU feedback timeout E-stop";
+      } else {
+        serial_status.message = status.estop ? "E-stop active" : "Serial fault";
+      }
     } else if (receive_only_) {
       serial_status.level = diagnostic_msgs::msg::DiagnosticStatus::WARN;
       serial_status.message = "Receive-only validation mode";
@@ -647,6 +666,13 @@ private:
     add_value("sensor_calibrated", sensor_calibrated_ ? "true" : "false");
     add_value("auto_confirmed", auto_confirmed ? "true" : "false");
     add_value("manual_zero_sent", manual_zero_sent ? "true" : "false");
+    add_value("commanded_speed_mps", std::to_string(desired_speed_mps));
+    add_value(
+      "commanded_speed_raw",
+      std::to_string(static_cast<int>(std::lround(desired_speed_mps * 100.0))));
+    add_value("commanded_steer_deg", std::to_string(desired_steer_deg));
+    add_value("command_age_sec", std::to_string(command_age_sec));
+    add_value("command_timeout_sec", std::to_string(command_timeout_.count()));
     add_value("pcu_alive", std::to_string(status.pcu_alive));
     add_value("hlv_alive", std::to_string(status.hlv_alive));
     diagnostics.status.push_back(serial_status);

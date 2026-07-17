@@ -22,6 +22,16 @@ direction, steering sign, or movement.
 3. With wheels raised, select the documented PCU Auto prerequisites and transmit
    only Auto, E-stop off, 2WIS, speed 0, steer 0 at 20 Hz.
 4. Arm the bench profile and command at most 0.1 m/s and +/-5 degrees.
+   For the first measured ground run, keep RC Auto and 2WIS selected, start the
+   bench hardware launch, and run:
+
+   ```bash
+   python3 scripts/bench_speed_calibration.py --execute --speed 0.01
+   ```
+
+   The tool ramps up/down, keeps zero commands alive while disarming, aborts
+   above 0.10 m/s feedback, and stores a JSON report under
+   `data/local/validation`.
 5. Verify positive speed direction and the manual's negative-left steering
    convention against physical wheel movement.
 6. Disconnect commands and feedback independently; both must result in a full
@@ -38,3 +48,6 @@ direction, steering sign, or movement.
    poses.
 6. Execute a 0.2 m/s waypoint path in a controlled area.
 7. Place a static obstacle and verify slowdown, stop, and a feasible local detour.
+
+The complete live stack is started with `./scripts/run_field_navigation.sh`.
+Set the initial pose in RViz before arming or executing waypoints.
