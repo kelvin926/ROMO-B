@@ -32,7 +32,7 @@ direction, steering sign, or movement.
    ```
 
    The tool ramps up/down, keeps zero commands alive while disarming, aborts
-   above 0.10 m/s feedback, and stores a JSON report under
+   above its configurable feedback threshold (default 0.10 m/s), and stores a JSON report under
    `data/local/validation`.
 5. Verify positive speed direction and the manual's negative-left steering
    convention against physical wheel movement.

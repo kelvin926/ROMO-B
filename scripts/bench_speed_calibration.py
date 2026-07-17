@@ -111,8 +111,8 @@ def main():
         parser.error("--speed must be between 0.005 and 0.05 m/s")
     if not 0.5 <= args.hold <= 3.0:
         parser.error("--hold must be between 0.5 and 3.0 seconds")
-    if not args.speed * 1.5 <= args.overspeed <= 0.15:
-        parser.error("--overspeed must be >= 1.5*speed and <= 0.15 m/s")
+    if not args.speed * 1.5 <= args.overspeed <= 0.30:
+        parser.error("--overspeed must be >= 1.5*speed and <= 0.30 m/s")
 
     root = pathlib.Path(__file__).resolve().parents[1]
     output = pathlib.Path(args.output) if args.output else (
