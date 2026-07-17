@@ -25,6 +25,14 @@ TEST(CommandEncoding, MatchesManualNegativeExample)
   EXPECT_EQ(rb::encode_command(command), expected);
 }
 
+TEST(CommandEncoding, SupportsMeasuredLittleEndianPcu)
+{
+  const rb::Command command{true, false, rb::SteerMode::k2Wis, 0.01, -5.0, 3};
+  const std::array<std::uint8_t, rb::kCommandFrameSize> expected{
+    0x53, 0x54, 0x58, 0x01, 0x00, 0x00, 0x01, 0x00, 0xfb, 0xff, 0x03, 0x0d, 0x0a};
+  EXPECT_EQ(rb::encode_command(command, true), expected);
+}
+
 TEST(FeedbackDecoding, DecodesLittleEndianAndScales)
 {
   const std::array<std::uint8_t, rb::kFeedbackFrameSize> frame{

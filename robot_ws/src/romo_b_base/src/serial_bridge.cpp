@@ -42,6 +42,7 @@ public:
     declare_parameter<int>("data_bits", 8);
     declare_parameter<std::string>("parity", "none");
     declare_parameter<int>("stop_bits", 1);
+    declare_parameter<std::string>("command_endian", "unverified");
     declare_parameter<double>("tx_rate_hz", 20.0);
     declare_parameter<double>("command_timeout_sec", 0.15);
     declare_parameter<double>("feedback_timeout_sec", 0.20);
@@ -74,6 +75,8 @@ private:
     data_bits_ = static_cast<int>(get_parameter("data_bits").as_int());
     parity_ = get_parameter("parity").as_string();
     stop_bits_ = static_cast<int>(get_parameter("stop_bits").as_int());
+    command_endian_ = get_parameter("command_endian").as_string();
+    command_little_endian_ = command_endian_ == "little";
     command_timeout_ = std::chrono::duration<double>(
       get_parameter("command_timeout_sec").as_double());
     feedback_timeout_ = std::chrono::duration<double>(
@@ -106,7 +109,11 @@ private:
 
     const double tx_rate = get_parameter("tx_rate_hz").as_double();
     if (baud_ <= 0 || data_bits_ < 5 || data_bits_ > 8 || parity_ != "none" ||
-      stop_bits_ != 1 || tx_rate <= 0.0 || command_timeout_.count() <= 0.0 ||
+      stop_bits_ != 1 ||
+      (command_endian_ != "big" && command_endian_ != "little" &&
+      command_endian_ != "unverified") ||
+      (!receive_only_ && command_endian_ == "unverified") ||
+      tx_rate <= 0.0 || command_timeout_.count() <= 0.0 ||
       feedback_timeout_.count() <= 0.0 || auto_transition_timeout_.count() <= 0.0 ||
       wheel_radius_m_ <= 0.0)
     {
@@ -170,8 +177,8 @@ private:
       bridge_state_ = BridgeState::kConnectedSafe;
     }
     RCLCPP_INFO(
-      get_logger(), "Configured %s at %d baud (%s)", device_.c_str(), baud_,
-      receive_only_ ? "receive-only" : profile.c_str());
+      get_logger(), "Configured %s at %d baud (%s, command %s-endian)", device_.c_str(), baud_,
+      receive_only_ ? "receive-only" : profile.c_str(), command_endian_.c_str());
     return CallbackReturn::SUCCESS;
   }
 
@@ -501,7 +508,7 @@ private:
     if (!serial_open_.load()) {
       return false;
     }
-    const auto frame = encode_command(command);
+    const auto frame = encode_command(command, command_little_endian_);
     try {
       std::scoped_lock lock(write_mutex_);
       boost::asio::write(serial_, boost::asio::buffer(frame));
@@ -663,6 +670,7 @@ private:
       };
     add_value("device", device_);
     add_value("receive_only", receive_only_ ? "true" : "false");
+    add_value("command_endian", command_endian_);
     add_value("sensor_calibrated", sensor_calibrated_ ? "true" : "false");
     add_value("auto_confirmed", auto_confirmed ? "true" : "false");
     add_value("manual_zero_sent", manual_zero_sent ? "true" : "false");
@@ -688,6 +696,8 @@ private:
   int data_bits_{8};
   std::string parity_{"none"};
   int stop_bits_{1};
+  std::string command_endian_{"unverified"};
+  bool command_little_endian_{false};
   bool receive_only_{true};
   bool navigation_profile_{false};
   bool sensor_calibrated_{false};

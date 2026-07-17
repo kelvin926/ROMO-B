@@ -19,6 +19,7 @@ def generate_launch_description():
             {
                 "device": "/tmp/romo_b_pcu",
                 "receive_only": False,
+                "command_endian": "big",
                 "safety_profile": "bench",
             }
         ],

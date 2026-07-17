@@ -20,6 +20,14 @@ void put_be_i16(std::array<std::uint8_t, kCommandFrameSize> & frame, std::size_t
   frame[offset + 1] = static_cast<std::uint8_t>(raw & 0xffU);
 }
 
+void put_le_i16(std::array<std::uint8_t, kCommandFrameSize> & frame, std::size_t offset,
+  std::int16_t value)
+{
+  const auto raw = static_cast<std::uint16_t>(value);
+  frame[offset] = static_cast<std::uint8_t>(raw & 0xffU);
+  frame[offset + 1] = static_cast<std::uint8_t>((raw >> 8U) & 0xffU);
+}
+
 std::int16_t get_le_i16(
   const std::array<std::uint8_t, kFeedbackFrameSize> & frame, std::size_t offset)
 {
@@ -53,7 +61,8 @@ bool plausible(const std::array<std::uint8_t, kFeedbackFrameSize> & frame)
 
 }  // namespace
 
-std::array<std::uint8_t, kCommandFrameSize> encode_command(const Command & command)
+std::array<std::uint8_t, kCommandFrameSize> encode_command(
+  const Command & command, bool little_endian)
 {
   std::array<std::uint8_t, kCommandFrameSize> frame{};
   std::copy(kHeader.begin(), kHeader.end(), frame.begin());
@@ -65,8 +74,9 @@ std::array<std::uint8_t, kCommandFrameSize> encode_command(const Command & comma
       std::clamp(command.speed_mps, -1.5, 1.5) * 100.0));
   const auto steer_raw = static_cast<std::int16_t>(std::lround(
       std::clamp(command.steer_deg, -300.0, 300.0)));
-  put_be_i16(frame, 6, speed_raw);
-  put_be_i16(frame, 8, steer_raw);
+  const auto put_i16 = little_endian ? put_le_i16 : put_be_i16;
+  put_i16(frame, 6, speed_raw);
+  put_i16(frame, 8, steer_raw);
   frame[10] = command.alive;
   frame[11] = kTail[0];
   frame[12] = kTail[1];

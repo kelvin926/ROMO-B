@@ -33,11 +33,13 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - User `hyunseo` has active `dialout` access. The FTDI `A5069RR4` udev link is
   `/dev/romo_b_pcu`; receive-only validation decoded 199 valid PCU frames at
   19.88 Hz over 10 seconds with no Alive gaps.
-- The physical bridge completed its zero-speed Manual/Auto handshake and
-  disarmed cleanly. A first 0.05 m/s ground command moved forward. The observed
-  `Hi_E-ST` was the expected HLV E-stop after the command publisher stopped and
-  the 0.15-second watchdog expired, not an overspeed error. Command encoding is
-  confirmed as Big Endian `m/s * 100`; a guarded measured-speed run remains.
+- The physical bridge completed its zero-speed Manual/Auto handshake. The
+  manual's Big Endian command claim does not match this PCU: raw speed `1` sent
+  as `00 01` produced feedback above 0.29 m/s and rising toward the platform
+  maximum before the guarded test latched HLV E-stop. This matches Little
+  Endian interpretation as raw `0x0100`. Transmit mode now requires an explicit
+  byte-order setting and this unit is configured `little`; low-speed
+  revalidation remains pending.
 - The Mid-360 is reachable at `192.168.1.113` through USB Ethernet
   `enxc84d44208014` with host `192.168.1.5`. Raw and filtered point clouds are
   stable at 10 Hz and the IMU at 200 Hz.
@@ -79,8 +81,8 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 
 ## Waiting for hardware validation
 
-- Run the guarded 0.01 m/s measured-speed calibration and verify steering raw
-  scale and left/right sign.
+- Restart with the Little Endian command setting, repeat the guarded 0.01 m/s
+  measured-speed calibration, and verify steering raw scale and left/right sign.
 - Verify RViz initial-pose recovery at several locations on the live platform.
 - Repeat planning and collision checks with live localization and PointCloud
   before any autonomous ground run.

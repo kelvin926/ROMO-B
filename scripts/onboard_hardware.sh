@@ -47,7 +47,8 @@ data = {
     "schema_version": 1,
     "serial": {
         "device": "/dev/romo_b_pcu", "baud": 115200, "data_bits": 8,
-        "parity": "none", "stop_bits": 1, "adapter_serial": serial,
+        "parity": "none", "stop_bits": 1, "command_endian": "little",
+        "adapter_serial": serial,
         "wiring": "pending",
     },
     "lidar": {

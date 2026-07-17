@@ -65,7 +65,8 @@ struct VehicleMotion
   double yaw_rate_radps{0.0};
 };
 
-std::array<std::uint8_t, kCommandFrameSize> encode_command(const Command & command);
+std::array<std::uint8_t, kCommandFrameSize> encode_command(
+  const Command & command, bool little_endian = false);
 std::optional<Feedback> decode_feedback(
   const std::array<std::uint8_t, kFeedbackFrameSize> & frame);
 ControlOutput map_twist(double linear_x_mps, double angular_z_radps, const ControlLimits & limits);

@@ -56,6 +56,7 @@ def _actions(context):
                 "data_bits": int(serial.get("data_bits", 8)),
                 "parity": serial.get("parity", "none"),
                 "stop_bits": int(serial.get("stop_bits", 1)),
+                "command_endian": serial.get("command_endian", "unverified"),
                 "receive_only": ParameterValue(
                     LaunchConfiguration("receive_only"), value_type=bool
                 ),

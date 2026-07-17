@@ -144,7 +144,7 @@ def main():
                     [
                         "ros2", "run", "romo_b_base", "romo_b_serial_bridge", "--ros-args",
                         "-p", f"device:={symlink}", "-p", "receive_only:=false",
-                        "-p", "safety_profile:=bench",
+                        "-p", "safety_profile:=bench", "-p", "command_endian:=big",
                     ],
                     stdout=bridge_log,
                     stderr=subprocess.STDOUT,

@@ -19,6 +19,8 @@ direction, steering sign, or movement.
    25-byte `STX...CRLF` frames and little-endian feedback. The command never
    writes to the port.
 2. Confirm the configured data bits (8N1 is only an initial assumption).
+   Confirm `serial.command_endian: little` for this physical PCU. Transmit mode
+   refuses to start if byte order is omitted or `unverified`.
 3. With wheels raised, select the documented PCU Auto prerequisites and transmit
    only Auto, E-stop off, 2WIS, speed 0, steer 0 at 20 Hz.
 4. Arm the bench profile and command at most 0.1 m/s and +/-5 degrees.

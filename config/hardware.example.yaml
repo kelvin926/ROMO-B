@@ -5,6 +5,7 @@ serial:
   data_bits: 8
   parity: none
   stop_bits: 1
+  command_endian: little
   adapter_serial: A5069RR4
   wiring: pending  # straight or null_modem
 lidar:
