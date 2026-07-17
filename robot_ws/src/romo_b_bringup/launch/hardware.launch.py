@@ -18,7 +18,9 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def _actions(context):
-    hardware_path = pathlib.Path(LaunchConfiguration("hardware_config").perform(context)).expanduser()
+    hardware_path = pathlib.Path(
+        LaunchConfiguration("hardware_config").perform(context)
+    ).expanduser()
     if not hardware_path.is_file():
         raise RuntimeError(
             f"Missing {hardware_path}; run scripts/onboard_hardware.sh --generate first"
@@ -34,10 +36,13 @@ def _actions(context):
     )
     description = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(str(description_launch)),
-        launch_arguments={
-            f"lidar_{name}": str(transform.get(name, 0.0))
-            for name in ("x", "y", "z", "roll", "pitch", "yaw")
-        }.items(),
+        launch_arguments=(
+            {
+                f"lidar_{name}": str(transform.get(name, 0.0))
+                for name in ("x", "y", "z", "roll", "pitch", "yaw")
+            }
+            | {"use_sim_time": LaunchConfiguration("use_sim_time")}
+        ).items(),
     )
     bridge = Node(
         package="romo_b_base",
@@ -136,6 +141,21 @@ def _actions(context):
             {"use_sim_time": use_sim_time},
         ],
     )
+    localization_filter_node = Node(
+        package="romo_b_perception",
+        executable="pointcloud_filter",
+        name="romo_b_localization_cloud_filter",
+        output="screen",
+        condition=IfCondition(LaunchConfiguration("use_livox")),
+        parameters=[
+            pathlib.Path(
+                get_package_share_directory("romo_b_bringup"),
+                "config",
+                "localization_cloud_filter.yaml",
+            ).as_posix(),
+            {"use_sim_time": use_sim_time},
+        ],
+    )
     ekf = Node(
         package="robot_localization",
         executable="ekf_node",
@@ -150,7 +170,17 @@ def _actions(context):
         ],
         remappings=[("odometry/filtered", "/odometry/filtered")],
     )
-    return [description, bridge, configure, activate, livox, imu_normalizer, filter_node, ekf]
+    return [
+        description,
+        bridge,
+        configure,
+        activate,
+        livox,
+        imu_normalizer,
+        filter_node,
+        localization_filter_node,
+        ekf,
+    ]
 
 
 def generate_launch_description():

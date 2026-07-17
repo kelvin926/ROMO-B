@@ -71,7 +71,7 @@ ros2 launch romo_b_bringup hardware.launch.py use_livox:=true
 
 # PCD localization (in another terminal after hardware bringup)
 ros2 launch romo_b_bringup localization.launch.py \
-  pcd_map:=data/local/maps/map.pcd
+  pcd_map:=data/local/maps/mapping_run/map.pcd
 
 # Forward-only waypoint navigation
 ros2 launch romo_b_navigation navigation.launch.py \
@@ -101,13 +101,19 @@ ros2 launch romo_b_bringup mapping_offline.launch.py \
   save_dir:=data/local/maps/mapping_run
 ros2 service call /map_save std_srvs/srv/Empty '{}'
 ros2 run romo_b_perception pcd_to_occupancy \
-  data/local/maps/mapping_run/map.pcd data/local/maps/map 0.05 0.10 1.80
+  data/local/maps/mapping_run/map.pcd \
+  data/local/maps/mapping_run/nav2-raycast/map \
+  0.05 0.10 1.80 \
+  data/local/maps/mapping_run/pose_graph.g2o 15.0 0.171
+./scripts/run_localization_replay.sh \
+  data/local/bags/MAPPING_BAG data/local/maps/mapping_run
 ```
 
-Do not use the generated occupancy map for autonomous motion until its unknown
-space has been reviewed and a recorded-bag localization replay has passed. The
-simple converter conservatively identifies obstacle points but currently assumes
-the rest of the PCD bounding box is free.
+The pose-graph converter leaves unobserved cells unknown, raycasts free space
+only between recorded poses and obstacle returns, and gives obstacle cells
+precedence. The replay runs in isolated ROS domain 97 without serial or velocity
+nodes and fails unless localization health, fitness, rejection, trajectory, and
+loop-closure checks pass. Still review every generated map before motion.
 
 ## Repository policy
 

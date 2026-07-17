@@ -25,6 +25,8 @@ tests remain possible without LiDAR calibration, within their lower limits.
 
 Nav2 uses a custom `NavigateThroughPoses` behavior tree containing only repeated
 planning and path following. It has no spin, reverse, or backup recovery action.
+The waypoint manager publishes the YAML `default_speed_mps` as an absolute Nav2
+speed limit before submitting each route.
 The command path is fixed as Nav2/teleop → twist_mux → velocity smoother →
 Collision Monitor → serial bridge.
 
@@ -35,9 +37,27 @@ Generated data belongs in `data/local/`. Create a manifest with
 is accepted during software development but must be replaced before the first
 real-data acceptance run.
 
-`pcd_to_occupancy` marks the selected-height PCD points as occupied and assumes
-the padded PCD bounding box is free elsewhere. Inspect and edit the generated map
-before navigation; a PCD alone does not prove that every unobserved cell is free.
+With a pose graph argument, `pcd_to_occupancy` compares obstacle height to the
+nearest recorded base pose, raycasts only pose-to-return lines as free, and
+leaves every other cell unknown. Obstacle cells override free rays. The legacy
+mode without a pose graph marks obstacles but deliberately leaves all other
+cells unknown. Inspect every generated map before navigation.
+
+Generate and validate a map without contacting the robot:
+
+```bash
+MAP_RUN=data/local/maps/mapping-20260717-195653
+BAG=data/local/bags/mapping-20260717-195653
+mkdir -p "$MAP_RUN/nav2-raycast"
+ros2 run romo_b_perception pcd_to_occupancy \
+  "$MAP_RUN/map.pcd" "$MAP_RUN/nav2-raycast/map" \
+  0.05 0.10 1.80 "$MAP_RUN/pose_graph.g2o" 15.0 0.171
+./scripts/run_localization_replay.sh "$BAG" "$MAP_RUN"
+```
+
+The replay forces an isolated ROS domain, launches no serial bridge or velocity
+publisher, records its localization outputs under `data/local/validation/`, and
+returns nonzero when any acceptance threshold fails.
 
 For offline mapping, keep the launch running until RKO-LIO has consumed the bag,
 then call `/map_save`. A successful run must leave non-empty `map.pcd` and
@@ -49,3 +69,11 @@ The tracked mapping RViz profile uses `map` as its fixed frame and displays
 `/rko_lio/frame`, `/rko_lio/odometry`, `/modified_map`, and `/modified_path`.
 The identity `map -> odom` transform in that launch exists only for offline map
 visualization; runtime localization remains the sole owner of `map -> odom`.
+
+Two point-cloud products are intentional. The obstacle topic
+`/sensing/lidar/top/pointcloud_filtered` is transformed to `base_footprint` and
+height-sliced to 0.10--1.80 m. Localization consumes
+`/sensing/lidar/top/pointcloud_localization`, transformed to `base_link` with
+full vertical structure retained. Both preserve Livox intensity and omit its
+vendor nanosecond timestamp field. Reusing the obstacle slice for 6-DoF NDT can
+make the solution degenerate and is prohibited.

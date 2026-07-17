@@ -34,11 +34,15 @@ install(TARGETS pointcloud_filter imu_normalizer pcd_to_occupancy DESTINATION li
 install(DIRECTORY include/ DESTINATION include)
 
 if(BUILD_TESTING)
+  find_package(Python3 REQUIRED COMPONENTS Interpreter)
   add_test(
     NAME pcd_to_occupancy_smoke
-    COMMAND $<TARGET_FILE:pcd_to_occupancy>
+    COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/check_occupancy.py
+      $<TARGET_FILE:pcd_to_occupancy>
       ${CMAKE_CURRENT_SOURCE_DIR}/test/fixture.pcd
-      ${CMAKE_CURRENT_BINARY_DIR}/fixture_map 0.05 0.10 1.80)
+      ${CMAKE_CURRENT_BINARY_DIR}/fixture_map 0.05 0.10 1.80
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/fixture.g2o 15.0 0.171)
   add_executable(test_imu_normalization test/test_imu_normalization.cpp)
   ament_target_dependencies(test_imu_normalization sensor_msgs)
   target_include_directories(test_imu_normalization PRIVATE include)

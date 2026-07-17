@@ -33,6 +33,8 @@ direction, steering sign, or movement.
 2. Measure and record the LiDAR xyz/rpy transform; clear the calibration gate.
 3. RC-drive a slow mapping loop while recording a rosbag.
 4. Inspect loop closure, PCD alignment, occupancy-map obstacles, and free space.
-5. Verify repeatable localization after several manual initial poses.
+5. Run `scripts/run_localization_replay.sh` and require every automated check to
+   pass, then verify repeatable live localization after several manual initial
+   poses.
 6. Execute a 0.2 m/s waypoint path in a controlled area.
 7. Place a static obstacle and verify slowdown, stop, and a feasible local detour.

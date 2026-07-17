@@ -1,0 +1,14 @@
+romo_b_localization_cloud_filter:
+  ros__parameters:
+    input_topic: /sensing/lidar/top/pointcloud_raw
+    output_topic: /sensing/lidar/top/pointcloud_localization
+    target_frame: base_link
+    voxel_size: 0.10
+    enable_height_filter: false
+    min_z: -5.0
+    max_z: 10.0
+    self_half_x: 0.398
+    self_half_y: 0.319
+    self_min_z: -0.25
+    self_max_z: 0.25
+    transform_timeout_sec: 0.05

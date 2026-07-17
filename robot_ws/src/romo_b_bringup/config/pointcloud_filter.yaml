@@ -4,6 +4,7 @@ romo_b_pointcloud_filter:
     output_topic: /sensing/lidar/top/pointcloud_filtered
     target_frame: base_footprint
     voxel_size: 0.05
+    enable_height_filter: true
     min_z: 0.10
     max_z: 1.80
     self_half_x: 0.398

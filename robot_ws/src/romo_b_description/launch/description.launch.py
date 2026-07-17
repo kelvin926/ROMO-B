@@ -9,7 +9,11 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     names = ("lidar_x", "lidar_y", "lidar_z", "lidar_roll", "lidar_pitch", "lidar_yaw")
     defaults = ("0.25", "0.0", "0.25", "0.0", "0.0", "0.0")
-    declarations = [DeclareLaunchArgument(name, default_value=value) for name, value in zip(names, defaults)]
+    declarations = [
+        DeclareLaunchArgument(name, default_value=value)
+        for name, value in zip(names, defaults)
+    ]
+    declarations.append(DeclareLaunchArgument("use_sim_time", default_value="false"))
     xacro_file = PathJoinSubstitution(
         [FindPackageShare("romo_b_description"), "urdf", "romo_b.urdf.xacro"]
     )
@@ -22,6 +26,13 @@ def generate_launch_description():
         executable="robot_state_publisher",
         name="robot_state_publisher",
         output="screen",
-        parameters=[{"robot_description": robot_description}],
+        parameters=[
+            {
+                "robot_description": robot_description,
+                "use_sim_time": ParameterValue(
+                    LaunchConfiguration("use_sim_time"), value_type=bool
+                ),
+            }
+        ],
     )
     return LaunchDescription([*declarations, publisher])

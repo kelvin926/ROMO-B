@@ -4,6 +4,7 @@ import pathlib
 import rclpy
 from geometry_msgs.msg import Point, PointStamped, PoseStamped
 from nav2_msgs.action import NavigateThroughPoses
+from nav2_msgs.msg import SpeedLimit
 from nav_msgs.msg import Path
 from rclpy.action import ActionClient
 from rclpy.node import Node
@@ -32,6 +33,9 @@ class WaypointManager(Node):
         self.path_publisher = self.create_publisher(Path, "/romo_b/waypoints/path", latched)
         self.marker_publisher = self.create_publisher(
             MarkerArray, "/romo_b/waypoints/markers", latched
+        )
+        self.speed_limit_publisher = self.create_publisher(
+            SpeedLimit, "/speed_limit", latched
         )
         self.create_subscription(PointStamped, "/clicked_point", self.on_clicked_point, 10)
         self.create_service(Trigger, "/romo_b/waypoints/clear", self.on_clear)
@@ -96,6 +100,12 @@ class WaypointManager(Node):
         if not self.navigation_client.wait_for_server(timeout_sec=0.2):
             response.message = "NavigateThroughPoses action server is unavailable"
             return response
+
+        speed_limit = SpeedLimit()
+        speed_limit.header.stamp = self.get_clock().now().to_msg()
+        speed_limit.percentage = False
+        speed_limit.speed_limit = self.route.default_speed_mps
+        self.speed_limit_publisher.publish(speed_limit)
 
         goal = NavigateThroughPoses.Goal()
         goal.poses = self.to_pose_messages()

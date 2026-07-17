@@ -50,15 +50,20 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   samples, and 7,448 wheel-odometry samples.
 - Offline RKO-LIO plus graph SLAM produced a 77,365-point PCD and a graph with
   143 poses, 702 constraints, and two nonlocal loop edges. The optimized path
-  is 235.87 m long and closes to 0.479 m. Top-down geometry review is coherent;
-  this remains a provisional map until localization replay passes.
+  is 235.87 m long and closes to 0.479 m. Top-down geometry review is coherent.
 - The graph backend's XYZ-only cloud conversion no longer emits one missing
   `intensity` warning per conversion, and `pose_graph.g2o` is now written into
   the requested map output directory. The mapping RViz profile uses the actual
   RKO-LIO and graph topics and an explicit mapping-only `map -> odom` transform.
-- A 0.05 m Nav2 PGM/YAML was generated for inspection. It is deliberately not
-  accepted for navigation yet because the current converter treats every
-  unobserved cell inside the PCD bounds as free.
+- The recorded mapping bag completed a full 381.83-second isolated localization
+  replay. All 3,794 alignment states were healthy, with zero rejected updates or
+  reinitialization requests, fitness median 0.0145, p95 0.1763, maximum 3.1204,
+  and 0.464 m start-to-end closure. The automated result is `PASS`.
+- A 0.05 m pose-graph-raycast Nav2 map was generated with 163,734 observed-free,
+  13,520 occupied, and 1,555,166 unknown cells. Unknown space stays unknown and
+  occupied cells override free rays; top-down review shows a coherent route
+  corridor. It remains blocked from physical navigation by velocity scaling and
+  final Nav2 software validation, not by localization replay.
 
 ## Host actions still required
 
@@ -71,8 +76,9 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 
 - Resolve the physical velocity scaling that caused the unexpectedly fast
   0.05 m/s ground test, then verify steering raw scale and left/right sign.
-- Pass recorded-bag localization replay and accept an occupancy map whose
-  observed/unknown free-space semantics have been reviewed.
+- Verify RViz initial-pose recovery at several locations on the live platform.
+- Validate planning and collision behavior against the accepted raycast map
+  before any autonomous ground run.
 - Actual PCU response to invalid fields and Alive/feedback timeout.
 - External storage URI for bags, PCDs, and maps.
 

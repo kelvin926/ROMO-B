@@ -17,7 +17,7 @@
     set_initial_pose: false
     use_odom: true
     use_twist_prediction: false
-    use_imu: true
+    use_imu: false
     use_imu_preintegration: false
     predict_pose_from_previous_delta: true
     reject_above_score_threshold: true

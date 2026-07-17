@@ -28,5 +28,8 @@ mapping:
   start_end_distance_m: 0.479
   pose_graph_sha256: d515d2a83d6ed2d02a1e4dceae0ff5684b8a2e459e83aa2be2351a766335d9f8
 validation:
-  status: provisional_pass
-  note: Geometry is coherent in top-down review; localization replay is still required.
+  status: software_validated
+  localization_replay: mapping-20260717-195653-localization
+  note: >-
+    Geometry is coherent in top-down review and the full recorded-bag
+    localization replay passed.

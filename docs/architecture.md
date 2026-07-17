@@ -23,8 +23,8 @@ commands, and clamps the selected safety profile.
 map -- lidar localization --> odom -- robot_localization --> base_link
                                                             |
                                                    robot_state_publisher
-                                                            |
-                                                        livox_frame
+                                                     /              \
+                                          base_footprint          livox_frame
 ```
 
 Only the listed component owns each transform. Raw wheel odometry does not
@@ -39,7 +39,8 @@ launch keeps that vendor stream private on `/sensing/imu/livox_raw` and
 ## Mapping and navigation
 
 - Livox SDK2/driver publishes PointCloud2 and IMU.
-- Point clouds are cropped, self-filtered, height-filtered, and voxelized.
+- Point clouds split after transform/self-filtering: a height-sliced 0.05 m
+  obstacle cloud feeds Nav2, while a full-height 0.10 m cloud feeds localization.
 - `lidar_slam_ros2` authors the PCD while the platform is RC-driven in Manual.
 - A 0.05 m occupancy map is derived from the PCD for the Nav2 static layer.
 - `lidar_localization_ros2` owns global localization.

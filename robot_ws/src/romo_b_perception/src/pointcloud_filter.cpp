@@ -40,6 +40,7 @@ public:
       "output_topic", "/sensing/lidar/top/pointcloud_filtered");
     target_frame_ = declare_parameter<std::string>("target_frame", "base_footprint");
     voxel_size_ = declare_parameter<double>("voxel_size", 0.05);
+    enable_height_filter_ = declare_parameter<bool>("enable_height_filter", true);
     min_z_ = declare_parameter<double>("min_z", 0.10);
     max_z_ = declare_parameter<double>("max_z", 1.80);
     self_half_x_ = declare_parameter<double>("self_half_x", 0.398);
@@ -73,20 +74,27 @@ private:
       return;
     }
 
-    auto cloud = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
+    // Keep Livox intensity for localization while intentionally dropping the
+    // vendor-specific per-point timestamp. The driver publishes that FLOAT64
+    // field in nanoseconds, whereas generic consumers commonly interpret a
+    // floating-point timestamp as seconds.
+    auto cloud = std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
     pcl::fromROSMsg(transformed, *cloud);
     std::vector<int> valid_indices;
     pcl::removeNaNFromPointCloud(*cloud, *cloud, valid_indices);
 
-    auto height_filtered = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
-    pcl::PassThrough<pcl::PointXYZ> height;
-    height.setInputCloud(cloud);
-    height.setFilterFieldName("z");
-    height.setFilterLimits(static_cast<float>(min_z_), static_cast<float>(max_z_));
-    height.filter(*height_filtered);
+    auto height_filtered = cloud;
+    if (enable_height_filter_) {
+      height_filtered = std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
+      pcl::PassThrough<pcl::PointXYZI> height;
+      height.setInputCloud(cloud);
+      height.setFilterFieldName("z");
+      height.setFilterLimits(static_cast<float>(min_z_), static_cast<float>(max_z_));
+      height.filter(*height_filtered);
+    }
 
-    auto without_robot = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
-    pcl::CropBox<pcl::PointXYZ> self_filter;
+    auto without_robot = std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
+    pcl::CropBox<pcl::PointXYZI> self_filter;
     self_filter.setInputCloud(height_filtered);
     self_filter.setMin(Eigen::Vector4f(
         static_cast<float>(-self_half_x_), static_cast<float>(-self_half_y_),
@@ -97,8 +105,8 @@ private:
     self_filter.setNegative(true);
     self_filter.filter(*without_robot);
 
-    pcl::PointCloud<pcl::PointXYZ> filtered;
-    pcl::VoxelGrid<pcl::PointXYZ> voxel;
+    pcl::PointCloud<pcl::PointXYZI> filtered;
+    pcl::VoxelGrid<pcl::PointXYZI> voxel;
     voxel.setInputCloud(without_robot);
     const auto leaf = static_cast<float>(voxel_size_);
     voxel.setLeafSize(leaf, leaf, leaf);
@@ -115,6 +123,7 @@ private:
   std::string output_topic_;
   std::string target_frame_;
   double voxel_size_{0.05};
+  bool enable_height_filter_{true};
   double min_z_{0.10};
   double max_z_{1.80};
   double self_half_x_{0.398};

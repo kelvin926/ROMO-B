@@ -1,8 +1,8 @@
 schema_version: 1
 id: mapping-20260717-195653-nav2
 type: nav2_occupancy_map
-created_at: '2026-07-17T11:27:11.320756+00:00'
-source_filename: map.pgm
+created_at: '2026-07-17T11:48:51+00:00'
+source_filename: nav2-raycast/map.pgm
 sensor:
   model: Livox Mid-360
   serial: pending
@@ -10,16 +10,26 @@ sensor:
 frames:
   fixed: map
   sensor: livox_frame
-size_bytes: 1974956
-sha256: ed0a88c08cd43abaf81b656fe0776787f55979672ef5b1ed94c42f5d982e1fb5
+size_bytes: 1732436
+sha256: 8ddfb88e07b2766d3271e389c11f64936090295c600b379b0049149f13d00ea1
 uri: pending
 occupancy:
   resolution_m: 0.05
-  width_cells: 2101
+  width_cells: 1843
   height_cells: 940
-  origin_xy_m: [-29.7894, -35.4288]
+  origin_xy_m: [-29.6923, -35.4288]
   obstacle_height_slice_m: [0.10, 1.80]
+  base_link_height_m: 0.171
+  maximum_ray_range_m: 15.0
+  free_cells: 163734
+  occupied_cells: 13520
+  unknown_cells: 1555166
+  yaml_size_bytes: 130
+  yaml_sha256: 839fb3cfccb7026b1c47ff5e250838b988ca19359ea6b578113d7f752e661257
 validation:
-  status: provisional_only
-  free_space_model: unobserved bounding-box cells are currently treated as free
-  blocker: Visual review and localization replay are required before navigation use.
+  status: provisional_pass
+  free_space_model: nearest-pose raycast; unobserved cells remain unknown
+  obstacle_precedence: true
+  visual_review: coherent route corridor with conservative unknown boundary
+  localization_replay: mapping-20260717-195653-localization
+  blocker: Nav2 planning validation and physical velocity scaling remain required.

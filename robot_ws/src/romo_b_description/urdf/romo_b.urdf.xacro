@@ -21,9 +21,11 @@
 
   <link name="base_footprint"/>
   <joint name="base_footprint_joint" type="fixed">
-    <parent link="base_footprint"/>
-    <child link="base_link"/>
-    <origin xyz="0 0 ${body_height / 2.0}" rpy="0 0 0"/>
+    <!-- base_link is the dynamic odometry child. Keeping the ground-projected
+         frame below it avoids giving base_link two TF parents. -->
+    <parent link="base_link"/>
+    <child link="base_footprint"/>
+    <origin xyz="0 0 ${-body_height / 2.0}" rpy="0 0 0"/>
   </joint>
 
   <link name="base_link">
