@@ -100,6 +100,10 @@ class Calibration(Node):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--execute", action="store_true", help="required motion confirmation")
+    parser.add_argument(
+        "--characterize", action="store_true",
+        help="measure the smallest nonzero command without comparing it to the requested SI speed",
+    )
     parser.add_argument("--speed", type=float, default=0.01)
     parser.add_argument("--hold", type=float, default=1.5)
     parser.add_argument("--overspeed", type=float, default=0.10)
@@ -113,6 +117,8 @@ def main():
         parser.error("--hold must be between 0.5 and 3.0 seconds")
     if not args.speed * 1.5 <= args.overspeed <= 0.30:
         parser.error("--overspeed must be >= 1.5*speed and <= 0.30 m/s")
+    if args.characterize and round(args.speed * 100.0) != 1:
+        parser.error("--characterize requires a speed that encodes to raw 1")
 
     root = pathlib.Path(__file__).resolve().parents[1]
     output = pathlib.Path(args.output) if args.output else (
@@ -122,7 +128,12 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     rclpy.init()
     node = Calibration(args.speed, args.overspeed)
-    result = {"result": "FAIL", "requested_speed_mps": args.speed}
+    result = {
+        "result": "FAIL",
+        "mode": "minimum_command_characterization" if args.characterize else "speed_validation",
+        "requested_speed_mps": args.speed,
+        "commanded_speed_raw": round(args.speed * 100.0),
+    }
     exit_code = 2
     try:
         node.wait_status()
@@ -168,7 +179,9 @@ def main():
             raise RuntimeError("no steady-state feedback samples")
         measured = statistics.median(rear_means)
         tolerance = max(0.01, args.speed * 0.5)
-        passed = measured > 0.0 and abs(measured - args.speed) <= tolerance
+        passed = measured > 0.0 and (
+            args.characterize or abs(measured - args.speed) <= tolerance
+        )
         result.update(
             {
                 "result": "PASS" if passed else "FAIL",
