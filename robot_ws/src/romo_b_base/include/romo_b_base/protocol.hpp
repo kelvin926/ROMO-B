@@ -35,6 +35,7 @@ struct Feedback
 {
   bool auto_mode{false};
   bool estop{false};
+  std::uint8_t estop_raw{0};
   SteerMode steer_mode{SteerMode::k2Wis};
   std::array<double, 4> wheel_speed_mps{};  // FL, FR, RL, RR
   std::array<double, 4> wheel_steer_rad{};  // PCU convention: left is negative

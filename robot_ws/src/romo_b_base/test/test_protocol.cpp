@@ -49,6 +49,20 @@ TEST(FeedbackDecoding, DecodesLittleEndianAndScales)
   EXPECT_EQ(result->alive, 0x44);
 }
 
+TEST(FeedbackDecoding, TreatsPhysicalEstopBitmaskAsActive)
+{
+  const std::array<std::uint8_t, rb::kFeedbackFrameSize> frame{
+    0x53, 0x54, 0x58, 0x00, 0x05, 0x00,
+    0x00, 0x00, 0x01, 0x00, 0xff, 0xff, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x3e, 0x0d, 0x0a};
+  const auto result = rb::decode_feedback(frame);
+  ASSERT_TRUE(result.has_value());
+  EXPECT_TRUE(result->estop);
+  EXPECT_EQ(result->estop_raw, 0x05);
+  EXPECT_EQ(result->alive, 0x3e);
+}
+
 TEST(FeedbackParser, RecoversFromNoiseCorruptionAndFragments)
 {
   std::array<std::uint8_t, rb::kFeedbackFrameSize> good{

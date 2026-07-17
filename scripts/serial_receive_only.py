@@ -21,7 +21,7 @@ def signed_le(frame, offset):
 def decode(frame):
     if len(frame) != FRAME_SIZE or frame[:3] != HEADER or frame[-2:] != TAIL:
         return None
-    if frame[3] > 1 or frame[4] > 1 or frame[5] > 2:
+    if frame[3] > 1 or frame[5] > 2:
         return None
     speed_raw = [signed_le(frame, offset) for offset in range(6, 14, 2)]
     steer_raw = [signed_le(frame, offset) for offset in range(14, 22, 2)]
@@ -32,6 +32,7 @@ def decode(frame):
     return {
         "auto": bool(frame[3]),
         "estop": bool(frame[4]),
+        "estop_raw": frame[4],
         "steer_mode": frame[5],
         "wheel_speed_mps": [value * 0.01 for value in speed_raw],
         "wheel_steer_deg": [value * 0.1 for value in steer_raw],
@@ -179,7 +180,8 @@ def main():
     print(f"First raw frame: {first_frame.hex(' ')}")
     print(
         "Decoded: "
-        f"auto={first['auto']} estop={first['estop']} mode={first['steer_mode']} "
+        f"auto={first['auto']} estop={first['estop']} "
+        f"estop_raw={first['estop_raw']} mode={first['steer_mode']} "
         f"speed_mps={first['wheel_speed_mps']} steer_deg={first['wheel_steer_deg']} "
         f"alive={first['alive']} alive_gaps={alive_gaps}"
     )

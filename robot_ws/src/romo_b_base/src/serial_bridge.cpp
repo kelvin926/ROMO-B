@@ -679,6 +679,7 @@ private:
     add_value("command_age_sec", std::to_string(command_age_sec));
     add_value("command_timeout_sec", std::to_string(command_timeout_.count()));
     add_value("pcu_alive", std::to_string(status.pcu_alive));
+    add_value("pcu_estop_raw", std::to_string(latest_feedback_.estop_raw));
     add_value("hlv_alive", std::to_string(status.hlv_alive));
     diagnostics.status.push_back(serial_status);
 

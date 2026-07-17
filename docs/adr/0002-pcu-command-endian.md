@@ -18,3 +18,7 @@ the behavior expected when the PCU interprets `00 01` as Little Endian raw
 The bridge therefore retains both encodings for traceability, selects Little
 Endian in this robot's local configuration and onboarding output, and refuses
 to transmit when the setting is absent.
+
+During the same recovery, the PCU emitted E-stop byte `0x05`. Feedback parsing
+therefore treats E-stop as a bitmask (`0` is off, any nonzero value is active)
+instead of rejecting values above `1`.

@@ -40,6 +40,9 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   Endian interpretation as raw `0x0100`. Transmit mode now requires an explicit
   byte-order setting and this unit is configured `little`; low-speed
   revalidation remains pending.
+- Physical E-stop feedback uses a bitmask on this PCU (`0x05` was observed),
+  despite the manual documenting only 0/1. The parser now treats any nonzero
+  value as E-stop active and exposes the raw byte in diagnostics.
 - The Mid-360 is reachable at `192.168.1.113` through USB Ethernet
   `enxc84d44208014` with host `192.168.1.5`. Raw and filtered point clouds are
   stable at 10 Hz and the IMU at 200 Hz.

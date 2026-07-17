@@ -43,7 +43,7 @@ bool plausible(const std::array<std::uint8_t, kFeedbackFrameSize> & frame)
   {
     return false;
   }
-  if (frame[3] > 1U || frame[4] > 1U || frame[5] > 2U) {
+  if (frame[3] > 1U || frame[5] > 2U) {
     return false;
   }
   for (std::size_t offset = 6; offset <= 12; offset += 2) {
@@ -92,7 +92,8 @@ std::optional<Feedback> decode_feedback(
 
   Feedback result;
   result.auto_mode = frame[3] == 1U;
-  result.estop = frame[4] == 1U;
+  result.estop_raw = frame[4];
+  result.estop = result.estop_raw != 0U;
   result.steer_mode = static_cast<SteerMode>(frame[5]);
   for (std::size_t index = 0; index < 4; ++index) {
     result.wheel_speed_mps[index] = static_cast<double>(get_le_i16(frame, 6 + index * 2)) * 0.01;
