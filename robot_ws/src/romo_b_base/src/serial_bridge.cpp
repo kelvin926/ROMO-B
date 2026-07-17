@@ -438,10 +438,10 @@ private:
     {
       std::scoped_lock lock(state_mutex_);
       const auto steady_now = std::chrono::steady_clock::now();
+      feedback_timed_out_ = !have_feedback_ ||
+        steady_now - last_feedback_time_ > feedback_timeout_ ||
+        steady_now - last_alive_change_time_ > feedback_timeout_;
       if (bridge_state_ == BridgeState::kArmedAuto) {
-        feedback_timed_out_ = !have_feedback_ ||
-          steady_now - last_feedback_time_ > feedback_timeout_ ||
-          steady_now - last_alive_change_time_ > feedback_timeout_;
         command_timed_out_ = auto_confirmed_ &&
           steady_now - last_command_time_ > command_timeout_;
         const bool auto_transition_timed_out = auto_request_sent_ && !auto_confirmed_ &&
@@ -467,9 +467,6 @@ private:
           bridge_state_ = BridgeState::kEstop;
         }
         command_timed_out_ = false;
-        feedback_timed_out_ = !have_feedback_ ||
-          steady_now - last_feedback_time_ > feedback_timeout_ ||
-          steady_now - last_alive_change_time_ > feedback_timeout_;
       }
 
       command.steer_mode = SteerMode::k2Wis;
