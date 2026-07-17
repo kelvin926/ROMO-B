@@ -81,11 +81,13 @@ class Calibration(Node):
                         }
                     )
                 if maximum > self.overspeed:
+                    steer = [float(value) for value in self.status.wheel_steer_rad]
                     try:
                         self.call(self.estop, True, timeout=1.0)
                     finally:
                         raise RuntimeError(
-                            f"overspeed feedback {maximum:.3f} m/s > {self.overspeed:.3f} m/s"
+                            f"overspeed feedback {maximum:.3f} m/s > "
+                            f"{self.overspeed:.3f} m/s; wheels={wheel}, steer_rad={steer}"
                         )
                 if self.status.estop or self.status.command_timed_out or self.status.feedback_timed_out:
                     raise RuntimeError("bridge reported E-stop or watchdog fault")
@@ -177,6 +179,7 @@ def main():
         else:
             raise RuntimeError("PCU did not enter armed Auto state")
 
+        node.publish_phase(0.5, 0.0, 0.0)
         node.publish_phase(1.0, 0.0, args.speed, steer_deg=args.steer_deg)
         node.publish_phase(
             args.hold, args.speed, args.speed, collect=True,
