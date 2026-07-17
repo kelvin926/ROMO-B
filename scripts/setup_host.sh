@@ -14,11 +14,11 @@ if [[ ! -f /opt/ros/humble/setup.bash ]]; then
 fi
 
 apt_packages=(
-  build-essential cmake ccache git gh libapr1-dev libaprutil1-dev libasio-dev
+  build-essential cmake ccache curl git gh libapr1-dev libaprutil1-dev libasio-dev
   libboost-system-dev libpcl-dev libyaml-cpp-dev
   nlohmann-json3-dev
   python3-colcon-common-extensions python3-pip python3-rosdep python3-setuptools
-  python3-serial python3-vcstool python3-yaml
+  python3-serial python3-vcstool python3-venv python3-yaml
 )
 
 ros_packages=(

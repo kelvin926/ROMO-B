@@ -30,6 +30,7 @@ if [[ "$fetch_only" == true ]]; then
 fi
 
 "$repo_root/scripts/apply_autoware_overrides.sh"
+"$repo_root/scripts/setup_acados.sh"
 
 printf 'Autoware environment installation needs sudo and can take about an hour.\n'
 (
@@ -41,6 +42,9 @@ printf 'Autoware environment installation needs sudo and can take about an hour.
   rosdep install --from-paths src --ignore-src -r -y
   export CMAKE_BUILD_PARALLEL_LEVEL=2
   export MAKEFLAGS=-j2
+  export ACADOS_SOURCE_DIR="${ACADOS_SOURCE_DIR:-$repo_root/autoware/deps/acados}"
+  export CMAKE_PREFIX_PATH="$ACADOS_SOURCE_DIR:${CMAKE_PREFIX_PATH:-}"
+  export LD_LIBRARY_PATH="$ACADOS_SOURCE_DIR/lib:${LD_LIBRARY_PATH:-}"
   rm -f install/.romo_b_build_complete
   colcon build --symlink-install --parallel-workers 2 \
     --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF

@@ -27,3 +27,7 @@ repositories:
     url: https://github.com/autowarefoundation/autoware.git
     version: 1.8.0
     commit: 5b27e88e84683deb4afaf0aa917f80082a608871
+  acados:
+    url: https://github.com/acados/acados.git
+    version: v0.5.3
+    commit: 7e1d1152c1babd6ea04af1c9d73444fe8381057b

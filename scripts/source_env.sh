@@ -12,6 +12,13 @@ if [[ $- == *u* ]]; then
 fi
 
 source /opt/ros/humble/setup.bash
+acados_root="${ACADOS_SOURCE_DIR:-$repo_root/autoware/deps/acados}"
+if [[ -f "$acados_root/.romo_b_ready" ]]; then
+  export ACADOS_SOURCE_DIR="$acados_root"
+  export CMAKE_PREFIX_PATH="$acados_root:${CMAKE_PREFIX_PATH:-}"
+  export LD_LIBRARY_PATH="$acados_root/lib:${LD_LIBRARY_PATH:-}"
+  export PATH="$acados_root/bin:${PATH:-}"
+fi
 if [[ -f "$repo_root/autoware/install/setup.bash" && \
       -f "$repo_root/autoware/install/.romo_b_build_complete" ]]; then
   source "$repo_root/autoware/install/setup.bash"
@@ -28,3 +35,4 @@ if [[ "$romo_b_nounset_was_enabled" == true ]]; then
   set -u
 fi
 unset romo_b_nounset_was_enabled
+unset acados_root

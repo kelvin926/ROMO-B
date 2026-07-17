@@ -98,6 +98,15 @@ if [[ "$mode" == "--autoware" ]]; then
   else
     fail 'Autoware install overlay incomplete; run setup_autoware.sh'
   fi
+  acados_root="${ACADOS_SOURCE_DIR:-$autoware_root/deps/acados}"
+  expected_acados_commit=7e1d1152c1babd6ea04af1c9d73444fe8381057b
+  if [[ -f "$acados_root/.romo_b_ready" && -f "$acados_root/cmake/acadosConfig.cmake" && \
+        -x "$acados_root/.venv/bin/python3" && \
+        "$(git -C "$acados_root" rev-parse HEAD 2>/dev/null)" == "$expected_acados_commit" ]]; then
+    pass "acados v0.5.3 local dependency exists: $acados_root"
+  else
+    fail 'acados v0.5.3 is incomplete; run scripts/setup_acados.sh'
+  fi
 
   planning_target="$autoware_root/src/launcher/autoware_launch/autoware_launch/config/planning/preset/romo_b_preset.yaml"
   control_target="$autoware_root/src/launcher/autoware_launch/autoware_launch/config/control/preset/romo_b_preset.yaml"
@@ -130,7 +139,7 @@ PY
     source "$repo_root/scripts/source_env.sh"
     set -u
     for package in autoware_launch autoware_map_projection_loader \
-      autoware_lanelet2_map_loader autoware_euclidean_cluster_object_detector \
+      autoware_map_loader autoware_euclidean_cluster_object_detector \
       romo_b_autoware romo_b_description; do
       ros2 pkg prefix "$package" >/dev/null || exit 1
     done
