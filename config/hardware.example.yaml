@@ -1,0 +1,22 @@
+schema_version: 1
+serial:
+  device: /dev/romo_b_pcu
+  baud: 115200
+  data_bits: 8
+  parity: none
+  stop_bits: 1
+  adapter_serial: A5069RR4
+  wiring: pending  # straight or null_modem
+lidar:
+  host_ip: 192.168.1.5
+  lidar_ip: pending
+  interface: pending
+  frame_id: livox_frame
+  calibrated: false
+  transform:
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0

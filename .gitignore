@@ -1,0 +1,33 @@
+# ROS and colcon outputs
+**/build/
+**/install/
+**/log/
+.colcon/
+
+# Reproducible third-party workspaces
+vendor_ws/
+autoware/
+
+# Hardware-local and generated data
+config/local/
+data/local/
+data/maps/
+data/bags/
+*.bag
+*.db3
+*.mcap
+*.pcd
+*.ply
+*.pgm
+
+# Editor, Python and test caches
+.idea/
+.vscode/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+
+# Local environment helpers
+.env
+.envrc

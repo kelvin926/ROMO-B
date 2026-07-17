@@ -1,0 +1,17 @@
+repositories:
+  livox_ros_driver2:
+    type: git
+    url: https://github.com/Livox-SDK/livox_ros_driver2.git
+    version: 13eb05e4e6dd7a765b934d0c5fd6236676a57b49
+  lidar_slam_ros2:
+    type: git
+    url: https://github.com/rsasaki0109/lidar_slam_ros2.git
+    version: 94da7fecf63ea90a100ae1672f36988ea9eb9293
+  lidar_localization_ros2:
+    type: git
+    url: https://github.com/rsasaki0109/lidar_localization_ros2.git
+    version: be1491ccf5fb97bdc2336bb713bf17bc7072065d
+  ndt_omp_ros2:
+    type: git
+    url: https://github.com/rsasaki0109/ndt_omp_ros2.git
+    version: ef8a34985876359ecac7b7ad0004b6f409f6fbbc

@@ -1,0 +1,29 @@
+schema_version: 1
+resolved_at: "2026-07-17"
+ros_distribution: humble
+platform: ubuntu-22.04-x86_64
+repositories:
+  Livox-SDK2:
+    url: https://github.com/Livox-SDK/Livox-SDK2.git
+    version: v1.3.1
+    commit: f5d9375f84efe2b15bc0a052d3e18482ed13adf4
+  livox_ros_driver2:
+    url: https://github.com/Livox-SDK/livox_ros_driver2.git
+    version: 1.2.6
+    commit: 13eb05e4e6dd7a765b934d0c5fd6236676a57b49
+  lidar_slam_ros2:
+    url: https://github.com/rsasaki0109/lidar_slam_ros2.git
+    version: v0.2.2
+    commit: 94da7fecf63ea90a100ae1672f36988ea9eb9293
+  lidar_localization_ros2:
+    url: https://github.com/rsasaki0109/lidar_localization_ros2.git
+    version: main
+    commit: be1491ccf5fb97bdc2336bb713bf17bc7072065d
+  ndt_omp_ros2:
+    url: https://github.com/rsasaki0109/ndt_omp_ros2.git
+    version: humble
+    commit: ef8a34985876359ecac7b7ad0004b6f409f6fbbc
+  autoware:
+    url: https://github.com/autowarefoundation/autoware.git
+    version: 1.8.0
+    commit: 5b27e88e84683deb4afaf0aa917f80082a608871

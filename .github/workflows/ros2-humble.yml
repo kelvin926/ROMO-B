@@ -1,0 +1,41 @@
+name: ROS 2 Humble CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  project:
+    runs-on: ubuntu-22.04
+    container:
+      image: ros:humble-ros-base-jammy
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install project dependencies
+        shell: bash
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            python3-colcon-common-extensions \
+            python3-pip \
+            python3-yaml \
+            libboost-system-dev \
+            ros-humble-diagnostic-updater \
+            ros-humble-joint-state-publisher \
+            ros-humble-nav2-msgs \
+            ros-humble-xacro
+          rosdep update
+          rosdep install --from-paths robot_ws/src --ignore-src -r -y \
+            --skip-keys "navigation2 nav2_bringup nav2_mppi_controller robot_localization twist_mux"
+      - name: Build and test project packages
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build --base-paths robot_ws/src --build-base robot_ws/build \
+            --install-base robot_ws/install --symlink-install \
+            --cmake-args -DBUILD_TESTING=ON
+          source robot_ws/install/setup.bash
+          colcon test --base-paths robot_ws/src --build-base robot_ws/build \
+            --install-base robot_ws/install --event-handlers console_direct+
+          colcon test-result --test-result-base robot_ws/build --verbose
