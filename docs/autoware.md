@@ -17,6 +17,11 @@ shift inside the 2.4 m corridor. If no safe path exists, its velocity planner
 slows/stops; the independent Collision Monitor also slows at 1.5 m and stops at
 0.9 m. This is research software, not a safety-rated person detector.
 
+Both moving and stationary avoidance are retuned for ROMO-B's 0.05--0.20 m/s
+range. The tracked override enables UNKNOWN safety checks, removes the default
+classification waiting period, caps lateral shift to 0.65 m, and uses reliable
+stop/deceleration behavior when the requested clearance does not fit.
+
 ## Reproduce the installation
 
 ```bash

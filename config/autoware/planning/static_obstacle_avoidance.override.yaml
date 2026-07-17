@@ -1,0 +1,66 @@
+/**:
+  ros__parameters:
+    avoidance:
+      resample_interval_for_output: 0.5
+      use_intersection_areas: false
+      use_hatched_road_markings: false
+      use_freespace_areas: false
+      target_object:
+        unknown:
+          th_moving_speed: 0.12
+          th_moving_time: 0.5
+          longitudinal_margin: 0.30
+          lateral_margin:
+            soft_margin: 0.35
+            hard_margin: 0.20
+            hard_margin_for_parked_vehicle: 0.20
+          max_expand_ratio: 0.0
+          envelope_buffer_margin: 0.10
+          th_error_eclipse_long_radius: 0.30
+      target_filtering:
+        object_check_goal_distance: 10.0
+        object_check_return_pose_distance: 10.0
+        max_compensation_time: 0.75
+        unstable_classification_time: 0.0
+        avoidance_for_ambiguous_vehicle:
+          policy: auto
+      safety_check:
+        target_type:
+          unknown: true
+        min_velocity: 0.05
+        max_velocity: 0.50
+        time_resolution: 0.25
+        time_horizon_for_front_object: 4.0
+        time_horizon_for_rear_object: 2.0
+        lateral_distance_max_threshold: 0.80
+        longitudinal_distance_min_threshold: 0.50
+      avoidance:
+        lateral:
+          soft_drivable_bound_margin: 0.10
+          hard_drivable_bound_margin: 0.10
+          max_right_shift_length: 0.65
+          max_left_shift_length: 0.65
+          max_deviation_from_lane: 0.65
+        longitudinal:
+          min_prepare_time: 0.5
+          max_prepare_time: 1.0
+          min_prepare_distance: 0.5
+          min_slow_down_speed: 0.05
+          buf_slow_down_speed: 0.03
+          nominal_avoidance_speed: 0.20
+      stop:
+        max_distance: 10.0
+        stop_buffer: 0.40
+      policy:
+        detection_reliability: reliable
+        deceleration: reliable
+        lateral_margin: reliable
+        use_shorten_margin_immediately: false
+      constraints:
+        lateral:
+          velocity: [0.05, 0.10, 0.20]
+          max_accel_values: [0.10, 0.15, 0.20]
+          min_jerk_values:
+            avoid: [0.10, 0.10, 0.15]
+            return: [0.10, 0.10, 0.15]
+          max_jerk_values: [0.20, 0.30, 0.40]

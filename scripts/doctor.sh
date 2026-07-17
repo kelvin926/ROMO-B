@@ -107,6 +107,23 @@ if [[ "$mode" == "--autoware" ]]; then
   else
     fail 'Autoware overrides are stale; run apply_autoware_overrides.sh and rebuild'
   fi
+  static_target="$autoware_root/src/launcher/autoware_launch/autoware_launch/config/planning/scenario_planning/lane_driving/behavior_planning/behavior_path_planner/autoware_behavior_path_static_obstacle_avoidance_module/static_obstacle_avoidance.param.yaml"
+  if python3 - "$static_target" <<'PY'
+import sys, yaml
+d = yaml.safe_load(open(sys.argv[1]))["/**"]["ros__parameters"]["avoidance"]
+valid = (
+    d["target_filtering"]["target_type"]["unknown"] is True
+    and d["target_filtering"]["unstable_classification_time"] == 0.0
+    and d["safety_check"]["target_type"]["unknown"] is True
+    and d["avoidance"]["longitudinal"]["nominal_avoidance_speed"] <= 0.20
+)
+raise SystemExit(0 if valid else 1)
+PY
+  then
+    pass 'low-speed static UNKNOWN avoidance override applied'
+  else
+    fail 'static avoidance override missing or stale'
+  fi
 
   if (
     set +u
