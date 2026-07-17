@@ -9,12 +9,20 @@ Visualization Manager:
       Enabled: true
       Plane: XY
       Plane Cell Count: 100
-    - Class: rviz_default_plugins/Map
+    - Alpha: 0.7
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: true
       Name: Static map
       Enabled: true
-      Topic: /map
-      Alpha: 0.7
-      Update Topic: /map_updates
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+      Use Timestamp: false
+      Value: true
     - Class: rviz_default_plugins/RobotModel
       Name: ROMO-B
       Enabled: true
