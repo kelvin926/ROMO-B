@@ -1,0 +1,10 @@
+romo_b_autoware_object_tracker:
+  ros__parameters:
+    output_frame: map
+    association_distance: 0.80
+    track_expiry: 0.75
+    velocity_gain: 0.35
+    stationary_speed: 0.12
+    prediction_horizon: 3.0
+    prediction_step: 0.5
+    transform_timeout: 0.08

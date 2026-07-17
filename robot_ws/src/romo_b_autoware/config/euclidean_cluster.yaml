@@ -1,0 +1,6 @@
+euclidean_cluster_node:
+  ros__parameters:
+    use_height: false
+    min_cluster_size: 4
+    max_cluster_size: 5000
+    tolerance: 0.25

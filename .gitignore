@@ -2,11 +2,12 @@
 **/build/
 **/install/
 **/log/
+**/log-*/
 .colcon/
 
 # Reproducible third-party workspaces
-vendor_ws/
-autoware/
+/vendor_ws/
+/autoware/
 
 # Hardware-local and generated data
 config/local/

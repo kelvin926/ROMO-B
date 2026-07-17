@@ -1,0 +1,9 @@
+romo_b_autoware_vehicle_interface:
+  ros__parameters:
+    wheel_base: 0.323
+    max_speed: 0.20
+    max_steer: 0.3839724354
+    command_timeout: 0.15
+    # The low-speed follower is the field default; native Autoware control can
+    # be selected after its controller is validated on this 0.323 m wheelbase.
+    command_source: trajectory

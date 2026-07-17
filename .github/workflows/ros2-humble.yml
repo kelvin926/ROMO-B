@@ -27,7 +27,7 @@ jobs:
             ros-humble-xacro
           rosdep update
           rosdep install --from-paths robot_ws/src --ignore-src -r -y \
-            --skip-keys "ament_python navigation2 nav2_bringup nav2_mppi_controller robot_localization twist_mux lidar_localization_ros2 lidarslam livox_ros_driver2"
+            --skip-keys "ament_python navigation2 nav2_bringup nav2_mppi_controller robot_localization twist_mux lidar_localization_ros2 lidarslam livox_ros_driver2 autoware_adapi_v1_msgs autoware_control_msgs autoware_perception_msgs autoware_planning_msgs autoware_vehicle_msgs unique_identifier_msgs"
       - name: Build and test project packages
         shell: bash
         run: |

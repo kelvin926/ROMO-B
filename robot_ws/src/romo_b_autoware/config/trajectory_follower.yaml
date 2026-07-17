@@ -1,0 +1,10 @@
+romo_b_autoware_trajectory_follower:
+  ros__parameters:
+    wheel_base: 0.323
+    lookahead: 0.70
+    stop_distance: 0.30
+    max_speed: 0.20
+    max_steer: 0.3839724354
+    trajectory_timeout: 0.50
+    odometry_timeout: 0.30
+    require_operation_mode: true

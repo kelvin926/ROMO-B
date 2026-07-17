@@ -1,0 +1,14 @@
+/**:
+  ros__parameters:
+    # ROMO-B manual dimensions. Autoware defines base_link at the vehicle
+    # center and uses the bicycle-model wheelbase for curvature conversion.
+    wheel_radius: 0.103
+    wheel_width: 0.075
+    wheel_base: 0.323
+    wheel_tread: 0.529
+    front_overhang: 0.2165
+    rear_overhang: 0.2165
+    left_overhang: 0.034
+    right_overhang: 0.034
+    vehicle_height: 0.342
+    max_steer_angle: 0.3839724354  # 22 degrees

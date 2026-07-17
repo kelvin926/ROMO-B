@@ -21,6 +21,9 @@ source_ros_setup() {
 }
 
 source_ros_setup /opt/ros/humble/setup.bash
+if [[ -f "$repo_root/autoware/install/setup.bash" ]]; then
+  source_ros_setup "$repo_root/autoware/install/setup.bash"
+fi
 export CMAKE_BUILD_PARALLEL_LEVEL=2
 export MAKEFLAGS=-j2
 
@@ -48,7 +51,9 @@ if [[ "$project_only" == false ]]; then
 fi
 
 rosdep install --from-paths "$repo_root/robot_ws/src" --ignore-src -r -y \
-  --skip-keys "ament_python livox_ros_driver2 lidar_localization_ros2 lidarslam"
+  --skip-keys "ament_python livox_ros_driver2 lidar_localization_ros2 lidarslam \
+autoware_adapi_v1_msgs autoware_control_msgs autoware_perception_msgs \
+autoware_planning_msgs autoware_vehicle_msgs unique_identifier_msgs"
 colcon --log-base "$repo_root/robot_ws/log" build \
   --base-paths "$repo_root/robot_ws/src" \
   --build-base "$repo_root/robot_ws/build" \
