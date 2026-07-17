@@ -163,7 +163,11 @@ class VehicleInterface(Node):
 
         gear = GearReport()
         gear.stamp = now
-        gear.report = GearReport.DRIVE if self.platform and self.platform.connected else GearReport.NEUTRAL
+        gear.report = (
+            GearReport.DRIVE
+            if self.platform and self.platform.connected
+            else GearReport.NEUTRAL
+        )
         self.gear_publisher.publish(gear)
 
         turn = TurnIndicatorsReport()

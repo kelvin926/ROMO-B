@@ -11,6 +11,7 @@ from autoware_adapi_v1_msgs.msg import (
     LocalizationInitializationState,
     OperationModeState,
 )
+from autoware_internal_planning_msgs.msg import VelocityLimit
 from autoware_planning_msgs.msg import Trajectory, TrajectoryPoint
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
@@ -44,6 +45,9 @@ class SafetyGateProbe(Node):
             "/localization/initialization_state",
             transient,
         )
+        self.velocity_limit_publisher = self.create_publisher(
+            VelocityLimit, "/planning/scenario_planning/max_velocity", 10
+        )
         self.command = None
         self.create_subscription(Twist, "/cmd_vel_nav", self._on_command, 10)
 
@@ -73,6 +77,7 @@ class SafetyGateProbe(Node):
         self.mode.is_autoware_control_enabled = True
 
         self.localization = LocalizationInitializationState()
+        self.velocity_limit = None
 
     def _on_command(self, message: Twist) -> None:
         self.command = message
@@ -87,6 +92,9 @@ class SafetyGateProbe(Node):
         self.mode_publisher.publish(self.mode)
         self.localization.stamp = stamp
         self.localization_publisher.publish(self.localization)
+        if self.velocity_limit is not None:
+            self.velocity_limit.stamp = stamp
+            self.velocity_limit_publisher.publish(self.velocity_limit)
 
     def sample(self, seconds: float = 0.45) -> Twist:
         self.command = None
@@ -117,6 +125,7 @@ def main() -> int:
             node.platform_publisher,
             node.mode_publisher,
             node.localization_publisher,
+            node.velocity_limit_publisher,
         )
         while time.monotonic() < discovery_deadline:
             if all(publisher.get_subscription_count() for publisher in publishers):
@@ -140,6 +149,11 @@ def main() -> int:
         node.mode.is_autoware_control_enabled = True
         enabled = node.sample()
 
+        node.velocity_limit = VelocityLimit()
+        node.velocity_limit.sender = "romo_b_waypoints"
+        node.velocity_limit.max_velocity = 0.10
+        yaml_limited = node.sample()
+
         node.localization.state = LocalizationInitializationState.INITIALIZING
         localization_lost = node.sample()
 
@@ -152,6 +166,10 @@ def main() -> int:
             "unlocalized_is_zero": stopped(unlocalized),
             "autoware_control_disabled_is_zero": stopped(control_disabled),
             "fully_enabled_moves_forward": 0.0 < enabled.linear.x <= 0.20,
+            "selected_yaml_limit_clamps_to_0_1_mps": abs(
+                yaml_limited.linear.x - 0.10
+            )
+            <= 1.0e-6,
             "localization_loss_is_zero": stopped(localization_lost),
             "feedback_timeout_is_zero": stopped(feedback_timeout),
         }
@@ -162,6 +180,7 @@ def main() -> int:
                 "linear_x": enabled.linear.x,
                 "angular_z": enabled.angular.z,
             },
+            "yaml_limited_command_mps": yaml_limited.linear.x,
         }
     except Exception as error:
         report = {"result": "FAIL", "error": str(error)}

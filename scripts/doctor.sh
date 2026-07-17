@@ -134,13 +134,36 @@ PY
     fail 'static avoidance override missing or stale'
   fi
 
+  velocity_target="$autoware_root/src/launcher/autoware_launch/autoware_launch/config/planning/scenario_planning/common/autoware_velocity_smoother/velocity_smoother.param.yaml"
+  speed_guard="$repo_root/robot_ws/src/romo_b_autoware/config/speed_limit_guard.yaml"
+  if python3 - "$velocity_target" "$speed_guard" <<'PY'
+import sys, yaml
+velocity = yaml.safe_load(open(sys.argv[1]))["/**"]["ros__parameters"]
+guard = yaml.safe_load(open(sys.argv[2]))["romo_b_autoware_speed_limit_guard"]["ros__parameters"]
+valid = (
+    velocity["min_curve_velocity"] <= 0.05
+    and velocity["replan_vel_deviation"] <= 0.10
+    and velocity["engage_velocity"] <= 0.10
+    and velocity["stopping_velocity"] <= 0.10
+    and guard["max_velocity_mps"] == 0.14
+)
+raise SystemExit(0 if valid else 1)
+PY
+  then
+    pass 'ROMO-B velocity smoother and independent 0.14 m/s planning guard applied'
+  else
+    fail 'velocity smoother override or planning speed guard is missing/stale'
+  fi
+
   if (
     set +u
     source "$repo_root/scripts/source_env.sh"
     set -u
     for package in autoware_launch autoware_map_projection_loader \
-      autoware_map_loader autoware_euclidean_cluster_object_detector \
-      romo_b_autoware romo_b_description; do
+      autoware_map_loader autoware_map_msgs \
+      autoware_euclidean_cluster_object_detector \
+      autoware_internal_planning_msgs romo_b_autoware romo_b_description \
+      romo_b_launch; do
       ros2 pkg prefix "$package" >/dev/null || exit 1
     done
   ); then

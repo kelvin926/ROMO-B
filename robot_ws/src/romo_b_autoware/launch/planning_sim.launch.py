@@ -5,6 +5,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction
 from launch.launch_description_sources import AnyLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 
 
 def _actions(context):
@@ -21,7 +22,22 @@ def _actions(context):
         "launch",
         "planning_simulator.launch.xml",
     )
+    share = pathlib.Path(get_package_share_directory("romo_b_autoware"))
     return [
+        Node(
+            package="romo_b_autoware",
+            executable="vector_map_startup_guard",
+            name="romo_b_vector_map_startup_guard",
+            output="screen",
+            parameters=[{"republish_delay_sec": 10.0}],
+        ),
+        Node(
+            package="romo_b_autoware",
+            executable="speed_limit_guard",
+            name="romo_b_autoware_speed_limit_guard",
+            output="screen",
+            parameters=[str(share / "config" / "speed_limit_guard.yaml")],
+        ),
         IncludeLaunchDescription(
             AnyLaunchDescriptionSource(str(launch_file)),
             launch_arguments={
@@ -33,6 +49,12 @@ def _actions(context):
                 "enable_all_modules_auto_mode": "true",
                 "localization_sim_mode": "api",
                 "vehicle_simulation": "true",
+                # The validation object must not disappear through the dummy
+                # simulator's optional stochastic detection-failure model.
+                "perception/enable_detection_failure": "false",
+                "initial_engage_state": LaunchConfiguration(
+                    "initial_engage_state"
+                ).perform(context),
                 "rviz": LaunchConfiguration("use_rviz").perform(context),
             }.items(),
         )
@@ -44,6 +66,7 @@ def generate_launch_description():
         [
             DeclareLaunchArgument("map_path"),
             DeclareLaunchArgument("use_rviz", default_value="true"),
+            DeclareLaunchArgument("initial_engage_state", default_value="false"),
             OpaqueFunction(function=_actions),
         ]
     )

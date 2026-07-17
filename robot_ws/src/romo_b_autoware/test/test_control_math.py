@@ -52,3 +52,19 @@ def test_left_target_and_curvature_conversion():
     )
     assert 0.0 < command.steer <= math.radians(22.0)
     assert curvature_to_twist(command.speed, command.steer, 0.323) > 0.0
+
+
+def test_route_speed_limit_clamps_follower_command():
+    path = [PathPoint(float(x), 0.0, 0.2) for x in range(5)]
+    command = calculate_follow_command(
+        path,
+        0.0,
+        0.0,
+        0.0,
+        wheel_base=0.323,
+        lookahead=0.7,
+        stop_distance=0.3,
+        max_speed=0.1,
+        max_steer=math.radians(22.0),
+    )
+    assert command.speed == 0.1

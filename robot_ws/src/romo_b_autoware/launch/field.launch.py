@@ -106,6 +106,16 @@ def _actions(context):
     adapters = [
         Node(
             package="romo_b_autoware",
+            executable="vector_map_startup_guard",
+            name="romo_b_vector_map_startup_guard",
+            output="screen",
+            # Autoware starts three seconds later below. Retaining one
+            # identical delayed sample removes a DDS discovery race without
+            # changing the map or publishing continuously.
+            parameters=[{"republish_delay_sec": 12.0}],
+        ),
+        Node(
+            package="romo_b_autoware",
             executable="vehicle_interface",
             name="romo_b_autoware_vehicle_interface",
             output="screen",
@@ -122,6 +132,13 @@ def _actions(context):
             executable="localization_interface",
             name="romo_b_autoware_localization_interface",
             output="screen",
+        ),
+        Node(
+            package="romo_b_autoware",
+            executable="speed_limit_guard",
+            name="romo_b_autoware_speed_limit_guard",
+            output="screen",
+            parameters=[str(share / "config" / "speed_limit_guard.yaml")],
         ),
         Node(
             package="romo_b_autoware",

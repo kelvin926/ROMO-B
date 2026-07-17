@@ -1,0 +1,4 @@
+romo_b_autoware_speed_limit_guard:
+  ros__parameters:
+    # Leave margin below the physical 0.20 m/s clamp for smoothing transients.
+    max_velocity_mps: 0.14

@@ -1,0 +1,10 @@
+/**:
+  ros__parameters:
+    # Upstream's 0.25 m/s engage pulse exceeds ROMO-B's 0.20 m/s physical
+    # limit.  Start below the limit and let the route's 0.20 m/s speed cap
+    # govern steady motion.
+    min_curve_velocity: 0.05
+    replan_vel_deviation: 0.10
+    engage_velocity: 0.10
+    engage_acceleration: 0.10
+    stopping_velocity: 0.10

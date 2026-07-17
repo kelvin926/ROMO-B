@@ -5,6 +5,7 @@ from autoware_adapi_v1_msgs.msg import (
     LocalizationInitializationState,
     OperationModeState,
 )
+from autoware_internal_planning_msgs.msg import VelocityLimit
 from autoware_planning_msgs.msg import Trajectory
 from geometry_msgs.msg import PointStamped, Twist
 from nav_msgs.msg import Odometry
@@ -47,6 +48,7 @@ class TrajectoryFollower(Node):
         self.platform = None
         self.operation_mode = None
         self.localization_state = None
+        self.selected_velocity_limit = None
 
         self.publisher = self.create_publisher(Twist, "/cmd_vel_nav", 10)
         self.target_publisher = self.create_publisher(
@@ -78,6 +80,12 @@ class TrajectoryFollower(Node):
             self._on_localization_state,
             transient,
         )
+        self.create_subscription(
+            VelocityLimit,
+            "/planning/scenario_planning/max_velocity",
+            self._on_velocity_limit,
+            10,
+        )
         self.create_timer(0.05, self._on_timer)
 
     def _seconds(self) -> float:
@@ -101,6 +109,10 @@ class TrajectoryFollower(Node):
         self, message: LocalizationInitializationState
     ) -> None:
         self.localization_state = message
+
+    def _on_velocity_limit(self, message: VelocityLimit) -> None:
+        if math.isfinite(message.max_velocity) and message.max_velocity >= 0.0:
+            self.selected_velocity_limit = float(message.max_velocity)
 
     def _ready(self) -> bool:
         platform_ready = bool(
@@ -151,6 +163,11 @@ class TrajectoryFollower(Node):
             )
             for point in self.trajectory.points
         ]
+        effective_max_speed = self.max_speed
+        if self.selected_velocity_limit is not None:
+            effective_max_speed = min(
+                effective_max_speed, self.selected_velocity_limit
+            )
         command = calculate_follow_command(
             path,
             pose.position.x,
@@ -161,7 +178,7 @@ class TrajectoryFollower(Node):
             wheel_base=self.wheel_base,
             lookahead=self.lookahead,
             stop_distance=self.stop_distance,
-            max_speed=self.max_speed,
+            max_speed=effective_max_speed,
             max_steer=self.max_steer,
         )
         output.linear.x = command.speed
