@@ -34,6 +34,7 @@ for command_name in "${required_commands[@]}"; do
   command -v "$command_name" >/dev/null 2>&1 && pass "$command_name available" || fail "$command_name missing"
 done
 command -v vcs >/dev/null 2>&1 && pass 'vcstool available' || warn 'vcstool missing; run setup_host.sh'
+python3 -c 'import serial' >/dev/null 2>&1 && pass 'pyserial available' || warn 'pyserial missing; run setup_host.sh'
 
 if id -nG "$USER" | tr ' ' '\n' | grep -qx dialout; then
   pass "$USER belongs to dialout"

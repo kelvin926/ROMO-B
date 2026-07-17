@@ -10,7 +10,17 @@ elif [[ -n "${1:-}" ]]; then
   exit 2
 fi
 
-source /opt/ros/humble/setup.bash
+# ROS/ament setup files read a few optional variables without `${name:-}`.
+# Temporarily disable nounset while sourcing them, then restore our strict mode.
+source_ros_setup() {
+  local setup_file="$1"
+  set +u
+  # shellcheck disable=SC1090
+  source "$setup_file"
+  set -u
+}
+
+source_ros_setup /opt/ros/humble/setup.bash
 export CMAKE_BUILD_PARALLEL_LEVEL=2
 export MAKEFLAGS=-j2
 
@@ -34,10 +44,11 @@ if [[ "$project_only" == false ]]; then
     --cmake-args -DCMAKE_BUILD_TYPE=Release -DROS_EDITION=ROS2 -DDISTRO_ROS=humble \
       -DLIVOX_LIDAR_SDK_LIBRARY="$sdk_install/lib/liblivox_lidar_sdk_shared.so" \
       -DLIVOX_LIDAR_SDK_INCLUDE_DIR="$sdk_install/include"
-  source "$repo_root/vendor_ws/install/setup.bash"
+  source_ros_setup "$repo_root/vendor_ws/install/setup.bash"
 fi
 
-rosdep install --from-paths "$repo_root/robot_ws/src" --ignore-src -r -y
+rosdep install --from-paths "$repo_root/robot_ws/src" --ignore-src -r -y \
+  --skip-keys "ament_python livox_ros_driver2 lidar_localization_ros2 lidarslam"
 colcon --log-base "$repo_root/robot_ws/log" build \
   --base-paths "$repo_root/robot_ws/src" \
   --build-base "$repo_root/robot_ws/build" \

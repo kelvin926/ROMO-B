@@ -78,7 +78,9 @@
   <!-- Placeholder until config/local/hardware.yaml records a measured transform. -->
   <link name="livox_frame">
     <visual>
-      <geometry><cylinder radius="0.033" length="0.065"/></geometry>
+      <!-- Mid-360 origin O is 47 mm above its bottom; its body is 60 mm tall. -->
+      <origin xyz="0 0 -0.017" rpy="0 0 0"/>
+      <geometry><cylinder radius="0.0325" length="0.060"/></geometry>
       <material name="sensor_red"/>
     </visual>
   </link>

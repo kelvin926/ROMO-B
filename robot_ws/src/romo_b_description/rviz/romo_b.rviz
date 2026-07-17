@@ -14,8 +14,41 @@ Visualization Manager:
     - Class: rviz_default_plugins/TF
       Name: TF
       Enabled: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Channel Name: intensity
+      Class: rviz_default_plugins/PointCloud2
+      Color Transformer: Intensity
+      Decay Time: 0.2
+      Enabled: true
+      Name: Mid-360 Raw
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.01
+      Style: Flat Squares
+      Topic: /sensing/lidar/top/pointcloud_raw
+      Unreliable: false
+      Use Fixed Frame: true
+    - Alpha: 1
+      Class: rviz_default_plugins/PointCloud2
+      Color: 0; 255; 0
+      Color Transformer: FlatColor
+      Decay Time: 0.2
+      Enabled: false
+      Name: Mid-360 Filtered
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.03
+      Style: Flat Squares
+      Topic: /sensing/lidar/top/pointcloud_filtered
+      Unreliable: true
+      Use Fixed Frame: true
   Global Options:
-    Fixed Frame: base_link
+    Fixed Frame: base_footprint
   Tools:
     - Class: rviz_default_plugins/Interact
     - Class: rviz_default_plugins/PublishPoint

@@ -27,7 +27,7 @@ jobs:
             ros-humble-xacro
           rosdep update
           rosdep install --from-paths robot_ws/src --ignore-src -r -y \
-            --skip-keys "navigation2 nav2_bringup nav2_mppi_controller robot_localization twist_mux lidar_localization_ros2 lidarslam livox_ros_driver2"
+            --skip-keys "ament_python navigation2 nav2_bringup nav2_mppi_controller robot_localization twist_mux lidar_localization_ros2 lidarslam livox_ros_driver2"
       - name: Build and test project packages
         shell: bash
         run: |
@@ -39,3 +39,9 @@ jobs:
           colcon test --base-paths robot_ws/src --build-base robot_ws/build \
             --install-base robot_ws/install --event-handlers console_direct+
           colcon test-result --test-result-base robot_ws/build --verbose
+      - name: Exercise PTY safety state machine
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          source robot_ws/install/setup.bash
+          python3 scripts/test_pty_bridge.py

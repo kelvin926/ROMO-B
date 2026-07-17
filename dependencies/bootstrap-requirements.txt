@@ -1,0 +1,3 @@
+# Sudo-free bootstrap fallback; setup_host.sh installs the Ubuntu packages.
+vcstool==0.3.0
+pyserial==3.5

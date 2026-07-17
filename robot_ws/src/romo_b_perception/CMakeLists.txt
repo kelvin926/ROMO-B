@@ -22,11 +22,16 @@ ament_target_dependencies(pointcloud_filter
 target_include_directories(pointcloud_filter PRIVATE ${PCL_INCLUDE_DIRS})
 target_link_libraries(pointcloud_filter ${PCL_LIBRARIES})
 
+add_executable(imu_normalizer src/imu_normalizer.cpp)
+ament_target_dependencies(imu_normalizer rclcpp sensor_msgs)
+target_include_directories(imu_normalizer PRIVATE include)
+
 add_executable(pcd_to_occupancy src/pcd_to_occupancy.cpp)
 target_include_directories(pcd_to_occupancy PRIVATE ${PCL_INCLUDE_DIRS})
 target_link_libraries(pcd_to_occupancy ${PCL_LIBRARIES})
 
-install(TARGETS pointcloud_filter pcd_to_occupancy DESTINATION lib/${PROJECT_NAME})
+install(TARGETS pointcloud_filter imu_normalizer pcd_to_occupancy DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY include/ DESTINATION include)
 
 if(BUILD_TESTING)
   add_test(
@@ -34,6 +39,10 @@ if(BUILD_TESTING)
     COMMAND $<TARGET_FILE:pcd_to_occupancy>
       ${CMAKE_CURRENT_SOURCE_DIR}/test/fixture.pcd
       ${CMAKE_CURRENT_BINARY_DIR}/fixture_map 0.05 0.10 1.80)
+  add_executable(test_imu_normalization test/test_imu_normalization.cpp)
+  ament_target_dependencies(test_imu_normalization sensor_msgs)
+  target_include_directories(test_imu_normalization PRIVATE include)
+  add_test(NAME imu_normalization COMMAND $<TARGET_FILE:test_imu_normalization>)
 endif()
 
 ament_package()

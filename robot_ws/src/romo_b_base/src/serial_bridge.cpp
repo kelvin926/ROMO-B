@@ -45,6 +45,7 @@ public:
     declare_parameter<double>("tx_rate_hz", 20.0);
     declare_parameter<double>("command_timeout_sec", 0.15);
     declare_parameter<double>("feedback_timeout_sec", 0.20);
+    declare_parameter<double>("auto_transition_timeout_sec", 0.50);
     declare_parameter<double>("wheelbase_m", 0.323);
     declare_parameter<double>("control_track_m", 0.390);
     declare_parameter<double>("wheel_radius_m", 0.103);
@@ -77,6 +78,8 @@ private:
       get_parameter("command_timeout_sec").as_double());
     feedback_timeout_ = std::chrono::duration<double>(
       get_parameter("feedback_timeout_sec").as_double());
+    auto_transition_timeout_ = std::chrono::duration<double>(
+      get_parameter("auto_transition_timeout_sec").as_double());
     wheelbase_m_ = get_parameter("wheelbase_m").as_double();
     control_track_m_ = get_parameter("control_track_m").as_double();
     wheel_radius_m_ = get_parameter("wheel_radius_m").as_double();
@@ -104,7 +107,8 @@ private:
     const double tx_rate = get_parameter("tx_rate_hz").as_double();
     if (baud_ <= 0 || data_bits_ < 5 || data_bits_ > 8 || parity_ != "none" ||
       stop_bits_ != 1 || tx_rate <= 0.0 || command_timeout_.count() <= 0.0 ||
-      feedback_timeout_.count() <= 0.0 || wheel_radius_m_ <= 0.0)
+      feedback_timeout_.count() <= 0.0 || auto_transition_timeout_.count() <= 0.0 ||
+      wheel_radius_m_ <= 0.0)
     {
       RCLCPP_ERROR(get_logger(), "Invalid serial, timeout, or vehicle parameter");
       return CallbackReturn::FAILURE;
@@ -141,6 +145,9 @@ private:
       have_feedback_ = false;
       command_timed_out_ = false;
       feedback_timed_out_ = false;
+      auto_confirmed_ = false;
+      auto_request_sent_ = false;
+      manual_zero_sent_ = false;
       desired_control_ = {};
       hlv_alive_ = 0;
       x_ = 0.0;
@@ -150,6 +157,8 @@ private:
       const auto steady_now = std::chrono::steady_clock::now();
       last_command_time_ = steady_now;
       last_feedback_time_ = steady_now;
+      last_alive_change_time_ = steady_now;
+      auto_request_time_ = steady_now;
       last_odom_time_ = steady_now;
     }
 
@@ -174,10 +183,17 @@ private:
     diagnostics_pub_->on_activate();
     {
       std::scoped_lock lock(state_mutex_);
-      bridge_state_ = BridgeState::kConnectedSafe;
+      // A lifecycle deactivate/activate cycle must never clear a latched
+      // software E-stop. Only the explicit reset service may do that.
+      bridge_state_ = software_estop_ ? BridgeState::kEstop : BridgeState::kConnectedSafe;
+      auto_confirmed_ = false;
+      auto_request_sent_ = false;
+      manual_zero_sent_ = false;
       last_command_time_ = std::chrono::steady_clock::now();
     }
-    RCLCPP_INFO(get_logger(), "Bridge active but disarmed");
+    RCLCPP_INFO(
+      get_logger(), "Bridge active, %s",
+      software_estop_ ? "software E-stop remains latched" : "but disarmed");
     return CallbackReturn::SUCCESS;
   }
 
@@ -306,10 +322,15 @@ private:
   {
     std::scoped_lock lock(state_mutex_);
     if (!request->data) {
-      bridge_state_ = BridgeState::kConnectedSafe;
       desired_control_ = {};
+      auto_confirmed_ = false;
+      auto_request_sent_ = false;
+      manual_zero_sent_ = false;
+      bridge_state_ = software_estop_ ? BridgeState::kEstop : BridgeState::kConnectedSafe;
       response->success = true;
-      response->message = "Disarmed; zero manual command will be sent";
+      response->message = software_estop_ ?
+        "Disarmed; software E-stop remains latched until explicit reset" :
+        "Disarmed; zero manual command will be sent";
       return;
     }
     if (get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
@@ -324,24 +345,42 @@ private:
       response->message = "Navigation profile requires an approved LiDAR transform";
       return;
     }
-    const auto age = std::chrono::steady_clock::now() - last_feedback_time_;
-    if (!serial_open_.load() || !have_feedback_ || age > feedback_timeout_) {
+    const auto steady_now = std::chrono::steady_clock::now();
+    const auto age = steady_now - last_feedback_time_;
+    const auto alive_age = steady_now - last_alive_change_time_;
+    if (!serial_open_.load() || !have_feedback_ || age > feedback_timeout_ ||
+      alive_age > feedback_timeout_)
+    {
       response->message = "Fresh PCU feedback is required";
       return;
     }
-    if (!latest_feedback_.auto_mode || latest_feedback_.estop || software_estop_ ||
+    if (latest_feedback_.estop || software_estop_ ||
       latest_feedback_.steer_mode != SteerMode::k2Wis)
     {
-      response->message = "PCU must report Auto, E-stop off, and 2WIS";
+      response->message = "PCU must report E-stop off and 2WIS";
+      return;
+    }
+    const bool stopped = std::all_of(
+      latest_feedback_.wheel_speed_mps.begin(), latest_feedback_.wheel_speed_mps.end(),
+      [](double speed) {return std::abs(speed) < 0.02;});
+    if (!stopped) {
+      response->message = "PCU must report all wheels stopped before Auto transition";
+      return;
+    }
+    if (!manual_zero_sent_) {
+      response->message = "A Manual zero frame must be transmitted before the Auto rising edge";
       return;
     }
     bridge_state_ = BridgeState::kArmedAuto;
+    auto_confirmed_ = false;
+    auto_request_sent_ = false;
+    manual_zero_sent_ = false;
     desired_control_ = {};
-    last_command_time_ = std::chrono::steady_clock::now();
+    last_command_time_ = steady_now;
     command_timed_out_ = false;
     feedback_timed_out_ = false;
     response->success = true;
-    response->message = "Armed in forward-only 2WIS mode";
+    response->message = "Auto rising edge requested; motion stays zero until PCU confirms Auto";
   }
 
   void on_estop(
@@ -352,21 +391,30 @@ private:
     if (request->data) {
       software_estop_ = true;
       bridge_state_ = BridgeState::kEstop;
+      auto_confirmed_ = false;
+      auto_request_sent_ = false;
       desired_control_ = {};
       response->success = true;
       response->message = "Software E-stop latched";
       return;
     }
-    const auto age = std::chrono::steady_clock::now() - last_feedback_time_;
+    const auto steady_now = std::chrono::steady_clock::now();
+    const auto age = steady_now - last_feedback_time_;
+    const auto alive_age = steady_now - last_alive_change_time_;
     const bool stopped = std::all_of(
       latest_feedback_.wheel_speed_mps.begin(), latest_feedback_.wheel_speed_mps.end(),
       [](double speed) {return std::abs(speed) < 0.02;});
-    if (!serial_open_.load() || !have_feedback_ || age > feedback_timeout_ || !stopped) {
+    if (!serial_open_.load() || !have_feedback_ || age > feedback_timeout_ ||
+      alive_age > feedback_timeout_ || !stopped)
+    {
       response->message = "Cannot reset: fresh stopped feedback is required";
       return;
     }
     software_estop_ = false;
     bridge_state_ = BridgeState::kConnectedSafe;
+    auto_confirmed_ = false;
+    auto_request_sent_ = false;
+    manual_zero_sent_ = false;
     command_timed_out_ = false;
     feedback_timed_out_ = false;
     response->success = true;
@@ -384,53 +432,81 @@ private:
       std::scoped_lock lock(state_mutex_);
       const auto steady_now = std::chrono::steady_clock::now();
       if (bridge_state_ == BridgeState::kArmedAuto) {
-        command_timed_out_ = steady_now - last_command_time_ > command_timeout_;
         feedback_timed_out_ = !have_feedback_ ||
-          steady_now - last_feedback_time_ > feedback_timeout_;
-        if (command_timed_out_ || feedback_timed_out_) {
+          steady_now - last_feedback_time_ > feedback_timeout_ ||
+          steady_now - last_alive_change_time_ > feedback_timeout_;
+        command_timed_out_ = auto_confirmed_ &&
+          steady_now - last_command_time_ > command_timeout_;
+        const bool auto_transition_timed_out = auto_request_sent_ && !auto_confirmed_ &&
+          steady_now - auto_request_time_ > auto_transition_timeout_;
+        if (command_timed_out_ || feedback_timed_out_ || auto_transition_timed_out) {
+          if (auto_transition_timed_out) {
+            RCLCPP_ERROR(get_logger(), "PCU did not confirm the Auto transition in time");
+          }
           software_estop_ = true;
           bridge_state_ = BridgeState::kEstop;
+          auto_confirmed_ = false;
+          auto_request_sent_ = false;
           desired_control_ = {};
         }
       } else if (bridge_state_ == BridgeState::kConnectedSafe) {
+        if (software_estop_) {
+          bridge_state_ = BridgeState::kEstop;
+        }
         command_timed_out_ = false;
         feedback_timed_out_ = !have_feedback_ ||
-          steady_now - last_feedback_time_ > feedback_timeout_;
+          steady_now - last_feedback_time_ > feedback_timeout_ ||
+          steady_now - last_alive_change_time_ > feedback_timeout_;
       }
 
       command.steer_mode = SteerMode::k2Wis;
       command.alive = hlv_alive_++;
       if (bridge_state_ == BridgeState::kArmedAuto) {
         command.auto_mode = true;
-        command.speed_mps = desired_control_.speed_mps;
-        command.steer_deg = desired_control_.pcu_steer_deg;
+        if (auto_confirmed_) {
+          command.speed_mps = desired_control_.speed_mps;
+          command.steer_deg = desired_control_.pcu_steer_deg;
+        }
       } else if (bridge_state_ == BridgeState::kEstop) {
         command.auto_mode = true;
         command.estop = true;
       }
     }
 
+    bool sent = false;
     if (!receive_only_) {
-      send_command(command);
+      sent = send_command(command);
+    }
+    if (sent && !command.auto_mode && !command.estop) {
+      std::scoped_lock lock(state_mutex_);
+      manual_zero_sent_ = true;
+    } else if (sent && command.auto_mode && !command.estop) {
+      std::scoped_lock lock(state_mutex_);
+      if (bridge_state_ == BridgeState::kArmedAuto && !auto_request_sent_) {
+        auto_request_sent_ = true;
+        auto_request_time_ = std::chrono::steady_clock::now();
+      }
     }
     publish_status_and_diagnostics();
   }
 
-  void send_command(const Command & command)
+  bool send_command(const Command & command)
   {
     if (!serial_open_.load()) {
-      return;
+      return false;
     }
     const auto frame = encode_command(command);
     try {
       std::scoped_lock lock(write_mutex_);
       boost::asio::write(serial_, boost::asio::buffer(frame));
+      return true;
     } catch (const std::exception & error) {
       RCLCPP_ERROR(get_logger(), "Serial write failed: %s", error.what());
       serial_open_.store(false);
       std::scoped_lock state_lock(state_mutex_);
       bridge_state_ = BridgeState::kDisconnected;
       software_estop_ = true;
+      return false;
     }
   }
 
@@ -443,17 +519,31 @@ private:
 
     {
       std::scoped_lock lock(state_mutex_);
+      if (!have_feedback_ || feedback.alive != latest_feedback_.alive) {
+        last_alive_change_time_ = steady_now;
+      }
       latest_feedback_ = feedback;
       have_feedback_ = true;
       last_feedback_time_ = steady_now;
-      if (bridge_state_ != BridgeState::kEstop) {
+      if (bridge_state_ != BridgeState::kEstop &&
+        steady_now - last_alive_change_time_ <= feedback_timeout_)
+      {
         feedback_timed_out_ = false;
       }
-      if (bridge_state_ == BridgeState::kArmedAuto &&
-        (!feedback.auto_mode || feedback.estop || feedback.steer_mode != SteerMode::k2Wis))
-      {
-        software_estop_ = true;
-        bridge_state_ = BridgeState::kEstop;
+      if (bridge_state_ == BridgeState::kArmedAuto) {
+        if (feedback.estop || feedback.steer_mode != SteerMode::k2Wis ||
+          (auto_confirmed_ && !feedback.auto_mode))
+        {
+          software_estop_ = true;
+          auto_confirmed_ = false;
+          auto_request_sent_ = false;
+          bridge_state_ = BridgeState::kEstop;
+        } else if (!auto_confirmed_ && auto_request_sent_ && feedback.auto_mode) {
+          auto_confirmed_ = true;
+          desired_control_ = {};
+          last_command_time_ = steady_now;
+          RCLCPP_INFO(get_logger(), "PCU confirmed Auto; forward commands are now enabled");
+        }
       }
 
       const auto motion = estimate_vehicle_motion(feedback, wheelbase_m_, control_track_m_);
@@ -507,6 +597,8 @@ private:
     romo_b_msgs::msg::PlatformStatus status;
     diagnostic_msgs::msg::DiagnosticArray diagnostics;
     diagnostic_msgs::msg::DiagnosticStatus serial_status;
+    bool auto_confirmed = false;
+    bool manual_zero_sent = false;
     status.header.stamp = now();
     status.header.frame_id = base_frame_;
     diagnostics.header = status.header;
@@ -529,6 +621,8 @@ private:
       status.hlv_alive = hlv_alive_;
       status.command_timed_out = command_timed_out_;
       status.feedback_timed_out = feedback_timed_out_;
+      auto_confirmed = auto_confirmed_;
+      manual_zero_sent = manual_zero_sent_;
     }
 
     if (!status.connected || status.estop || status.command_timed_out || status.feedback_timed_out) {
@@ -551,6 +645,8 @@ private:
     add_value("device", device_);
     add_value("receive_only", receive_only_ ? "true" : "false");
     add_value("sensor_calibrated", sensor_calibrated_ ? "true" : "false");
+    add_value("auto_confirmed", auto_confirmed ? "true" : "false");
+    add_value("manual_zero_sent", manual_zero_sent ? "true" : "false");
     add_value("pcu_alive", std::to_string(status.pcu_alive));
     add_value("hlv_alive", std::to_string(status.hlv_alive));
     diagnostics.status.push_back(serial_status);
@@ -576,6 +672,7 @@ private:
   std::string base_frame_{"base_link"};
   std::chrono::duration<double> command_timeout_{0.15};
   std::chrono::duration<double> feedback_timeout_{0.20};
+  std::chrono::duration<double> auto_transition_timeout_{0.50};
   ControlLimits limits_;
 
   boost::asio::io_context io_context_;
@@ -592,11 +689,16 @@ private:
   bool have_feedback_{false};
   bool command_timed_out_{false};
   bool feedback_timed_out_{false};
+  bool auto_confirmed_{false};
+  bool auto_request_sent_{false};
+  bool manual_zero_sent_{false};
   Feedback latest_feedback_;
   ControlOutput desired_control_;
   std::uint8_t hlv_alive_{0};
   std::chrono::steady_clock::time_point last_command_time_;
   std::chrono::steady_clock::time_point last_feedback_time_;
+  std::chrono::steady_clock::time_point last_alive_change_time_;
+  std::chrono::steady_clock::time_point auto_request_time_;
   std::chrono::steady_clock::time_point last_odom_time_;
   double x_{0.0};
   double y_{0.0};

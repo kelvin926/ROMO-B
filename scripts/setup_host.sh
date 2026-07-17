@@ -14,9 +14,10 @@ if [[ ! -f /opt/ros/humble/setup.bash ]]; then
 fi
 
 apt_packages=(
-  build-essential cmake ccache git gh libapr1-dev libasio-dev
+  build-essential cmake ccache git gh libapr1-dev libaprutil1-dev libasio-dev
   libboost-system-dev libpcl-dev libyaml-cpp-dev
-  python3-colcon-common-extensions python3-pip python3-rosdep
+  nlohmann-json3-dev
+  python3-colcon-common-extensions python3-pip python3-rosdep python3-setuptools
   python3-serial python3-vcstool python3-yaml
 )
 
@@ -31,6 +32,8 @@ ros_packages=(
   ros-humble-pcl-ros
   ros-humble-pointcloud-to-laserscan
   ros-humble-robot-localization
+  ros-humble-ros-testing
+  ros-humble-sophus
   ros-humble-teleop-twist-keyboard
   ros-humble-twist-mux
   ros-humble-xacro

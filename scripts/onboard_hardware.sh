@@ -2,8 +2,9 @@
 set -euo pipefail
 
 mode="${1:---discover}"
-if [[ "$mode" != "--discover" && "$mode" != "--generate" && "$mode" != "--apply" ]]; then
-  printf 'Usage: %s [--discover|--generate|--apply]\n' "$0" >&2
+if [[ "$mode" != "--discover" && "$mode" != "--generate" && \
+  "$mode" != "--apply" && "$mode" != "--receive-only" ]]; then
+  printf 'Usage: %s [--discover|--generate|--apply|--receive-only]\n' "$0" >&2
   exit 2
 fi
 
@@ -24,6 +25,10 @@ printf 'No serial data was transmitted.\n'
 
 if [[ "$mode" == "--discover" ]]; then
   exit 0
+fi
+
+if [[ "$mode" == "--receive-only" ]]; then
+  exec python3 "$repo_root/scripts/serial_receive_only.py"
 fi
 
 mkdir -p "$(dirname "$hardware_yaml")"
@@ -74,13 +79,16 @@ printf '%s\n' "$rule" | sudo tee /etc/udev/rules.d/99-romo-b-pcu.rules >/dev/nul
 sudo udevadm control --reload-rules
 sudo udevadm trigger --subsystem-match=tty
 
-readarray -t lidar_network < <(python3 - "$hardware_yaml" "$repo_root/config/local/MID360_config.json" <<'PY'
+readarray -t lidar_network < <(python3 - "$hardware_yaml" \
+  "$repo_root/config/local/MID360_config.json" \
+  "$repo_root/config/local/rko_lio_mid360.yaml" <<'PY'
 import json
+import math
 import pathlib
 import sys
 import yaml
 
-hardware_path, json_path = sys.argv[1:]
+hardware_path, json_path, rko_path = sys.argv[1:]
 data = yaml.safe_load(pathlib.Path(hardware_path).read_text()) or {}
 lidar = data.get("lidar", {})
 host_ip = str(lidar.get("host_ip", "pending"))
@@ -118,6 +126,33 @@ config = {
 }
 pathlib.Path(json_path).write_text(json.dumps(config, indent=2) + "\n")
 print(f"Generated {json_path}", file=sys.stderr)
+
+transform = lidar.get("transform", {})
+x = float(transform.get("x", 0.0))
+y = float(transform.get("y", 0.0))
+z = float(transform.get("z", 0.0))
+roll = float(transform.get("roll", 0.0))
+pitch = float(transform.get("pitch", 0.0))
+yaw = float(transform.get("yaw", 0.0))
+cr, sr = math.cos(roll / 2.0), math.sin(roll / 2.0)
+cp, sp = math.cos(pitch / 2.0), math.sin(pitch / 2.0)
+cy, sy = math.cos(yaw / 2.0), math.sin(yaw / 2.0)
+qx = sr * cp * cy - cr * sp * sy
+qy = cr * sp * cy + sr * cp * sy
+qz = cr * cp * sy - sr * sp * cy
+qw = cr * cp * cy + sr * sp * sy
+sensor_to_base = [qx, qy, qz, qw, x, y, z]
+rko_config = {
+    "/**": {
+        "ros__parameters": {
+            "extrinsic_imu2base_quat_xyzw_xyz": sensor_to_base,
+            "extrinsic_lidar2base_quat_xyzw_xyz": sensor_to_base,
+            "initialization_phase": True,
+        },
+    },
+}
+pathlib.Path(rko_path).write_text(yaml.safe_dump(rko_config, sort_keys=False))
+print(f"Generated {rko_path}", file=sys.stderr)
 PY
 )
 host_ip="${lidar_network[0]:-pending}"

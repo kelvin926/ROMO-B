@@ -14,8 +14,10 @@ direction, steering sign, or movement.
 
 ## Serial stages
 
-1. Keep PCU in Manual and run receive-only capture. Confirm 25-byte `STX...CRLF`
-   frames and little-endian feedback without writing to the port.
+1. Keep PCU in Manual and run
+   `./scripts/onboard_hardware.sh --receive-only`. Confirm at least three
+   25-byte `STX...CRLF` frames and little-endian feedback. The command never
+   writes to the port.
 2. Confirm the configured data bits (8N1 is only an initial assumption).
 3. With wheels raised, select the documented PCU Auto prerequisites and transmit
    only Auto, E-stop off, 2WIS, speed 0, steer 0 at 20 Hz.

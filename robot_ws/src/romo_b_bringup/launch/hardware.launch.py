@@ -103,7 +103,22 @@ def _actions(context):
         ],
         remappings=[
             ("/livox/lidar", "/sensing/lidar/top/pointcloud_raw"),
-            ("/livox/imu", "/sensing/imu/imu_raw"),
+            ("/livox/imu", "/sensing/imu/livox_raw"),
+        ],
+    )
+    imu_normalizer = Node(
+        package="romo_b_perception",
+        executable="imu_normalizer",
+        name="romo_b_imu_normalizer",
+        output="screen",
+        condition=IfCondition(LaunchConfiguration("use_livox")),
+        parameters=[
+            pathlib.Path(
+                get_package_share_directory("romo_b_bringup"),
+                "config",
+                "imu_normalizer.yaml",
+            ).as_posix(),
+            {"use_sim_time": use_sim_time},
         ],
     )
     filter_node = Node(
@@ -135,7 +150,7 @@ def _actions(context):
         ],
         remappings=[("odometry/filtered", "/odometry/filtered")],
     )
-    return [description, bridge, configure, activate, livox, filter_node, ekf]
+    return [description, bridge, configure, activate, livox, imu_normalizer, filter_node, ekf]
 
 
 def generate_launch_description():

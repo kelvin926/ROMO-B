@@ -1,0 +1,6 @@
+romo_b_imu_normalizer:
+  ros__parameters:
+    input_topic: /sensing/imu/livox_raw
+    output_topic: /sensing/imu/imu_raw
+    frame_id: livox_frame
+    acceleration_scale: 9.80665

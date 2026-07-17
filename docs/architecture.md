@@ -31,6 +31,11 @@ Only the listed component owns each transform. Raw wheel odometry does not
 publish TF. The static `base_link -> livox_frame` transform is invalid until its
 measured values are placed in the ignored hardware-local configuration.
 
+The pinned Livox driver publishes Mid-360 acceleration in `g`. The hardware
+launch keeps that vendor stream private on `/sensing/imu/livox_raw` and
+`romo_b_imu_normalizer` converts it by 9.80665 to the public SI-unit
+`/sensing/imu/imu_raw` topic used by SLAM, localization, and the EKF.
+
 ## Mapping and navigation
 
 - Livox SDK2/driver publishes PointCloud2 and IMU.
@@ -42,5 +47,6 @@ measured values are placed in the ignored hardware-local configuration.
 - MPPI uses the Ackermann motion model; Collision Monitor provides an
   independent slowdown/stop layer from PointCloud2.
 
-Autoware Universe 1.8.0 is installed as a separate, ignored research workspace.
-It is not part of the V1 runtime and no Lanelet2 map is required.
+Autoware Universe 1.8.0 is prepared as a separate, ignored research workspace.
+It is not part of the V1 runtime and no Lanelet2 map is required. Its complete
+environment/build remains independent from the ROMO-B overlays.

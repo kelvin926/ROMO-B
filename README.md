@@ -4,6 +4,9 @@ ROS 2 Humble software for controlling the ROMO-B platform through USB-to-RS232,
 mapping and localizing with one Livox Mid-360, and following YAML/RViz waypoints
 with Nav2 local obstacle avoidance.
 
+The protocol source of truth is the tracked
+[verified manual extraction](ROMO-B_manual_verified_complete.md).
+
 The supported host is **Ubuntu 22.04 x86_64 with ROS 2 Humble**. The V1 runtime
 uses forward-only 2WIS Ackermann motion. Pivot, 4WIS, reverse recovery, and
 rotate-in-place are deliberately disabled.
@@ -23,6 +26,7 @@ rotate-in-place are deliberately disabled.
 source robot_ws/install/setup.bash
 colcon test --base-paths robot_ws/src --event-handlers console_direct+
 colcon test-result --test-result-base robot_ws/build --verbose
+python3 scripts/test_pty_bridge.py
 ros2 launch romo_b_sim simulation.launch.py
 ```
 
@@ -36,12 +40,17 @@ motion test.
 ## Hardware workflow
 
 1. Connect the USB-to-RS232 adapter without selecting PCU Auto mode.
-2. Run `./scripts/onboard_hardware.sh --discover` (read-only discovery).
-3. Complete `config/local/hardware.yaml`, including the measured LiDAR pose.
-4. Run `./scripts/doctor.sh --hardware` until all mandatory checks pass.
-5. Follow [hardware acceptance](docs/hardware_acceptance.md), beginning with a
-   receive-only test and then a zero-speed frame.
-6. Map by driving in RC Manual mode, create the 2D occupancy map, localize, and
+2. Run `./scripts/onboard_hardware.sh --discover`, then `--generate` (neither
+   command opens the port).
+3. Complete `config/local/hardware.yaml`, including the measured LiDAR pose,
+   then run `./scripts/onboard_hardware.sh --apply` for the udev/network setup.
+4. After the required reboot/replug, run
+   `./scripts/onboard_hardware.sh --receive-only`; it reads and validates PCU
+   feedback but never writes serial bytes.
+5. Run `./scripts/doctor.sh --hardware` until all mandatory checks pass.
+6. Follow [hardware acceptance](docs/hardware_acceptance.md), transmitting a
+   zero-speed frame only after receive-only validation passes.
+7. Map by driving in RC Manual mode, create the 2D occupancy map, localize, and
    only then execute waypoints.
 
 See [architecture](docs/architecture.md), [status](docs/status.md), and
@@ -88,7 +97,9 @@ offline SLAM and occupancy conversion:
 ```bash
 ./scripts/record_mapping_bag.sh
 ros2 launch romo_b_bringup mapping_offline.launch.py \
-  bag_path:=data/local/bags/MAPPING_BAG
+  bag_path:=data/local/bags/MAPPING_BAG \
+  save_dir:=data/local/maps/mapping_run
+ros2 service call /map_save std_srvs/srv/Empty '{}'
 ros2 run romo_b_perception pcd_to_occupancy \
   data/local/maps/mapping_run/map.pcd data/local/maps/map 0.05 0.10 1.80
 ```
