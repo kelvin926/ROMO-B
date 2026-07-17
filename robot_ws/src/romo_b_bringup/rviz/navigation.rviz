@@ -34,6 +34,9 @@ Visualization Manager:
       Size (Pixels): 2
       Style: Flat Squares
       Queue Size: 10
+      Durability Policy: Volatile
+      History Policy: Keep Last
+      Reliability Policy: Best Effort
       Unreliable: true
     - Class: rviz_default_plugins/Path
       Name: Nav2 plan

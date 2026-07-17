@@ -81,6 +81,10 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - `scripts/run_field_navigation.sh` now starts the complete live Mid-360, EKF,
   PCD localization, Nav2, collision-monitor, waypoint, and RViz stack. The
   bridge remains disarmed until the explicit arm service is called.
+- The first live full-stack attempt exposed a duplicate bench bridge and raw
+  Mid-360 acceleration integration. The launcher now refuses to start beside an
+  existing bridge, EKF uses wheel odometry only until IMU bias/covariance are
+  calibrated, and RViz requests Best Effort QoS for the filtered PointCloud2.
 
 ## Host actions still required
 

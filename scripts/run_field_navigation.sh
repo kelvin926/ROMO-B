@@ -4,6 +4,12 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$repo_root/scripts/source_env.sh"
 
+if ros2 node list 2>/dev/null | grep -Fxq /romo_b_serial_bridge; then
+  printf '%s\n' \
+    'A ROMO-B bridge is already running. Stop every previous hardware/field launch first.' >&2
+  exit 3
+fi
+
 map_run="${MAP_RUN:-$repo_root/data/local/maps/mapping-20260717-195653}"
 pcd_map="${PCD_MAP:-$map_run/map.pcd}"
 map_yaml="${MAP_YAML:-$map_run/nav2-raycast/map.yaml}"
