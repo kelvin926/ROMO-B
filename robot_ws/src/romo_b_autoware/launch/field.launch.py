@@ -65,6 +65,7 @@ def _actions(context):
             "pcd_map": str(pcd_map),
             "use_sim_time": "false",
             "set_initial_pose": "false",
+            "initial_pose_topic": "/localization/initialpose_direct",
         },
     )
     perception = _python_launch("romo_b_autoware", "perception.launch.py", {})
@@ -114,6 +115,12 @@ def _actions(context):
             package="romo_b_autoware",
             executable="kinematic_bridge",
             name="romo_b_autoware_kinematic_bridge",
+            output="screen",
+        ),
+        Node(
+            package="romo_b_autoware",
+            executable="localization_interface",
+            name="romo_b_autoware_localization_interface",
             output="screen",
         ),
         Node(

@@ -55,7 +55,8 @@ rosdep install --from-paths "$repo_root/robot_ws/src" --ignore-src -r -y \
   --skip-keys "ament_python livox_ros_driver2 lidar_localization_ros2 lidarslam \
 autoware_adapi_v1_msgs autoware_control_msgs autoware_perception_msgs \
 autoware_planning_msgs autoware_vehicle_msgs \
-autoware_euclidean_cluster_object_detector unique_identifier_msgs"
+autoware_euclidean_cluster_object_detector autoware_localization_msgs \
+unique_identifier_msgs"
 colcon --log-base "$repo_root/robot_ws/log" build \
   --base-paths "$repo_root/robot_ws/src" \
   --build-base "$repo_root/robot_ws/build" \

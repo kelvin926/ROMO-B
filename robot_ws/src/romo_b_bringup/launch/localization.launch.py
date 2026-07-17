@@ -70,7 +70,7 @@ def generate_launch_description():
             ("cloud", LaunchConfiguration("cloud_topic")),
             ("imu", LaunchConfiguration("imu_topic")),
             ("odom", LaunchConfiguration("odom_topic")),
-            ("initialpose", "/initialpose"),
+            ("initialpose", LaunchConfiguration("initial_pose_topic")),
             ("pcl_pose", "/localization/pose_with_covariance"),
             ("path", "/localization/path"),
             ("initial_map", "/localization/map"),
@@ -119,6 +119,9 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument("imu_topic", default_value="/sensing/imu/imu_raw"),
             DeclareLaunchArgument("odom_topic", default_value="/odometry/filtered"),
+            # Nav2/replay retain the direct RViz topic. The Autoware field
+            # launch overrides this with its API-safe private forwarding topic.
+            DeclareLaunchArgument("initial_pose_topic", default_value="/initialpose"),
             DeclareLaunchArgument("use_odom", default_value="true"),
             DeclareLaunchArgument("use_imu", default_value="false"),
             DeclareLaunchArgument("use_imu_preintegration", default_value="false"),

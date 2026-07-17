@@ -24,6 +24,7 @@ setup(
     entry_points={
         "console_scripts": [
             "kinematic_bridge = romo_b_autoware.kinematic_bridge:main",
+            "localization_interface = romo_b_autoware.localization_interface:main",
             "object_tracker = romo_b_autoware.object_tracker:main",
             "trajectory_follower = romo_b_autoware.trajectory_follower:main",
             "vehicle_interface = romo_b_autoware.vehicle_interface:main",

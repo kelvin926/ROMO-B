@@ -1,11 +1,15 @@
 import math
 
 import rclpy
-from autoware_adapi_v1_msgs.msg import OperationModeState
+from autoware_adapi_v1_msgs.msg import (
+    LocalizationInitializationState,
+    OperationModeState,
+)
 from autoware_planning_msgs.msg import Trajectory
 from geometry_msgs.msg import PointStamped, Twist
 from nav_msgs.msg import Odometry
 from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from romo_b_msgs.msg import PlatformStatus
 
 from .control_math import (
@@ -42,6 +46,7 @@ class TrajectoryFollower(Node):
         self.odometry_received = -math.inf
         self.platform = None
         self.operation_mode = None
+        self.localization_state = None
 
         self.publisher = self.create_publisher(Twist, "/cmd_vel_nav", 10)
         self.target_publisher = self.create_publisher(
@@ -62,6 +67,17 @@ class TrajectoryFollower(Node):
             self._on_operation_mode,
             10,
         )
+        transient = QoSProfile(
+            depth=1,
+            reliability=ReliabilityPolicy.RELIABLE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+        )
+        self.create_subscription(
+            LocalizationInitializationState,
+            "/localization/initialization_state",
+            self._on_localization_state,
+            transient,
+        )
         self.create_timer(0.05, self._on_timer)
 
     def _seconds(self) -> float:
@@ -81,6 +97,11 @@ class TrajectoryFollower(Node):
     def _on_operation_mode(self, message: OperationModeState) -> None:
         self.operation_mode = message
 
+    def _on_localization_state(
+        self, message: LocalizationInitializationState
+    ) -> None:
+        self.localization_state = message
+
     def _ready(self) -> bool:
         platform_ready = bool(
             self.platform
@@ -88,8 +109,16 @@ class TrajectoryFollower(Node):
             and self.platform.connected
             and self.platform.auto_mode
             and not self.platform.estop
+            and not self.platform.command_timed_out
+            and not self.platform.feedback_timed_out
         )
         if not platform_ready:
+            return False
+        if not (
+            self.localization_state
+            and self.localization_state.state
+            == LocalizationInitializationState.INITIALIZED
+        ):
             return False
         if not self.require_operation_mode:
             return True
@@ -155,4 +184,5 @@ def main(args=None) -> None:
         rclpy.spin(node)
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
