@@ -13,8 +13,11 @@ def generate_launch_description():
     twist_mux = PathJoinSubstitution([share, "config", "twist_mux.yaml"])
     velocity_smoother = PathJoinSubstitution([share, "config", "velocity_smoother.yaml"])
     collision_monitor = PathJoinSubstitution([share, "config", "collision_monitor.yaml"])
-    behavior_tree = PathJoinSubstitution(
+    through_poses_behavior_tree = PathJoinSubstitution(
         [share, "behavior_trees", "navigate_through_poses_forward_only.xml"]
+    )
+    to_pose_behavior_tree = PathJoinSubstitution(
+        [share, "behavior_trees", "navigate_to_pose_forward_only.xml"]
     )
 
     params = LaunchConfiguration("params_file")
@@ -54,7 +57,8 @@ def generate_launch_description():
                 params,
                 {
                     "use_sim_time": typed_sim_time,
-                    "default_nav_through_poses_bt_xml": behavior_tree,
+                    "default_nav_through_poses_bt_xml": through_poses_behavior_tree,
+                    "default_nav_to_pose_bt_xml": to_pose_behavior_tree,
                 },
             ],
         ),

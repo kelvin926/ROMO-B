@@ -59,11 +59,12 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   replay. All 3,794 alignment states were healthy, with zero rejected updates or
   reinitialization requests, fitness median 0.0145, p95 0.1763, maximum 3.1204,
   and 0.464 m start-to-end closure. The automated result is `PASS`.
-- A 0.05 m pose-graph-raycast Nav2 map was generated with 163,734 observed-free,
-  13,520 occupied, and 1,555,166 unknown cells. Unknown space stays unknown and
-  occupied cells override free rays; top-down review shows a coherent route
-  corridor. It remains blocked from physical navigation by velocity scaling and
-  final Nav2 software validation, not by localization replay.
+- A 0.05 m pose-graph-raycast Nav2 map was generated with 192,064 observed-free,
+  13,168 occupied, and 1,527,188 unknown cells after adding the continuous
+  measured swept footprint. Unknown traversal is disabled. Isolated Nav2
+  preflight planned 87.73 m and 106.71 m forward-only paths with zero reverse
+  segments, clamped a 0.5 m/s input to 0.2 m/s, and stopped for three obstacle
+  points. All automated checks pass.
 
 ## Host actions still required
 
@@ -77,7 +78,7 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - Resolve the physical velocity scaling that caused the unexpectedly fast
   0.05 m/s ground test, then verify steering raw scale and left/right sign.
 - Verify RViz initial-pose recovery at several locations on the live platform.
-- Validate planning and collision behavior against the accepted raycast map
+- Repeat planning and collision checks with live localization and PointCloud
   before any autonomous ground run.
 - Actual PCU response to invalid fields and Alive/feedback timeout.
 - External storage URI for bags, PCDs, and maps.

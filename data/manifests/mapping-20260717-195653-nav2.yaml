@@ -11,7 +11,7 @@ frames:
   fixed: map
   sensor: livox_frame
 size_bytes: 1732436
-sha256: 8ddfb88e07b2766d3271e389c11f64936090295c600b379b0049149f13d00ea1
+sha256: 5bb91ae3766b4d72577a9568312a2f77f4d5b171ff58a82b1d126c4de40c690c
 uri: pending
 occupancy:
   resolution_m: 0.05
@@ -21,15 +21,22 @@ occupancy:
   obstacle_height_slice_m: [0.10, 1.80]
   base_link_height_m: 0.171
   maximum_ray_range_m: 15.0
-  free_cells: 163734
-  occupied_cells: 13520
-  unknown_cells: 1555166
+  swept_footprint_margin_m: 0.05
+  free_cells: 192064
+  occupied_cells: 13168
+  unknown_cells: 1527188
   yaml_size_bytes: 130
   yaml_sha256: 839fb3cfccb7026b1c47ff5e250838b988ca19359ea6b578113d7f752e661257
 validation:
-  status: provisional_pass
-  free_space_model: nearest-pose raycast; unobserved cells remain unknown
-  obstacle_precedence: true
+  status: software_validated
+  free_space_model: nearest-pose raycast plus continuous measured swept footprint
+  obstacle_precedence: true except inside the physically traversed robot footprint
   visual_review: coherent route corridor with conservative unknown boundary
   localization_replay: mapping-20260717-195653-localization
-  blocker: Nav2 planning validation and physical velocity scaling remain required.
+  nav2_preflight:
+    unknown_traversal: false
+    forward_plan_lengths_m: [87.7325, 106.7118]
+    reverse_segment_count: 0
+    maximum_command_speed_mps: 0.2
+    three_point_obstacle_stop: true
+  blocker: Physical velocity scaling and live navigation validation remain required.

@@ -13,19 +13,21 @@ collision_monitor:
     polygons: [StopZone, SlowdownZone]
     StopZone:
       type: polygon
-      points: "[[0.30,0.38],[0.90,0.38],[0.90,-0.38],[0.30,-0.38]]"
+      points: [0.30, 0.38, 0.90, 0.38, 0.90, -0.38, 0.30, -0.38]
       action_type: stop
-      min_points: 3
+      max_points: 2
       visualize: true
       polygon_pub_topic: /romo_b/stop_zone
+      enabled: true
     SlowdownZone:
       type: polygon
-      points: "[[0.25,0.65],[1.50,0.65],[1.50,-0.65],[0.25,-0.65]]"
+      points: [0.25, 0.65, 1.50, 0.65, 1.50, -0.65, 0.25, -0.65]
       action_type: slowdown
       slowdown_ratio: 0.30
-      min_points: 3
+      max_points: 2
       visualize: true
       polygon_pub_topic: /romo_b/slowdown_zone
+      enabled: true
     observation_sources: [pointcloud]
     pointcloud:
       type: pointcloud

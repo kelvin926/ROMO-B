@@ -20,6 +20,7 @@ struct GraphPose
   double x{};
   double y{};
   double z{};
+  double yaw{};
 };
 
 struct ObstaclePoint
@@ -45,7 +46,14 @@ std::vector<GraphPose> load_graph_poses(const std::filesystem::path & path)
     }
     std::size_t id{};
     GraphPose pose;
-    if (stream >> id >> pose.x >> pose.y >> pose.z) {
+    double qx{};
+    double qy{};
+    double qz{};
+    double qw{};
+    if (stream >> id >> pose.x >> pose.y >> pose.z >> qx >> qy >> qz >> qw) {
+      pose.yaw = std::atan2(
+        2.0 * (qw * qz + qx * qy),
+        1.0 - 2.0 * (qy * qy + qz * qz));
       poses.push_back(pose);
     }
   }
@@ -104,10 +112,11 @@ void mark_ray_free(
 
 int main(int argc, char ** argv)
 {
-  if (argc < 3 || argc > 9) {
+  if (argc < 3 || argc > 10) {
     std::cerr <<
       "Usage: pcd_to_occupancy INPUT.pcd OUTPUT_PREFIX [resolution] [min_height] "
-      "[max_height] [pose_graph.g2o] [max_ray_range] [base_link_height]\n";
+      "[max_height] [pose_graph.g2o] [max_ray_range] [base_link_height] "
+      "[swept_footprint_margin]\n";
     return 2;
   }
   const std::filesystem::path input(argv[1]);
@@ -118,8 +127,10 @@ int main(int argc, char ** argv)
   const bool use_pose_graph = argc > 6;
   const double max_ray_range = argc > 7 ? std::stod(argv[7]) : 15.0;
   const double base_link_height = argc > 8 ? std::stod(argv[8]) : 0.171;
+  const double footprint_margin = argc > 9 ? std::stod(argv[9]) : 0.05;
   if (resolution <= 0.0 || min_height >= max_height || max_ray_range <= 0.0 ||
-    !std::isfinite(base_link_height))
+    !std::isfinite(base_link_height) || footprint_margin < 0.0 ||
+    footprint_margin > 1.0)
   {
     std::cerr << "Invalid resolution, height slice, ray range, or base-link height\n";
     return 2;
@@ -191,6 +202,7 @@ int main(int argc, char ** argv)
   const auto height = static_cast<std::size_t>(std::ceil((max_y - min_y) / resolution)) + 1;
   std::vector<bool> free_cells(width * height, false);
   std::vector<bool> occupied_cells(width * height, false);
+  std::vector<bool> traversed_cells(width * height, false);
 
   const auto grid_x = [min_x, resolution](double x) {
       return static_cast<int>(std::floor((x - min_x) / resolution));
@@ -217,23 +229,65 @@ int main(int argc, char ** argv)
   }
 
   if (use_pose_graph) {
-    const int free_radius_cells = static_cast<int>(std::ceil(0.35 / resolution));
-    for (const auto & pose : poses) {
-      const int center_x = grid_x(pose.x);
-      const int center_y = grid_y(pose.y);
-      for (int dy = -free_radius_cells; dy <= free_radius_cells; ++dy) {
-        for (int dx = -free_radius_cells; dx <= free_radius_cells; ++dx) {
-          if (dx * dx + dy * dy > free_radius_cells * free_radius_cells) {
-            continue;
-          }
-          const int x = center_x + dx;
-          const int y = center_y + dy;
-          if (x >= 0 && y >= 0 && x < static_cast<int>(width) &&
-            y < static_cast<int>(height))
-          {
-            free_cells[static_cast<std::size_t>(y) * width + static_cast<std::size_t>(x)] = true;
+    const double half_length = 0.398 + footprint_margin;
+    const double half_width = 0.319 + footprint_margin;
+    const int footprint_radius_cells = static_cast<int>(
+      std::ceil(std::hypot(half_length, half_width) / resolution));
+    const auto mark_footprint = [&](double center_x, double center_y, double yaw) {
+        const int center_grid_x = grid_x(center_x);
+        const int center_grid_y = grid_y(center_y);
+        const double cos_yaw = std::cos(yaw);
+        const double sin_yaw = std::sin(yaw);
+        for (int dy = -footprint_radius_cells; dy <= footprint_radius_cells; ++dy) {
+          for (int dx = -footprint_radius_cells; dx <= footprint_radius_cells; ++dx) {
+            const int x = center_grid_x + dx;
+            const int y = center_grid_y + dy;
+            if (x < 0 || y < 0 || x >= static_cast<int>(width) ||
+              y >= static_cast<int>(height))
+            {
+              continue;
+            }
+            const double world_dx = (static_cast<double>(x) + 0.5) * resolution +
+              min_x - center_x;
+            const double world_dy = (static_cast<double>(y) + 0.5) * resolution +
+              min_y - center_y;
+            const double body_x = cos_yaw * world_dx + sin_yaw * world_dy;
+            const double body_y = -sin_yaw * world_dx + cos_yaw * world_dy;
+            if (std::abs(body_x) <= half_length && std::abs(body_y) <= half_width) {
+              const auto cell = static_cast<std::size_t>(y) * width +
+                static_cast<std::size_t>(x);
+              free_cells[cell] = true;
+              // The physical robot occupied this exact swept footprint during
+              // the mapping run. PCD returns inside it are self/registration
+              // remnants and cannot represent a persistent static obstacle.
+              if (std::abs(body_x) <= 0.398 && std::abs(body_y) <= 0.319) {
+                traversed_cells[cell] = true;
+              }
+            }
           }
         }
+      };
+    for (std::size_t index = 0; index < poses.size(); ++index) {
+      if (index == 0) {
+        mark_footprint(poses[index].x, poses[index].y, poses[index].yaw);
+        continue;
+      }
+      const auto & previous = poses[index - 1];
+      const auto & current = poses[index];
+      const double dx = current.x - previous.x;
+      const double dy = current.y - previous.y;
+      const double distance = std::hypot(dx, dy);
+      const double yaw_delta = std::atan2(
+        std::sin(current.yaw - previous.yaw),
+        std::cos(current.yaw - previous.yaw));
+      const std::size_t samples = std::max<std::size_t>(
+        1, static_cast<std::size_t>(std::ceil(distance / (resolution * 0.5))));
+      for (std::size_t sample = 0; sample <= samples; ++sample) {
+        const double ratio = static_cast<double>(sample) / static_cast<double>(samples);
+        mark_footprint(
+          previous.x + ratio * dx,
+          previous.y + ratio * dy,
+          previous.yaw + ratio * yaw_delta);
       }
     }
   }
@@ -245,7 +299,10 @@ int main(int argc, char ** argv)
     for (std::size_t column = 0; column < width; ++column) {
       const std::size_t map_index = map_row * width + column;
       const std::size_t image_index = (height - 1 - map_row) * width + column;
-      if (occupied_cells[map_index]) {
+      if (traversed_cells[map_index]) {
+        pixels[image_index] = 254U;
+        ++free_count;
+      } else if (occupied_cells[map_index]) {
         pixels[image_index] = 0U;
         ++occupied_count;
       } else if (free_cells[map_index]) {

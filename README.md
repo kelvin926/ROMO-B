@@ -107,6 +107,9 @@ ros2 run romo_b_perception pcd_to_occupancy \
   data/local/maps/mapping_run/pose_graph.g2o 15.0 0.171
 ./scripts/run_localization_replay.sh \
   data/local/bags/MAPPING_BAG data/local/maps/mapping_run
+./scripts/run_nav2_preflight.sh \
+  data/local/maps/mapping_run/nav2-raycast/map.yaml \
+  data/local/maps/mapping_run/pose_graph.g2o
 ```
 
 The pose-graph converter leaves unobserved cells unknown, raycasts free space
