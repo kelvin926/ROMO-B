@@ -12,7 +12,8 @@ if [[ $- == *u* ]]; then
 fi
 
 source /opt/ros/humble/setup.bash
-if [[ -f "$repo_root/autoware/install/setup.bash" ]]; then
+if [[ -f "$repo_root/autoware/install/setup.bash" && \
+      -f "$repo_root/autoware/install/.romo_b_build_complete" ]]; then
   source "$repo_root/autoware/install/setup.bash"
 fi
 if [[ -f "$repo_root/vendor_ws/install/setup.bash" ]]; then

@@ -41,6 +41,8 @@ printf 'Autoware environment installation needs sudo and can take about an hour.
   rosdep install --from-paths src --ignore-src -r -y
   export CMAKE_BUILD_PARALLEL_LEVEL=2
   export MAKEFLAGS=-j2
+  rm -f install/.romo_b_build_complete
   colcon build --symlink-install --parallel-workers 2 \
-    --cmake-args -DCMAKE_BUILD_TYPE=Release
+    --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
+  touch install/.romo_b_build_complete
 )

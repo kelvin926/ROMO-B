@@ -54,7 +54,8 @@ motion test.
    only then execute waypoints.
 
 See [architecture](docs/architecture.md), [status](docs/status.md), and
-[operations](docs/operations.md) before connecting the platform.
+[operations](docs/operations.md) before connecting the platform. The Autoware
+research runtime has a separate [installation and field runbook](docs/autoware.md).
 
 ## Runtime launches
 
@@ -80,6 +81,25 @@ ros2 launch romo_b_navigation navigation.launch.py \
 
 The operator must separately select PCU Auto, verify diagnostics, disable
 `receive_only`, and explicitly call `/romo_b/arm`. No launch file arms motion.
+
+## Autoware corridor runtime
+
+Autoware Universe 1.8.0 is now integrated for Lanelet2 route planning and
+local obstacle avoidance. Its low-speed trajectory is still passed through the
+same velocity limits and independent Collision Monitor used by Nav2.
+
+```bash
+./scripts/prepare_autoware_map.sh
+./scripts/doctor.sh --autoware
+USE_RVIZ=true ./scripts/run_autoware_planning_sim.sh
+
+# Live inspection only: no serial writes
+RECEIVE_ONLY=true ./scripts/run_autoware_field.sh
+```
+
+See [Autoware operations](docs/autoware.md) before enabling serial TX. A live
+Mid-360 cluster is always treated as an obstacle, including people, even when
+its semantic class is unknown.
 
 Use RViz `Publish Point` or copy the tracked waypoint example:
 

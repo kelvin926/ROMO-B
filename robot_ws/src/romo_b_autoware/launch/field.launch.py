@@ -51,7 +51,7 @@ def _actions(context):
         {
             "hardware_config": str(hardware_config),
             "livox_config": str(livox_config),
-            "receive_only": "false",
+            "receive_only": LaunchConfiguration("receive_only").perform(context),
             "safety_profile": "navigation",
             "use_livox": "true",
             "use_ekf": "true",
@@ -142,6 +142,10 @@ def generate_launch_description():
             DeclareLaunchArgument("pcd_map"),
             DeclareLaunchArgument("map_path"),
             DeclareLaunchArgument("use_rviz", default_value="true"),
+            # The default field launch can inspect every live topic but cannot
+            # write to the PCU. The operator must explicitly opt into TX and
+            # still has to arm the lifecycle bridge separately.
+            DeclareLaunchArgument("receive_only", default_value="true"),
             OpaqueFunction(function=_actions),
         ]
     )

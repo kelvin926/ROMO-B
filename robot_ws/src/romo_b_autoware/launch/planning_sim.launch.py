@@ -33,7 +33,7 @@ def _actions(context):
                 "enable_all_modules_auto_mode": "true",
                 "localization_sim_mode": "api",
                 "vehicle_simulation": "true",
-                "rviz": "true",
+                "rviz": LaunchConfiguration("use_rviz").perform(context),
             }.items(),
         )
     ]
@@ -43,6 +43,7 @@ def generate_launch_description():
     return LaunchDescription(
         [
             DeclareLaunchArgument("map_path"),
+            DeclareLaunchArgument("use_rviz", default_value="true"),
             OpaqueFunction(function=_actions),
         ]
     )
