@@ -1,5 +1,7 @@
 # ROMO-B waypoint navigation
 
+[![ROS 2 Humble CI](https://github.com/kelvin926/ROMO-B/actions/workflows/ros2-humble.yml/badge.svg)](https://github.com/kelvin926/ROMO-B/actions/workflows/ros2-humble.yml)
+
 ROS 2 Humble software for controlling the ROMO-B platform through USB-to-RS232,
 mapping and localizing with one Livox Mid-360, and following YAML/RViz waypoints
 with Nav2 or Autoware Universe 1.8.0 local obstacle avoidance.

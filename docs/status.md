@@ -22,6 +22,8 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - Ten project packages build locally, including the Autoware adapters and the
   standard `romo_b_launch` vehicle-model contract. The current project suite
   contains 25 passing tests plus the PTY PCU state-machine test.
+- The latest pushed `main` revision passes the clean Ubuntu 22.04/ROS 2 Humble
+  GitHub Actions build, project test suite, and PTY safety-state-machine check.
 - Exact external revisions have been fetched for Livox SDK2,
   `livox_ros_driver2`, LiDAR SLAM, and LiDAR localization. Livox SDK2 v1.3.1
   builds and installs successfully in the ignored local vendor prefix.
