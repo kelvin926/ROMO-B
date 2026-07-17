@@ -44,6 +44,12 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - Physical E-stop feedback uses a bitmask on this PCU (`0x05` was observed),
   despite the manual documenting only 0/1. The parser now treats any nonzero
   value as E-stop active and exposes the raw byte in diagnostics.
+- Guarded physical calibration now passes in both directions: straight
+  0.05 m/s produced 0.045 m/s median rear feedback, left 3 degrees produced
+  0.055 m/s and +3.0 degrees, and right 3 degrees produced 0.045 m/s and
+  -3.0 degrees. One immediate back-to-back right run tripped on a transient
+  0.13 m/s sample; a clean restart plus an added 0.5-second Auto zero-settle
+  produced the repeatable passing result.
 - The Mid-360 is reachable at `192.168.1.113` through USB Ethernet
   `enxc84d44208014` with host `192.168.1.5`. Raw and filtered point clouds are
   stable at 10 Hz and the IMU at 200 Hz.
@@ -85,7 +91,6 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 
 ## Waiting for hardware validation
 
-- Verify steering raw scale and left/right sign with guarded +/-3 degree runs.
 - Verify RViz initial-pose recovery at several locations on the live platform.
 - Repeat planning and collision checks with live localization and PointCloud
   before any autonomous ground run.

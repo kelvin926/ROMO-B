@@ -36,6 +36,8 @@ direction, steering sign, or movement.
    `data/local/validation`.
 5. Verify positive speed direction and the manual's negative-left steering
    convention against physical wheel movement.
+   On this unit, the guarded 0.05 m/s straight and +/-3 degree tests passed on
+   2026-07-17 with median feedback 0.045 m/s, +3.0 degrees, and -3.0 degrees.
 6. Disconnect commands and feedback independently; both must result in a full
    stop and latched software E-stop before ground testing.
 
