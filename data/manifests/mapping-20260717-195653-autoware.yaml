@@ -27,7 +27,28 @@ generation:
   pointcloud_link: pointcloud_map.pcd
   projector_info_sha256: a6fb6af33e164e61a075f9a79eeffa5eca3ead4435dc3de49e811525175b8307
 validation:
-  status: generated
+  status: software_validated
   xml_parse: true
   pointcloud_link_resolves: true
-  blocker: Autoware runtime map load and route planning validation are pending.
+  autoware_version: 1.8.0
+  runtime_map_load: true
+  delayed_vector_map_latch: true
+  adapi_route_planning: true
+  forward_only: true
+  maximum_baseline_speed_mps: 0.2000205
+  avoidance:
+    object_diameter_m: 0.4
+    baseline_offset_m: 0.3
+    required_clearance_m: 0.6
+    achieved_clearance_m: 0.835
+    remained_moving: true
+  blocked_corridor:
+    object_diameter_m: 0.6
+    minimum_planned_speed_mps: 0.0
+  yaml_waypoint_route:
+    intermediate_waypoint_count: 1
+    selected_speed_limit_mps: 0.1
+    trajectory_forward_only: true
+  blocker: >-
+    Live NDT localization, Mid-360 perception, Collision Monitor, and supervised
+    ground motion acceptance remain required.

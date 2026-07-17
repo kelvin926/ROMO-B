@@ -1,6 +1,6 @@
 # Project status
 
-Last updated: 2026-07-17
+Last updated: 2026-07-18
 
 Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 `4384934fefb2b96a3cacc2a07ad52010c9e15cc1f24ae51c05c5b7bcb6bbee7e`.
@@ -19,15 +19,16 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   arm, simulated motion feedback, odometry, independent command/feedback
   timeouts, PCU ALIVE stagnation, AorM 0-to-1 handshake, preserved E-stop
   latch, and explicit reset. CI runs this test.
-- Eight project packages build locally: messages, base bridge, description,
-  simulator, perception, waypoint manager, navigation, and bringup.
-- The latest pushed `main` revision passes the Ubuntu 22.04/ROS 2 Humble
-  GitHub Actions build and all eighteen tests.
+- Ten project packages build locally, including the Autoware adapters and the
+  standard `romo_b_launch` vehicle-model contract. The current project suite
+  contains 25 passing tests plus the PTY PCU state-machine test.
 - Exact external revisions have been fetched for Livox SDK2,
   `livox_ros_driver2`, LiDAR SLAM, and LiDAR localization. Livox SDK2 v1.3.1
   builds and installs successfully in the ignored local vendor prefix.
 - Autoware 1.8.0 sources are fetched below the ignored `autoware/` workspace;
-  the meta repository is at `5b27e88` and Autoware Universe at `d4d2609`.
+  the meta repository is at `5b27e88` and Autoware Universe at `d4d2609`. The
+  full 481-package source build completed successfully. Optional CUDA/TensorRT
+  packages are intentionally inactive on this CPU perception path.
 - `vcstool` 0.3.0 and `pyserial` 3.5 are available through the tracked,
   sudo-free bootstrap fallback.
 - User `hyunseo` has active `dialout` access. The FTDI `A5069RR4` udev link is
@@ -75,7 +76,7 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - A 0.05 m pose-graph-raycast Nav2 map was generated with 192,064 observed-free,
   13,168 occupied, and 1,527,188 unknown cells after adding the continuous
   measured swept footprint. Unknown traversal is disabled. Isolated Nav2
-  preflight planned 87.73 m and 106.71 m forward-only paths with zero reverse
+  preflight planned 87.22 m and 106.61 m forward-only paths with zero reverse
   segments, clamped a 0.5 m/s input to 0.2 m/s, and stopped for three obstacle
   points. All automated checks pass.
 - `scripts/run_field_navigation.sh` now starts the complete live Mid-360, EKF,
@@ -85,19 +86,42 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   Mid-360 acceleration integration. The launcher now refuses to start beside an
   existing bridge, EKF uses wheel odometry only until IMU bias/covariance are
   calibrated, and RViz requests Best Effort QoS for the filtered PointCloud2.
+- The recorded corridor now has a valid 14-lanelet Autoware map, local
+  projector, and linked 77,365-point PCD. Runtime map load and ADAPI route
+  planning pass in the pinned Autoware 1.8.0 stack.
+- The ROMO-B Autoware field stack includes NDT initialization health bridging,
+  UNKNOWN-object clustering/tracking/prediction, a forward-only low-speed
+  follower, a persistent 0.14 m/s planning guard, YAML intermediate route
+  points, and the independent Nav2 Collision Monitor. It defaults to serial
+  receive-only and never arms automatically.
+- The field and simulation launches retain one unchanged delayed Lanelet2 map
+  sample, preventing a verified DDS startup-discovery race from leaving a late
+  planning component without `/map/vector_map`.
+- Isolated Autoware acceptance passes nine localization-interface checks,
+  seven fail-closed motion-gate checks, six point-cloud/perception checks,
+  seven YAML route/speed-limit checks, and both route-planning outcomes. A
+  feasible offset obstacle produced 0.835 m lateral clearance while remaining
+  forward-moving; a centered blocking obstacle produced a 0.0 m/s planned
+  stop. Baseline planning stayed forward-only and at or below 0.200021 m/s.
+- The Autoware RViz configuration loads the Lanelet2/PCD map, live Mid-360
+  cloud, UNKNOWN objects, route and trajectory, localization tools,
+  `RouteTool`, dummy-object tools for simulation, and the Autoware state panel.
 
-## Host actions still required
+## Reproduction still required
 
-- Complete the isolated Autoware environment/build only when that research
-  workspace is needed; it is not part of V1 waypoint navigation.
-- Re-run a clean clone-to-simulation reproduction after the current hardware
-  acceptance changes are committed.
+- Run clone-to-build-to-simulation once on a second clean Ubuntu 22.04/Humble
+  host. This laptop's complete local build and isolated validations pass.
+- Replace the pending external artifact URIs before another researcher needs to
+  retrieve the bag, PCD, or generated maps off this laptop.
 
 ## Waiting for hardware validation
 
 - Verify RViz initial-pose recovery at several locations on the live platform.
-- Repeat planning and collision checks with live localization and PointCloud
-  before any autonomous ground run.
+- Run the receive-only Autoware field checklist, then repeat planning,
+  Collision Monitor, and UNKNOWN-object checks with live localization and the
+  Mid-360 before any autonomous ground run.
+- Perform one supervised 0.10 m/s short route, then a box avoidance/stop test,
+  then a walking-person intrusion test with an operator holding the E-stop.
 - Actual PCU response to invalid fields and Alive/feedback timeout.
 - External storage URI for bags, PCDs, and maps.
 

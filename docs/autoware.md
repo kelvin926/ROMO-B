@@ -5,6 +5,11 @@ ROMO-B field stack keeps the already validated serial bridge, NDT localization,
 and independent Nav2 Collision Monitor. Autoware supplies the Lanelet2 route,
 trajectory, and local avoidance decisions.
 
+The localization interface forwards RViz/API initial poses to the pinned NDT
+localizer and translates its alignment diagnostics into Autoware's
+`INITIALIZING/INITIALIZED` state. Autoware therefore cannot expose autonomous
+mode while NDT is unhealthy or has requested reinitialization.
+
 The command path is:
 
 `Autoware trajectory -> ROMO-B low-speed follower -> /cmd_vel_nav -> twist_mux
@@ -21,6 +26,13 @@ Both moving and stationary avoidance are retuned for ROMO-B's 0.05--0.20 m/s
 range. The tracked override enables UNKNOWN safety checks, removes the default
 classification waiting period, caps lateral shift to 0.65 m, and uses reliable
 stop/deceleration behavior when the requested clearance does not fit.
+An always-on 0.14 m/s planning candidate leaves smoothing margin below the
+physical 0.20 m/s limit. The ROMO-B follower independently clamps to 0.20 m/s
+and also applies the currently selected YAML/Autoware speed limit.
+The launch also republishes the identical transient Lanelet2 map once after
+startup settles. This keeps late planner components from missing the one-shot
+map during a DDS discovery race; it does not alter or continuously replay the
+map.
 
 ## Reproduce the installation
 
@@ -29,12 +41,35 @@ cd /home/hyunseo/ROMO-B
 ./scripts/setup_autoware.sh
 ./scripts/build_all.sh --project-only
 ./scripts/prepare_autoware_map.sh
-./scripts/doctor.sh --autoware
+./scripts/run_autoware_validation.sh
 ```
 
 `setup_autoware.sh` checks out the exact Autoware 1.8.0 meta revision, imports
 its pinned repositories, installs dependencies without changing the NVIDIA
-driver, applies the tracked ROMO-B presets, and builds with two workers.
+driver, applies the tracked ROMO-B presets, and builds with two workers. The
+upstream `acados` v0.5.3 dependency is built below ignored `autoware/deps/`
+instead of modifying `/opt` or requiring permanent shell-profile edits.
+
+The perception check runs in an isolated ROS domain with a synthetic point
+cluster. It must verify cluster detection, UNKNOWN classification, map-frame
+tracking, and a predicted path. It launches no serial or velocity node.
+
+The validation starts only the disengaged dummy simulator. It verifies the
+localization bridge and fail-closed motion gates, then clusters a synthetic
+UNKNOWN object. Two independent planning cases are mandatory: a 0.40 m object
+offset 0.30 m from the baseline must be avoided, and a centered 0.60 m object
+must make the planned speed reach zero. The validated corridor run shifted to
+0.835 m clearance in the first case and reached 0.0 m/s in the second. Reports
+and launch logs are saved below `data/local/validation/`.
+
+The same suite submits a generated two-pose YAML route through the real ADAPI
+`SetRoutePoints` endpoint and checks the intermediate waypoint, forward-only
+trajectory, and selected 0.10 m/s limit. Every wrapper uses a separate ROS
+domain, launches no serial bridge, and removes its full process group on exit.
+
+Use the short [field checklist](autoware_field_checklist.md) at the robot. It
+keeps receive-only inspection, TX startup, route creation, and supervised arm
+as separate operator decisions.
 
 The generated local map bundle contains:
 
@@ -61,8 +96,25 @@ In the Autoware RViz window:
    available, or reach zero velocity before it when clearance is unavailable.
 5. Use `DeleteAllObjectsTool` to clear the simulation object.
 
+The same YAML used by the Nav2 waypoint editor can be sent to Autoware without
+arming or engaging the platform:
+
+```bash
+python3 scripts/send_autoware_waypoints.py config/local/waypoints.yaml
+```
+
+All entries except the final pose become Autoware intermediate route points;
+the final pose is the goal, and `default_speed_mps` is published as Autoware's
+maximum-velocity candidate. The physical follower also consumes the selected
+limit, so a 0.10 m/s YAML route cannot be raised by a smoothing transient. An
+existing route is left untouched unless the operator explicitly adds
+`--replace` while the platform is stopped. A route change is rejected while
+Autoware is actively controlling in autonomous mode or while the PCU reports
+armed.
+
 The simulator uses Autoware's dummy vehicle only. It neither opens
-`/dev/romo_b_pcu` nor launches the ROMO-B serial bridge.
+`/dev/romo_b_pcu` nor launches the ROMO-B serial bridge. It starts disengaged,
+so creating a route alone does not move even the dummy vehicle.
 
 ## Field startup
 
@@ -87,6 +139,12 @@ clear space around the robot, healthy diagnostics, and PCU Auto selected:
 ```bash
 ros2 service call /romo_b/arm std_srvs/srv/SetBool '{data: true}'
 ```
+
+Then use the `AutowareStatePanel` in RViz to select `Auto` and turn on
+`Autoware Control`. These are a second, independent motion gate. If the panel
+shows a start request, accept it only after rechecking the live obstacle view.
+The ROMO-B follower outputs zero unless the PCU is armed **and** both Autoware
+states are active.
 
 Disarm at route completion or on any unexpected behavior:
 

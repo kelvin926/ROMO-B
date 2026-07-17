@@ -2,7 +2,7 @@
 
 ROS 2 Humble software for controlling the ROMO-B platform through USB-to-RS232,
 mapping and localizing with one Livox Mid-360, and following YAML/RViz waypoints
-with Nav2 local obstacle avoidance.
+with Nav2 or Autoware Universe 1.8.0 local obstacle avoidance.
 
 The protocol source of truth is the tracked
 [verified manual extraction](ROMO-B_manual_verified_complete.md).
@@ -23,7 +23,7 @@ rotate-in-place are deliberately disabled.
 ./scripts/setup_host.sh
 ./scripts/fetch_dependencies.sh
 ./scripts/build_all.sh --project-only
-source robot_ws/install/setup.bash
+source scripts/source_env.sh
 colcon test --base-paths robot_ws/src --event-handlers console_direct+
 colcon test-result --test-result-base robot_ws/build --verbose
 python3 scripts/test_pty_bridge.py
@@ -55,7 +55,8 @@ motion test.
 
 See [architecture](docs/architecture.md), [status](docs/status.md), and
 [operations](docs/operations.md) before connecting the platform. The Autoware
-research runtime has a separate [installation and field runbook](docs/autoware.md).
+research runtime has a separate [installation and field runbook](docs/autoware.md)
+and a concise [corridor field checklist](docs/autoware_field_checklist.md).
 
 ## Runtime launches
 
@@ -91,6 +92,7 @@ same velocity limits and independent Collision Monitor used by Nav2.
 ```bash
 ./scripts/prepare_autoware_map.sh
 ./scripts/doctor.sh --autoware
+./scripts/run_autoware_validation.sh
 USE_RVIZ=true ./scripts/run_autoware_planning_sim.sh
 
 # Live inspection only: no serial writes
@@ -99,7 +101,9 @@ RECEIVE_ONLY=true ./scripts/run_autoware_field.sh
 
 See [Autoware operations](docs/autoware.md) before enabling serial TX. A live
 Mid-360 cluster is always treated as an obstacle, including people, even when
-its semantic class is unknown.
+its semantic class is unknown. The software-only acceptance requires a feasible
+lateral avoidance response and, separately, a zero-speed response to a blocking
+obstacle; it launches no PCU bridge.
 
 Use RViz `Publish Point` or copy the tracked waypoint example:
 
