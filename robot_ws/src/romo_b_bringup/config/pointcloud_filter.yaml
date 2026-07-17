@@ -7,8 +7,10 @@ romo_b_pointcloud_filter:
     enable_height_filter: true
     min_z: 0.10
     max_z: 1.80
-    self_half_x: 0.398
-    self_half_y: 0.319
+    # Remove the complete robot/mount prism. Mid-360 returns from the mount
+    # were measured at z=0.47-0.57 m and made the robot's own start cell lethal.
+    self_half_x: 0.42
+    self_half_y: 0.34
     self_min_z: 0.0
-    self_max_z: 0.45
+    self_max_z: 1.80
     transform_timeout_sec: 0.05

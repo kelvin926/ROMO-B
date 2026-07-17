@@ -163,8 +163,10 @@ local_costmap:
         plugin: nav2_costmap_2d::VoxelLayer
         enabled: true
         publish_voxel_map: false
-        origin_z: 0.0
-        z_resolution: 0.1125
+        # base_footprint is 0.17 m below base_link, so include the sensor
+        # origin instead of rejecting every clearing ray as out of bounds.
+        origin_z: -0.25
+        z_resolution: 0.13
         z_voxels: 16
         max_obstacle_height: 1.80
         mark_threshold: 0
@@ -183,7 +185,7 @@ local_costmap:
       inflation_layer:
         plugin: nav2_costmap_2d::InflationLayer
         cost_scaling_factor: 5.0
-        inflation_radius: 0.35
+        inflation_radius: 0.25
       always_send_full_costmap: true
 
 global_costmap:
@@ -220,5 +222,5 @@ global_costmap:
       inflation_layer:
         plugin: nav2_costmap_2d::InflationLayer
         cost_scaling_factor: 5.0
-        inflation_radius: 0.35
+        inflation_radius: 0.25
       always_send_full_costmap: true
