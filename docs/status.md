@@ -39,7 +39,8 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   maximum before the guarded test latched HLV E-stop. This matches Little
   Endian interpretation as raw `0x0100`. Transmit mode now requires an explicit
   byte-order setting and this unit is configured `little`; low-speed
-  revalidation remains pending.
+  revalidation passed: a 0.05 m/s command produced 0.045 m/s median rear-wheel
+  feedback. Raw `1` remains below the platform's useful-motion deadband.
 - Physical E-stop feedback uses a bitmask on this PCU (`0x05` was observed),
   despite the manual documenting only 0/1. The parser now treats any nonzero
   value as E-stop active and exposes the raw byte in diagnostics.
@@ -84,8 +85,7 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 
 ## Waiting for hardware validation
 
-- Restart with the Little Endian command setting, repeat the guarded 0.01 m/s
-  measured-speed calibration, and verify steering raw scale and left/right sign.
+- Verify steering raw scale and left/right sign with guarded +/-3 degree runs.
 - Verify RViz initial-pose recovery at several locations on the live platform.
 - Repeat planning and collision checks with live localization and PointCloud
   before any autonomous ground run.

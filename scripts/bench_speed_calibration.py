@@ -51,7 +51,9 @@ class Calibration(Node):
             raise RuntimeError(f"service timeout: {client.srv_name}")
         return future.result()
 
-    def publish_phase(self, duration, start_speed, end_speed, collect=False):
+    def publish_phase(
+        self, duration, start_speed, end_speed, collect=False, steer_deg=0.0
+    ):
         started = time.monotonic()
         deadline = started + duration
         next_tick = started
@@ -60,6 +62,9 @@ class Calibration(Node):
             ratio = min(1.0, max(0.0, (now - started) / max(duration, 1e-6)))
             command = Twist()
             command.linear.x = start_speed + (end_speed - start_speed) * ratio
+            command.angular.z = (
+                command.linear.x * math.tan(math.radians(steer_deg)) / 0.323
+            )
             self.publisher.publish(command)
             rclpy.spin_once(self, timeout_sec=0.005)
             if self.status is not None:
@@ -67,7 +72,13 @@ class Calibration(Node):
                 maximum = max(abs(value) for value in wheel)
                 if collect:
                     self.hold_samples.append(
-                        {"time_sec": now - started, "wheel_speed_mps": wheel}
+                        {
+                            "time_sec": now - started,
+                            "wheel_speed_mps": wheel,
+                            "wheel_steer_rad": [
+                                float(value) for value in self.status.wheel_steer_rad
+                            ],
+                        }
                     )
                 if maximum > self.overspeed:
                     try:
@@ -105,6 +116,7 @@ def main():
         help="measure the smallest nonzero command without comparing it to the requested SI speed",
     )
     parser.add_argument("--speed", type=float, default=0.01)
+    parser.add_argument("--steer-deg", type=float, default=0.0)
     parser.add_argument("--hold", type=float, default=1.5)
     parser.add_argument("--overspeed", type=float, default=0.10)
     parser.add_argument("--output")
@@ -113,6 +125,8 @@ def main():
         parser.error("--execute is required; this command moves the robot")
     if not math.isfinite(args.speed) or not 0.005 <= args.speed <= 0.05:
         parser.error("--speed must be between 0.005 and 0.05 m/s")
+    if not math.isfinite(args.steer_deg) or not -5.0 <= args.steer_deg <= 5.0:
+        parser.error("--steer-deg must be between -5 and 5 degrees")
     if not 0.5 <= args.hold <= 3.0:
         parser.error("--hold must be between 0.5 and 3.0 seconds")
     if not args.speed * 1.5 <= args.overspeed <= 0.30:
@@ -132,6 +146,7 @@ def main():
         "result": "FAIL",
         "mode": "minimum_command_characterization" if args.characterize else "speed_validation",
         "requested_speed_mps": args.speed,
+        "requested_steer_deg": args.steer_deg,
         "commanded_speed_raw": round(args.speed * 100.0),
     }
     exit_code = 2
@@ -162,9 +177,12 @@ def main():
         else:
             raise RuntimeError("PCU did not enter armed Auto state")
 
-        node.publish_phase(1.0, 0.0, args.speed)
-        node.publish_phase(args.hold, args.speed, args.speed, collect=True)
-        node.publish_phase(1.0, args.speed, 0.0)
+        node.publish_phase(1.0, 0.0, args.speed, steer_deg=args.steer_deg)
+        node.publish_phase(
+            args.hold, args.speed, args.speed, collect=True,
+            steer_deg=args.steer_deg,
+        )
+        node.publish_phase(1.0, args.speed, 0.0, steer_deg=args.steer_deg)
         node.publish_phase(0.6, 0.0, 0.0)
         response = node.call(node.arm, False)
         if not response.success:
@@ -178,21 +196,37 @@ def main():
         if not rear_means:
             raise RuntimeError("no steady-state feedback samples")
         measured = statistics.median(rear_means)
+        front_steer_deg = [
+            math.degrees(
+                0.5 * (sample["wheel_steer_rad"][0] + sample["wheel_steer_rad"][1])
+            )
+            for sample in node.hold_samples
+            if sample["time_sec"] >= args.hold * 0.5
+        ]
+        measured_steer_deg = statistics.median(front_steer_deg)
         tolerance = max(0.01, args.speed * 0.5)
-        passed = measured > 0.0 and (
+        steer_tolerance_deg = max(1.0, abs(args.steer_deg) * 0.5)
+        steering_passed = (
+            abs(args.steer_deg) < 0.1
+            or abs(measured_steer_deg - args.steer_deg) <= steer_tolerance_deg
+        )
+        passed = measured > 0.0 and steering_passed and (
             args.characterize or abs(measured - args.speed) <= tolerance
         )
         result.update(
             {
                 "result": "PASS" if passed else "FAIL",
                 "median_rear_speed_mps": measured,
+                "median_front_steer_deg": measured_steer_deg,
                 "tolerance_mps": tolerance,
+                "steer_tolerance_deg": steer_tolerance_deg,
                 "samples": node.hold_samples,
             }
         )
         if not passed:
             raise RuntimeError(
-                f"requested {args.speed:.3f}, measured median {measured:.3f} m/s"
+                f"requested {args.speed:.3f} m/s and {args.steer_deg:.1f} deg, "
+                f"measured {measured:.3f} m/s and {measured_steer_deg:.1f} deg"
             )
         exit_code = 0
     except (KeyboardInterrupt, Exception) as error:
