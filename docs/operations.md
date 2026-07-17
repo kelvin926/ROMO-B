@@ -38,3 +38,14 @@ real-data acceptance run.
 `pcd_to_occupancy` marks the selected-height PCD points as occupied and assumes
 the padded PCD bounding box is free elsewhere. Inspect and edit the generated map
 before navigation; a PCD alone does not prove that every unobserved cell is free.
+
+For offline mapping, keep the launch running until RKO-LIO has consumed the bag,
+then call `/map_save`. A successful run must leave non-empty `map.pcd` and
+`pose_graph.g2o` files in the selected `save_dir`. The upstream offline node can
+remain alive while draining its tail buffer after the final scan; once `/map_save`
+has succeeded and the two files are stable, stop the launch with Ctrl+C.
+
+The tracked mapping RViz profile uses `map` as its fixed frame and displays
+`/rko_lio/frame`, `/rko_lio/odometry`, `/modified_map`, and `/modified_path`.
+The identity `map -> odom` transform in that launch exists only for offline map
+visualization; runtime localization remains the sole owner of `map -> odom`.

@@ -104,6 +104,11 @@ ros2 run romo_b_perception pcd_to_occupancy \
   data/local/maps/mapping_run/map.pcd data/local/maps/map 0.05 0.10 1.80
 ```
 
+Do not use the generated occupancy map for autonomous motion until its unknown
+space has been reviewed and a recorded-bag localization replay has passed. The
+simple converter conservatively identifies obstacle points but currently assumes
+the rest of the PCD bounding box is free.
+
 ## Repository policy
 
 Project code, configuration, scripts, documentation, and dependency locks are

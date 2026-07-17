@@ -22,7 +22,7 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - Eight project packages build locally: messages, base bridge, description,
   simulator, perception, waypoint manager, navigation, and bringup.
 - The latest pushed `main` revision passes the Ubuntu 22.04/ROS 2 Humble
-  GitHub Actions build and all seventeen tests.
+  GitHub Actions build and all eighteen tests.
 - Exact external revisions have been fetched for Livox SDK2,
   `livox_ros_driver2`, LiDAR SLAM, and LiDAR localization. Livox SDK2 v1.3.1
   builds and installs successfully in the ignored local vendor prefix.
@@ -45,6 +45,20 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - The measured Mid-360 transform is xyz `(0.270, 0.000, 0.258)` m and rpy
   `(0, 0, 0)` rad. RViz confirmed a level floor, vertical structures, and the
   sensor's forward direction; the local LiDAR calibration gate is approved.
+- The first RC-Manual mapping bag (`mapping-20260717-195653`) passed SQLite and
+  topic-count checks: 381.83 seconds, 3,818 clouds, 76,359 normalized IMU
+  samples, and 7,448 wheel-odometry samples.
+- Offline RKO-LIO plus graph SLAM produced a 77,365-point PCD and a graph with
+  143 poses, 702 constraints, and two nonlocal loop edges. The optimized path
+  is 235.87 m long and closes to 0.479 m. Top-down geometry review is coherent;
+  this remains a provisional map until localization replay passes.
+- The graph backend's XYZ-only cloud conversion no longer emits one missing
+  `intensity` warning per conversion, and `pose_graph.g2o` is now written into
+  the requested map output directory. The mapping RViz profile uses the actual
+  RKO-LIO and graph topics and an explicit mapping-only `map -> odom` transform.
+- A 0.05 m Nav2 PGM/YAML was generated for inspection. It is deliberately not
+  accepted for navigation yet because the current converter treats every
+  unobserved cell inside the PCD bounds as free.
 
 ## Host actions still required
 
@@ -57,6 +71,8 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 
 - Resolve the physical velocity scaling that caused the unexpectedly fast
   0.05 m/s ground test, then verify steering raw scale and left/right sign.
+- Pass recorded-bag localization replay and accept an occupancy map whose
+  observed/unknown free-space semantics have been reviewed.
 - Actual PCU response to invalid fields and Alive/feedback timeout.
 - External storage URI for bags, PCDs, and maps.
 

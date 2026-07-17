@@ -1,0 +1,32 @@
+schema_version: 1
+id: mapping-20260717-195653-pcd
+type: pointcloud_map
+created_at: '2026-07-17T11:27:11.280479+00:00'
+source_filename: map.pcd
+sensor:
+  model: Livox Mid-360
+  serial: pending
+  pointcloud_rate_hz: 10.0
+  imu_rate_hz: 200.0
+  transform_base_link_xyz_m: [0.27, 0.0, 0.258]
+  transform_base_link_rpy_rad: [0.0, 0.0, 0.0]
+frames:
+  fixed: map
+  sensor: livox_frame
+size_bytes: 946882
+sha256: 0246b15b4c32cad13c0b510c19ab2e891370fd614f8bc053e837d8f6537a37b9
+uri: pending
+mapping:
+  frontend: RKO-LIO
+  backend: graph_based_slam
+  point_count: 77365
+  map_leaf_size_m: 0.2
+  submap_count: 143
+  constraint_count: 702
+  nonlocal_loop_edges: [[31, 102], [2, 141]]
+  optimized_trajectory_length_m: 235.867
+  start_end_distance_m: 0.479
+  pose_graph_sha256: d515d2a83d6ed2d02a1e4dceae0ff5684b8a2e459e83aa2be2351a766335d9f8
+validation:
+  status: provisional_pass
+  note: Geometry is coherent in top-down review; localization replay is still required.

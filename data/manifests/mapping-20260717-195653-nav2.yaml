@@ -1,0 +1,25 @@
+schema_version: 1
+id: mapping-20260717-195653-nav2
+type: nav2_occupancy_map
+created_at: '2026-07-17T11:27:11.320756+00:00'
+source_filename: map.pgm
+sensor:
+  model: Livox Mid-360
+  serial: pending
+  source_pointcloud_sha256: 0246b15b4c32cad13c0b510c19ab2e891370fd614f8bc053e837d8f6537a37b9
+frames:
+  fixed: map
+  sensor: livox_frame
+size_bytes: 1974956
+sha256: ed0a88c08cd43abaf81b656fe0776787f55979672ef5b1ed94c42f5d982e1fb5
+uri: pending
+occupancy:
+  resolution_m: 0.05
+  width_cells: 2101
+  height_cells: 940
+  origin_xy_m: [-29.7894, -35.4288]
+  obstacle_height_slice_m: [0.10, 1.80]
+validation:
+  status: provisional_only
+  free_space_model: unobserved bounding-box cells are currently treated as free
+  blocker: Visual review and localization replay are required before navigation use.

@@ -23,6 +23,24 @@ git -C "$sdk_root" checkout --detach f5d9375f84efe2b15bc0a052d3e18482ed13adf4
 slam_root="$src_root/lidar_slam_ros2"
 if [[ -d "$slam_root/.git" ]]; then
   git -C "$slam_root" submodule update --init --recursive
+  # A newer, shared ndt_omp_ros2 checkout is pinned at vendor_ws/src. Keep the
+  # upstream submodule for source integrity but prevent duplicate ROS packages.
+  touch "$slam_root/Thirdparty/ndt_omp_ros2/COLCON_IGNORE"
+
+  patch_root="$repo_root/dependencies/patches/lidar_slam_ros2"
+  if [[ -d "$patch_root" ]]; then
+    while IFS= read -r -d '' patch_file; do
+      if git -C "$slam_root" apply --unidiff-zero --reverse --check "$patch_file" >/dev/null 2>&1; then
+        printf 'ALREADY  lidar_slam_ros2 patch: %s\n' "$(basename "$patch_file")"
+      elif git -C "$slam_root" apply --unidiff-zero --check "$patch_file"; then
+        git -C "$slam_root" apply --unidiff-zero "$patch_file"
+        printf 'APPLIED  lidar_slam_ros2 patch: %s\n' "$(basename "$patch_file")"
+      else
+        printf 'ERROR: cannot apply vendor patch %s\n' "$patch_file" >&2
+        exit 1
+      fi
+    done < <(find "$patch_root" -maxdepth 1 -type f -name '*.patch' -print0 | sort -z)
+  fi
 fi
 
 driver_root="$src_root/livox_ros_driver2"

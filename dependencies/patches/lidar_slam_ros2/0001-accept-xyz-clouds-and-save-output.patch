@@ -1,0 +1,71 @@
+diff --git a/graph_based_slam/src/graph_based_slam_component.cpp b/graph_based_slam/src/graph_based_slam_component.cpp
+index 6863867..d141b47 100644
+--- a/graph_based_slam/src/graph_based_slam_component.cpp
++++ b/graph_based_slam/src/graph_based_slam_component.cpp
+@@ -46,0 +47,39 @@ namespace graphslam
++namespace
++{
++void fromRosMsgWithOptionalIntensity(
++  const sensor_msgs::msg::PointCloud2 & message,
++  pcl::PointCloud<pcl::PointXYZI> & output)
++{
++  const bool has_intensity = std::any_of(
++    message.fields.begin(), message.fields.end(),
++    [](const sensor_msgs::msg::PointField & field) {return field.name == "intensity";});
++  if (has_intensity) {
++    pcl::fromROSMsg(message, output);
++    return;
++  }
++
++  // RKO-LIO's deskewed cloud intentionally contains XYZ only.  PCL emits one
++  // warning per conversion when such a cloud is converted directly to
++  // PointXYZI.  Preserve its geometry and provide a deterministic zero value
++  // for consumers that use PointXYZI as their registration storage type.
++  pcl::PointCloud<pcl::PointXYZ> xyz;
++  pcl::fromROSMsg(message, xyz);
++  output.clear();
++  output.reserve(xyz.size());
++  output.header = xyz.header;
++  output.width = xyz.width;
++  output.height = xyz.height;
++  output.is_dense = xyz.is_dense;
++  for (const auto & source : xyz) {
++    pcl::PointXYZI point;
++    point.x = source.x;
++    point.y = source.y;
++    point.z = source.z;
++    point.intensity = 0.0F;
++    output.push_back(point);
++  }
++  output.width = xyz.width;
++  output.height = xyz.height;
++}
++}  // namespace
++
+@@ -720 +759 @@ void GraphBasedSlamComponent::initializePubSub()
+-            pcl::fromROSMsg(sub.cloud, *cloud);
++            fromRosMsgWithOptionalIntensity(sub.cloud, *cloud);
+@@ -945 +984 @@ void GraphBasedSlamComponent::searchLoop()
+-          pcl::fromROSMsg(map_array_msg.submaps[src_idx].cloud, *cloud);
++          fromRosMsgWithOptionalIntensity(map_array_msg.submaps[src_idx].cloud, *cloud);
+@@ -1027 +1066 @@ void GraphBasedSlamComponent::searchLoop()
+-      pcl::fromROSMsg(src_submap.cloud, *src_cloud);
++      fromRosMsgWithOptionalIntensity(src_submap.cloud, *src_cloud);
+@@ -1625 +1664 @@ void GraphBasedSlamComponent::searchLoop()
+-        pcl::fromROSMsg(near_submap.cloud, *submap_cloud_ptr);
++        fromRosMsgWithOptionalIntensity(near_submap.cloud, *submap_cloud_ptr);
+@@ -2078 +2117,7 @@ void GraphBasedSlamComponent::doPoseAdjustment(
+-  optimizer.save("pose_graph.g2o");
++  const auto pose_graph_path = std::filesystem::path(map_save_dir_) / "pose_graph.g2o";
++  if (optimizer.save(pose_graph_path.string().c_str())) {
++    std::cout << "Saved pose graph: " << pose_graph_path << std::endl;
++  } else {
++    RCLCPP_ERROR(
++      get_logger(), "Failed to save pose graph: %s", pose_graph_path.string().c_str());
++  }
+@@ -2105 +2150 @@ void GraphBasedSlamComponent::doPoseAdjustment(
+-      pcl::fromROSMsg(map_array_msg.submaps[i].cloud, *cloud_ptr);
++      fromRosMsgWithOptionalIntensity(map_array_msg.submaps[i].cloud, *cloud_ptr);
+@@ -2507 +2552 @@ void GraphBasedSlamComponent::tryCreateSubmap()
+-      pcl::fromROSMsg(submap.cloud, *cloud);
++      fromRosMsgWithOptionalIntensity(submap.cloud, *cloud);
