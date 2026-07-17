@@ -265,7 +265,7 @@ private:
       boost::asio::buffer(read_buffer_),
       [this](const boost::system::error_code & error, std::size_t bytes) {
         if (error) {
-          if (error != boost::asio::error::operation_aborted) {
+          if (error != boost::asio::error::operation_aborted && rclcpp::ok()) {
             RCLCPP_ERROR(get_logger(), "Serial read failed: %s", error.message().c_str());
             serial_open_.store(false);
             std::scoped_lock lock(state_mutex_);
@@ -375,15 +375,19 @@ private:
     {
       std::scoped_lock lock(state_mutex_);
       const auto steady_now = std::chrono::steady_clock::now();
-      command_timed_out_ = bridge_state_ == BridgeState::kArmedAuto &&
-        steady_now - last_command_time_ > command_timeout_;
-      feedback_timed_out_ = !have_feedback_ || steady_now - last_feedback_time_ > feedback_timeout_;
-      if (bridge_state_ == BridgeState::kArmedAuto &&
-        (command_timed_out_ || feedback_timed_out_))
-      {
-        software_estop_ = true;
-        bridge_state_ = BridgeState::kEstop;
-        desired_control_ = {};
+      if (bridge_state_ == BridgeState::kArmedAuto) {
+        command_timed_out_ = steady_now - last_command_time_ > command_timeout_;
+        feedback_timed_out_ = !have_feedback_ ||
+          steady_now - last_feedback_time_ > feedback_timeout_;
+        if (command_timed_out_ || feedback_timed_out_) {
+          software_estop_ = true;
+          bridge_state_ = BridgeState::kEstop;
+          desired_control_ = {};
+        }
+      } else if (bridge_state_ == BridgeState::kConnectedSafe) {
+        command_timed_out_ = false;
+        feedback_timed_out_ = !have_feedback_ ||
+          steady_now - last_feedback_time_ > feedback_timeout_;
       }
 
       command.steer_mode = SteerMode::k2Wis;
@@ -434,7 +438,9 @@ private:
       latest_feedback_ = feedback;
       have_feedback_ = true;
       last_feedback_time_ = steady_now;
-      feedback_timed_out_ = false;
+      if (bridge_state_ != BridgeState::kEstop) {
+        feedback_timed_out_ = false;
+      }
       if (bridge_state_ == BridgeState::kArmedAuto &&
         (!feedback.auto_mode || feedback.estop || feedback.steer_mode != SteerMode::k2Wis))
       {

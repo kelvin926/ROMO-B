@@ -9,6 +9,10 @@ Last updated: 2026-07-17
 - GitHub CLI is authenticated as `kelvin926` with admin access to the private,
   initially empty repository.
 - USB adapter detected as FTDI FT232R, serial `A5069RR4`, at `/dev/ttyUSB0`.
+- Manual protocol examples, fragmented/corrupt parsing, Ackermann conversion,
+  steering sign, and odometry pass eleven C++/Python tests.
+- The PTY PCU integration test passes lifecycle activation, explicit arm,
+  simulated motion feedback, odometry, command timeout, and latched E-stop.
 
 ## Host actions still required
 

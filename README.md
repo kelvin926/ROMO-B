@@ -23,10 +23,15 @@ rotate-in-place are deliberately disabled.
 source robot_ws/install/setup.bash
 colcon test --base-paths robot_ws/src --event-handlers console_direct+
 colcon test-result --test-result-base robot_ws/build --verbose
+ros2 launch romo_b_sim simulation.launch.py
 ```
 
 `setup_host.sh` requires sudo for apt packages and adding the current user to
 `dialout`. Log out and back in (or reboot) after group membership changes.
+
+The simulator creates `/tmp/romo_b_pcu`; it never opens the physical USB adapter.
+The bridge comes up active but disarmed, so call `/romo_b/arm` explicitly for a
+motion test.
 
 ## Hardware workflow
 
