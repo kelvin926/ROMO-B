@@ -10,9 +10,14 @@ Last updated: 2026-07-17
   initially empty repository.
 - USB adapter detected as FTDI FT232R, serial `A5069RR4`, at `/dev/ttyUSB0`.
 - Manual protocol examples, fragmented/corrupt parsing, Ackermann conversion,
-  steering sign, and odometry pass eleven C++/Python tests.
+  steering sign, route YAML, yaw inference, PCD conversion, and odometry pass
+  seventeen C++/Python tests.
 - The PTY PCU integration test passes lifecycle activation, explicit arm,
   simulated motion feedback, odometry, command timeout, and latched E-stop.
+- Eight project packages build locally: messages, base bridge, description,
+  simulator, perception, waypoint manager, navigation, and bringup.
+- The generated local hardware YAML records FTDI serial `A5069RR4`; no bytes have
+  been transmitted to the physical PCU.
 
 ## Host actions still required
 
@@ -21,6 +26,8 @@ Last updated: 2026-07-17
   out/in or reboot.
 - Nav2, robot_localization, twist_mux, Xacro, vcstool, and pyserial are not yet
   all installed; `scripts/setup_host.sh` owns this installation.
+- Nav2/Livox/localization runtime launches are implemented but cannot be marked
+  runtime-verified until those host/vendor dependencies are installed.
 
 ## Waiting for hardware validation
 

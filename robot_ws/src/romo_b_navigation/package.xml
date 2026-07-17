@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>romo_b_navigation</name>
+  <version>0.1.0</version>
+  <description>Forward-only Ackermann Nav2 configuration for ROMO-B.</description>
+  <maintainer email="futile-nutmegs0d@icloud.com">Jang HyunSeo</maintainer>
+  <license>Proprietary</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>nav2_bt_navigator</exec_depend>
+  <exec_depend>nav2_collision_monitor</exec_depend>
+  <exec_depend>nav2_controller</exec_depend>
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>nav2_mppi_controller</exec_depend>
+  <exec_depend>nav2_planner</exec_depend>
+  <exec_depend>nav2_smac_planner</exec_depend>
+  <exec_depend>nav2_velocity_smoother</exec_depend>
+  <exec_depend>romo_b_waypoints</exec_depend>
+  <exec_depend>twist_mux</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

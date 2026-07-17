@@ -1,0 +1,13 @@
+romo_b_pointcloud_filter:
+  ros__parameters:
+    input_topic: /sensing/lidar/top/pointcloud_raw
+    output_topic: /sensing/lidar/top/pointcloud_filtered
+    target_frame: base_footprint
+    voxel_size: 0.05
+    min_z: 0.10
+    max_z: 1.80
+    self_half_x: 0.398
+    self_half_y: 0.319
+    self_min_z: 0.0
+    self_max_z: 0.45
+    transform_timeout_sec: 0.05

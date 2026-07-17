@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>romo_b_bringup</name>
+  <version>0.1.0</version>
+  <description>Safe hardware, mapping, and localization launch files for ROMO-B.</description>
+  <maintainer email="futile-nutmegs0d@icloud.com">Jang HyunSeo</maintainer>
+  <license>Proprietary</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>lidar_localization_ros2</exec_depend>
+  <exec_depend>lidarslam</exec_depend>
+  <exec_depend>livox_ros_driver2</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
+  <exec_depend>romo_b_base</exec_depend>
+  <exec_depend>romo_b_description</exec_depend>
+  <exec_depend>romo_b_perception</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

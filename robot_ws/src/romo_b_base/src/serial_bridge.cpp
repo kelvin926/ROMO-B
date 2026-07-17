@@ -50,6 +50,7 @@ public:
     declare_parameter<double>("wheel_radius_m", 0.103);
     declare_parameter<std::string>("safety_profile", "bench");
     declare_parameter<bool>("receive_only", true);
+    declare_parameter<bool>("sensor_calibrated", false);
     declare_parameter<std::string>("odom_frame", "odom");
     declare_parameter<std::string>("base_frame", "base_link");
   }
@@ -80,6 +81,7 @@ private:
     control_track_m_ = get_parameter("control_track_m").as_double();
     wheel_radius_m_ = get_parameter("wheel_radius_m").as_double();
     receive_only_ = get_parameter("receive_only").as_bool();
+    sensor_calibrated_ = get_parameter("sensor_calibrated").as_bool();
     odom_frame_ = get_parameter("odom_frame").as_string();
     base_frame_ = get_parameter("base_frame").as_string();
 
@@ -87,9 +89,11 @@ private:
     limits_.wheelbase_m = wheelbase_m_;
     limits_.allow_reverse = false;
     if (profile == "bench") {
+      navigation_profile_ = false;
       limits_.max_speed_mps = 0.1;
       limits_.max_steer_deg = 5.0;
     } else if (profile == "navigation") {
+      navigation_profile_ = true;
       limits_.max_speed_mps = 0.2;
       limits_.max_steer_deg = 22.0;
     } else {
@@ -314,6 +318,10 @@ private:
     }
     if (receive_only_) {
       response->message = "receive_only is enabled";
+      return;
+    }
+    if (navigation_profile_ && !sensor_calibrated_) {
+      response->message = "Navigation profile requires an approved LiDAR transform";
       return;
     }
     const auto age = std::chrono::steady_clock::now() - last_feedback_time_;
@@ -542,6 +550,7 @@ private:
       };
     add_value("device", device_);
     add_value("receive_only", receive_only_ ? "true" : "false");
+    add_value("sensor_calibrated", sensor_calibrated_ ? "true" : "false");
     add_value("pcu_alive", std::to_string(status.pcu_alive));
     add_value("hlv_alive", std::to_string(status.hlv_alive));
     diagnostics.status.push_back(serial_status);
@@ -558,6 +567,8 @@ private:
   std::string parity_{"none"};
   int stop_bits_{1};
   bool receive_only_{true};
+  bool navigation_profile_{false};
+  bool sensor_calibrated_{false};
   double wheelbase_m_{0.323};
   double control_track_m_{0.390};
   double wheel_radius_m_{0.103};

@@ -47,6 +47,52 @@ motion test.
 See [architecture](docs/architecture.md), [status](docs/status.md), and
 [operations](docs/operations.md) before connecting the platform.
 
+## Runtime launches
+
+After completing `config/local/hardware.yaml`:
+
+```bash
+source scripts/source_env.sh
+
+# Safe receive-only serial validation (Livox disabled)
+ros2 launch romo_b_bringup hardware.launch.py
+
+# Sensors and wheel/IMU EKF; still receive-only by default
+ros2 launch romo_b_bringup hardware.launch.py use_livox:=true
+
+# PCD localization (in another terminal after hardware bringup)
+ros2 launch romo_b_bringup localization.launch.py \
+  pcd_map:=data/local/maps/map.pcd
+
+# Forward-only waypoint navigation
+ros2 launch romo_b_navigation navigation.launch.py \
+  map:=data/local/maps/map.yaml
+```
+
+The operator must separately select PCU Auto, verify diagnostics, disable
+`receive_only`, and explicitly call `/romo_b/arm`. No launch file arms motion.
+
+Use RViz `Publish Point` or copy the tracked waypoint example:
+
+```bash
+mkdir -p ~/.ros
+cp robot_ws/src/romo_b_navigation/config/waypoints/example.yaml \
+  ~/.ros/romo_b_waypoints.yaml
+ros2 service call /romo_b/waypoints/reload std_srvs/srv/Trigger '{}'
+ros2 service call /romo_b/waypoints/execute std_srvs/srv/Trigger '{}'
+```
+
+For mapping, record live topics while RC-driving in Manual, then run the pinned
+offline SLAM and occupancy conversion:
+
+```bash
+./scripts/record_mapping_bag.sh
+ros2 launch romo_b_bringup mapping_offline.launch.py \
+  bag_path:=data/local/bags/MAPPING_BAG
+ros2 run romo_b_perception pcd_to_occupancy \
+  data/local/maps/mapping_run/map.pcd data/local/maps/map 0.05 0.10 1.80
+```
+
 ## Repository policy
 
 Project code, configuration, scripts, documentation, and dependency locks are
