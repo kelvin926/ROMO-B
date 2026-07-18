@@ -136,7 +136,10 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   zero Manual handoff. Software E-stop TX and its ROS service are removed; only
   physical/PCU E-stop feedback is reported.
 - LiDAR localization republishes `map -> odom` at 20 Hz between 10 Hz scans,
-  removing the future-extrapolation gap seen by Nav2. The corridor controller
+  removing the future-extrapolation gap seen by Nav2. The timer now preserves
+  the last scan-validated correction instead of recomputing it against current
+  odometry, which previously counter-rotated RViz and disturbed localization
+  during physical turns. The corridor controller
   uses a 0.5 m/s Regulated Pure Pursuit profile, filtered/rate-limited steering,
   position-only goal completion, and a 45-second pedestrian-wait allowance.
 - The obstacle pipeline now rejects floor/near/far noise, uses a 0.10 m voxel,

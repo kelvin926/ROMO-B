@@ -43,6 +43,24 @@ if [[ -d "$slam_root/.git" ]]; then
   fi
 fi
 
+localization_root="$src_root/lidar_localization_ros2"
+if [[ -d "$localization_root/.git" ]]; then
+  patch_root="$repo_root/dependencies/patches/lidar_localization_ros2"
+  if [[ -d "$patch_root" ]]; then
+    while IFS= read -r -d '' patch_file; do
+      if git -C "$localization_root" apply --reverse --check "$patch_file" >/dev/null 2>&1; then
+        printf 'ALREADY  lidar_localization_ros2 patch: %s\n' "$(basename "$patch_file")"
+      elif git -C "$localization_root" apply --check "$patch_file"; then
+        git -C "$localization_root" apply "$patch_file"
+        printf 'APPLIED  lidar_localization_ros2 patch: %s\n' "$(basename "$patch_file")"
+      else
+        printf 'ERROR: cannot apply vendor patch %s\n' "$patch_file" >&2
+        exit 1
+      fi
+    done < <(find "$patch_root" -maxdepth 1 -type f -name '*.patch' -print0 | sort -z)
+  fi
+fi
+
 driver_root="$src_root/livox_ros_driver2"
 if [[ -d "$driver_root" ]]; then
   cp "$driver_root/package_ROS2.xml" "$driver_root/package.xml"

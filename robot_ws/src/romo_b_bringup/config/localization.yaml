@@ -25,8 +25,8 @@
     global_frame_id: map
     odom_frame_id: odom
     base_frame_id: base_link
-    # Re-stamp and republish map->odom between 10 Hz LiDAR updates.  Without
-    # this, Nav2 frequently asked for a transform a few milliseconds newer than
-    # the most recent localization result and stopped with extrapolation errors.
+    # Re-stamp the last scan-validated map->odom correction between LiDAR
+    # updates. Never recompute it from a stale map->base pose and current odom;
+    # doing so counter-rotates the vehicle while localization is busy.
     enable_timer_publishing: true
     pose_publish_frequency: 20.0
