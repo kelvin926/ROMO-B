@@ -21,7 +21,8 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - The tracked PTY PCU integration test passes lifecycle activation, explicit
   arm, simulated motion feedback, odometry, independent command/feedback
   timeouts, PCU ALIVE stagnation, and the AorM 0-to-1 handshake. It verifies
-  that feedback/ALIVE faults use zero plus disarm and never transmit E-stop.
+  that feedback/ALIVE faults retain arm at zero, recover Auto without another
+  arm request, and never transmit E-stop.
   CI runs this test.
 - Ten project packages build locally, including the Autoware adapters and the
   standard `romo_b_launch` vehicle-model contract. The current project suite
@@ -131,26 +132,29 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   in Fast DDS/shared memory. This laptop now uses Cyclone DDS by default, with
   a UDP-only Fast DDS fallback retained for fresh hosts until setup completes.
 - Command-source timeout is a recoverable zero-speed hold that preserves the
-  20 Hz PCU Auto heartbeat. Stale PCU feedback/ALIVE, a failed Auto transition,
-  serial failure, explicit disarm, and routine lifecycle shutdown all use a
-  zero Manual handoff. Software E-stop TX and its ROS service are removed; only
-  physical/PCU E-stop feedback is reported.
+  20 Hz PCU Auto heartbeat. Stale PCU feedback/ALIVE and failed Auto transitions
+  retain the software arm latch at zero and automatically retry Auto; shutdown
+  does not manufacture an Auto falling edge. Only an explicit arm=false request
+  performs a Manual handoff. Software E-stop TX and its ROS service are removed;
+  only physical/PCU E-stop feedback is reported.
 - LiDAR localization republishes `map -> odom` at 20 Hz between 10 Hz scans,
   removing the future-extrapolation gap seen by Nav2. The timer now preserves
   the last scan-validated correction instead of recomputing it against current
   odometry, which previously counter-rotated RViz and disturbed localization
   during physical turns. The corridor controller
   uses a 0.5 m/s Regulated Pure Pursuit profile, filtered/rate-limited steering,
-  position-only goal completion, and a 45-second pedestrian-wait allowance.
-- The obstacle pipeline now rejects floor/near/far noise, uses a 0.10 m voxel,
-  requires multi-point evidence before slowdown/stop, and excludes huge static
-  clusters from tracked-object visualization. RViz shows both costmaps,
+  position-only goal completion, and a 120-second progress allowance.
+- The obstacle pipeline now rejects floor/near/far noise and small isolated
+  groups. A transient costmap plugin rebuilds dynamic obstacles at 2-5 Hz from
+  only the latest 0.35 seconds of Mid-360 data, so departed people do not leave
+  persistent lethal costs. Close-stop/slowdown zones require 20/10 points and
+  never disarm. RViz shows both costmaps,
   collision zones, footprint, lookahead point, tracked boxes, and predicted
   paths; rendering is PRIME-offloaded to the RTX GPU.
 - The corrected nine-package subset builds locally. All 25 package tests pass,
   and the PTY state-machine test passes under Cyclone DDS, including motion,
-  command soft-stop/recovery and feedback/ALIVE zero-disarm without software
-  E-stop transmission.
+  command soft-stop/recovery and feedback/ALIVE arm-retaining Auto recovery
+  without software E-stop transmission.
 
 ## Reproduction still required
 
@@ -164,8 +168,8 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 
 - Repeat one direct `Nav2 Goal` run to verify live TF freshness, smooth steering,
   position-only completion, and absence of nuisance `Hi_E-ST` after command gaps.
-- Place one box and then one walking person in the corridor to tune only the
-  1.0 m stop / 2.0 m slowdown polygons if the measured braking envelope demands it.
+- Place one box and then one walking person in the corridor to validate the
+  0.70 m stop / 1.25 m slowdown polygons and 0.35-second cost expiry.
 - Verify RViz initial-pose recovery at several locations on the live platform.
 - Run the receive-only Autoware field checklist, then repeat planning,
   Collision Monitor, and UNKNOWN-object checks with live localization and the

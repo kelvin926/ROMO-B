@@ -18,18 +18,20 @@ collision_monitor:
     polygons: [StopZone, SlowdownZone]
     StopZone:
       type: polygon
-      points: [0.30, 0.52, 1.00, 0.52, 1.00, -0.52, 0.30, -0.52]
+      # Last-resort collision pause only; never disarms or asserts E-stop.
+      # A higher point threshold rejects sparse Mid-360 noise.
+      points: [0.38, 0.45, 0.70, 0.45, 0.70, -0.45, 0.38, -0.45]
       action_type: stop
-      max_points: 8
+      max_points: 20
       visualize: true
       polygon_pub_topic: /romo_b/stop_zone
       enabled: true
     SlowdownZone:
       type: polygon
-      points: [0.25, 0.75, 2.00, 0.75, 2.00, -0.75, 0.25, -0.75]
+      points: [0.30, 0.65, 1.25, 0.65, 1.25, -0.65, 0.30, -0.65]
       action_type: slowdown
-      slowdown_ratio: 0.30
-      max_points: 8
+      slowdown_ratio: 0.55
+      max_points: 10
       visualize: true
       polygon_pub_topic: /romo_b/slowdown_zone
       enabled: true

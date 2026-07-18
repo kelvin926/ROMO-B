@@ -1,0 +1,10 @@
+<library path="romo_b_transient_obstacle_layer">
+  <class
+    type="romo_b_navigation::TransientObstacleLayer"
+    base_class_type="nav2_costmap_2d::Layer">
+    <description>
+      Rebuilds dynamic PointCloud obstacles from a short recent observation
+      window so moving people do not leave persistent lethal costs.
+    </description>
+  </class>
+</library>

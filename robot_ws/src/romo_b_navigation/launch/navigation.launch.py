@@ -63,6 +63,14 @@ def generate_launch_description():
             ],
         ),
         Node(
+            package="nav2_behaviors",
+            executable="behavior_server",
+            name="behavior_server",
+            output="screen",
+            parameters=[params, {"use_sim_time": typed_sim_time}],
+            remappings=[("cmd_vel", "/cmd_vel_nav")],
+        ),
+        Node(
             package="twist_mux",
             executable="twist_mux",
             name="twist_mux",
@@ -125,6 +133,7 @@ def generate_launch_description():
                         "map_server",
                         "planner_server",
                         "controller_server",
+                        "behavior_server",
                         "bt_navigator",
                         "velocity_smoother",
                         "collision_monitor",

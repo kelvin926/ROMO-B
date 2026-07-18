@@ -155,6 +155,7 @@ private:
       feedback_timed_out_ = false;
       auto_confirmed_ = false;
       auto_request_sent_ = false;
+      auto_recovery_manual_pending_ = false;
       manual_zero_sent_ = false;
       desired_control_ = {};
       hlv_alive_ = 0;
@@ -196,6 +197,7 @@ private:
       bridge_state_ = BridgeState::kConnectedSafe;
       auto_confirmed_ = false;
       auto_request_sent_ = false;
+      auto_recovery_manual_pending_ = false;
       manual_zero_sent_ = false;
       last_command_time_ = std::chrono::steady_clock::now();
     }
@@ -209,10 +211,10 @@ private:
     const bool should_send = !receive_only_ && serial_open_.load();
     {
       std::scoped_lock lock(state_mutex_);
-      // Every software-initiated shutdown is a zero Manual handoff. The HLV
-      // bridge never asserts the PCU E-stop bit; the operator owns E-stop via
-      // the physical/RC control.
-      command.auto_mode = false;
+      // Do not manufacture an Auto falling edge on shutdown. If software was
+      // armed, hand off one final zero-speed Auto heartbeat. The operator owns
+      // intentional Manual/disarm transitions.
+      command.auto_mode = bridge_state_ == BridgeState::kArmedAuto;
       command.estop = false;
       command.steer_mode = SteerMode::k2Wis;
       command.alive = hlv_alive_++;
@@ -336,6 +338,7 @@ private:
       desired_control_ = {};
       auto_confirmed_ = false;
       auto_request_sent_ = false;
+      auto_recovery_manual_pending_ = false;
       manual_zero_sent_ = false;
       bridge_state_ = BridgeState::kConnectedSafe;
       response->success = true;
@@ -382,6 +385,7 @@ private:
     bridge_state_ = BridgeState::kArmedAuto;
     auto_confirmed_ = false;
     auto_request_sent_ = false;
+    auto_recovery_manual_pending_ = false;
     manual_zero_sent_ = false;
     desired_control_ = {};
     last_command_time_ = steady_now;
@@ -425,17 +429,17 @@ private:
         }
         if (feedback_timed_out_ || auto_transition_timed_out) {
           if (feedback_timed_out_) {
-            RCLCPP_ERROR(
-              get_logger(),
-              "PCU feedback watchdog expired; disarming with zero (software E-stop TX disabled)");
+            RCLCPP_ERROR_THROTTLE(
+              get_logger(), *get_clock(), 2000,
+              "PCU feedback watchdog expired; arm is retained and output is held at zero");
           } else if (auto_transition_timed_out) {
-            RCLCPP_ERROR(
+            RCLCPP_WARN(
               get_logger(),
-              "PCU did not confirm Auto in time; disarming with zero (software E-stop TX disabled)");
+              "PCU did not confirm Auto in time; retaining arm and retrying the Auto edge");
           }
-          bridge_state_ = BridgeState::kConnectedSafe;
           auto_confirmed_ = false;
           auto_request_sent_ = false;
+          auto_recovery_manual_pending_ = true;
           desired_control_ = {};
           filtered_steer_deg_ = 0.0;
         }
@@ -446,7 +450,27 @@ private:
       command.steer_mode = SteerMode::k2Wis;
       command.alive = hlv_alive_++;
       if (bridge_state_ == BridgeState::kArmedAuto) {
-        command.auto_mode = true;
+        const bool feedback_allows_auto_recovery = have_feedback_ && !feedback_timed_out_ &&
+          !latest_feedback_.estop && latest_feedback_.steer_mode == SteerMode::k2Wis;
+        if (auto_recovery_manual_pending_ && feedback_allows_auto_recovery) {
+          if (latest_feedback_.auto_mode) {
+            // Feedback returned while the PCU remained in Auto. Resume without
+            // creating an unnecessary Manual/disarm pulse.
+            command.auto_mode = true;
+            auto_recovery_manual_pending_ = false;
+            auto_confirmed_ = true;
+            last_command_time_ = steady_now;
+          } else {
+            // The PCU already left Auto and requires one real Manual -> Auto
+            // rising edge. Send a single zero Manual frame without clearing
+            // the software arm latch; the next timer tick retries Auto.
+            command.auto_mode = false;
+            auto_recovery_manual_pending_ = false;
+            auto_request_sent_ = false;
+          }
+        } else {
+          command.auto_mode = true;
+        }
         if (auto_confirmed_) {
           command.speed_mps = desired_control_.speed_mps;
           const double filtered_target = filtered_steer_deg_ +
@@ -485,7 +509,7 @@ private:
     }
     // Hard invariant: software never asserts the HLV E-stop byte. Emergency
     // stopping belongs to the operator's physical/RC E-stop. Software faults
-    // are handled by zero speed and a Manual/disarmed handoff.
+    // are handled by zero speed while the software arm latch is retained.
     Command transmitted = command;
     transmitted.estop = false;
     const auto frame = encode_command(transmitted, command_little_endian_);
@@ -527,12 +551,14 @@ private:
         {
           auto_confirmed_ = false;
           auto_request_sent_ = false;
+          auto_recovery_manual_pending_ = true;
           desired_control_ = {};
           filtered_steer_deg_ = 0.0;
-          bridge_state_ = BridgeState::kConnectedSafe;
-          RCLCPP_WARN(
-            get_logger(),
-            "PCU left armed 2WIS state; disarming with zero (software E-stop TX disabled)");
+          RCLCPP_WARN_THROTTLE(
+            get_logger(), *get_clock(), 2000,
+            "PCU Auto state unavailable (auto=%s estop=%s mode=%u); retaining software arm at zero",
+            feedback.auto_mode ? "true" : "false", feedback.estop ? "true" : "false",
+            static_cast<unsigned int>(feedback.steer_mode));
         } else if (!auto_confirmed_ && auto_request_sent_ && feedback.auto_mode) {
           auto_confirmed_ = true;
           desired_control_ = {};
@@ -632,7 +658,7 @@ private:
     if (!status.connected || status.estop || status.feedback_timed_out) {
       serial_status.level = diagnostic_msgs::msg::DiagnosticStatus::ERROR;
       if (status.feedback_timed_out) {
-        serial_status.message = "PCU feedback timeout; bridge disarmed with zero";
+        serial_status.message = "PCU feedback timeout; arm retained at zero, Auto retry pending";
       } else {
         serial_status.message = status.estop ? "E-stop active" : "Serial fault";
       }
@@ -667,7 +693,8 @@ private:
     add_value("command_age_sec", std::to_string(command_age_sec));
     add_value("command_timeout_sec", std::to_string(command_timeout_.count()));
     add_value("command_timeout_action", "soft_zero");
-    add_value("feedback_timeout_action", "zero_disarm");
+    add_value("feedback_timeout_action", "zero_retain_arm_retry_auto");
+    add_value("automatic_disarm", "disabled");
     add_value("software_estop_tx", "disabled");
     add_value("pcu_alive", std::to_string(status.pcu_alive));
     add_value("pcu_estop_raw", std::to_string(latest_feedback_.estop_raw));
@@ -717,6 +744,7 @@ private:
   bool feedback_timed_out_{false};
   bool auto_confirmed_{false};
   bool auto_request_sent_{false};
+  bool auto_recovery_manual_pending_{false};
   bool manual_zero_sent_{false};
   Feedback latest_feedback_;
   ControlOutput desired_control_;

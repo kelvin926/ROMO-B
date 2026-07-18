@@ -20,9 +20,11 @@ rotate-in-place are deliberately disabled.
 
 The HLV software never asserts the PCU E-stop command bit and does not expose a
 software E-stop service. Planner, command, feedback, and serial faults command
-zero speed and disarm instead. Emergency-stop authority remains with the
-operator through the physical/RC control; PCU E-stop feedback is still reported
-on `/romo_b/platform_status`.
+zero speed without clearing the software arm latch; fresh PCU feedback retries
+Auto automatically. Only an explicit `/romo_b/arm {data: false}` request
+disarms. Emergency-stop authority remains with the operator through the
+physical/RC control; PCU E-stop feedback is still reported on
+`/romo_b/platform_status`.
 
 ## Quick start (no hardware)
 

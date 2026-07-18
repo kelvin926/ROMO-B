@@ -222,18 +222,18 @@ def main():
                     description="clean stopped disarm state",
                 )
 
-                # Feedback loss disarms with a zero Manual command. Software
-                # must never assert the PCU E-stop bit.
+                # Feedback loss holds zero but retains the software arm latch.
+                # Fresh feedback triggers an automatic Manual -> Auto retry.
                 set_bool(probe, probe.arm, True, "re-arm")
                 set_bool(probe, probe.feedback, False, "pause feedback")
                 wait_until(
                     probe,
-                    lambda: probe.status.state == PlatformStatus.STATE_CONNECTED_SAFE
+                    lambda: probe.status.state == PlatformStatus.STATE_ARMED_AUTO
                     and probe.status.feedback_timed_out
                     and not probe.status.estop,
                     2.0,
                     tick=lambda: publish_forward(probe),
-                    description="feedback-timeout zero disarm",
+                    description="feedback-timeout zero with arm retained",
                 )
                 if probe.status.command_timed_out:
                     raise RuntimeError("command timeout tripped during feedback-timeout test")
@@ -248,23 +248,25 @@ def main():
                 )
                 wait_until(
                     probe,
-                    lambda: probe.status.state == PlatformStatus.STATE_CONNECTED_SAFE
-                    and not probe.status.estop,
+                    lambda: probe.status.state == PlatformStatus.STATE_ARMED_AUTO
+                    and not probe.status.estop
+                    and not probe.status.feedback_timed_out
+                    and max(abs(value) for value in probe.status.wheel_speed_mps) > 0.04,
                     2.0,
-                    description="feedback recovery without E-stop",
+                    tick=lambda: publish_forward(probe),
+                    description="automatic feedback recovery without re-arm",
                 )
 
                 # Frames that keep arriving with a frozen PCU ALIVE are also stale feedback.
-                set_bool(probe, probe.arm, True, "re-arm for ALIVE test")
                 set_bool(probe, probe.alive, False, "freeze PCU ALIVE")
                 wait_until(
                     probe,
-                    lambda: probe.status.state == PlatformStatus.STATE_CONNECTED_SAFE
+                    lambda: probe.status.state == PlatformStatus.STATE_ARMED_AUTO
                     and probe.status.feedback_timed_out
                     and not probe.status.estop,
                     2.0,
                     tick=lambda: publish_forward(probe),
-                    description="stale-ALIVE zero disarm",
+                    description="stale-ALIVE zero with arm retained",
                 )
                 if probe.status.command_timed_out:
                     raise RuntimeError("command timeout tripped during stale-ALIVE test")
@@ -279,14 +281,17 @@ def main():
                 )
                 wait_until(
                     probe,
-                    lambda: probe.status.state == PlatformStatus.STATE_CONNECTED_SAFE
-                    and not probe.status.estop,
+                    lambda: probe.status.state == PlatformStatus.STATE_ARMED_AUTO
+                    and not probe.status.estop
+                    and not probe.status.feedback_timed_out
+                    and max(abs(value) for value in probe.status.wheel_speed_mps) > 0.04,
                     2.0,
-                    description="ALIVE recovery without E-stop",
+                    tick=lambda: publish_forward(probe),
+                    description="automatic ALIVE recovery without re-arm",
                 )
                 print(
                     "PTY_INTEGRATION_OK: Auto handshake, motion, command soft-stop/recovery, "
-                    "feedback/ALIVE zero-disarm, software E-stop disabled"
+                    "feedback/ALIVE arm-retaining Auto recovery, software E-stop disabled"
                 )
             except Exception:
                 simulator_log.flush()
