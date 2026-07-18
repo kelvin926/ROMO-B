@@ -1,0 +1,227 @@
+[INFO] [launch]: All log files can be found below /home/hyunseo/.ros/log/2026-07-18-01-41-24-399594-hyunseo-2204-411268
+[INFO] [launch]: Default logging verbosity is set to INFO
+[37;1m2026-07-18 01:41:41.804 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[INFO] [speed_limit_guard-1]: process started with pid [411348]
+[INFO] [component_container_mt-2]: process started with pid [411350]
+[INFO] [robot_state_publisher-3]: process started with pid [411352]
+[INFO] [autoware_duplicated_node_checker_node-4]: process started with pid [411354]
+[INFO] [processing_time_checker_node-5]: process started with pid [411356]
+[INFO] [autoware_pipeline_latency_monitor_node-6]: process started with pid [411358]
+[INFO] [service_log_checker_node-7]: process started with pid [411360]
+[INFO] [component_container-8]: process started with pid [411362]
+[INFO] [component_container-9]: process started with pid [411364]
+[INFO] [component_container-10]: process started with pid [411366]
+[INFO] [aggregator_node-11]: process started with pid [411368]
+[INFO] [converter_node-12]: process started with pid [411370]
+[INFO] [autoware_hazard_status_converter_node-13]: process started with pid [411372]
+[INFO] [autoware_mrm_handler_node-14]: process started with pid [411374]
+[INFO] [autoware_dummy_diag_publisher_node-15]: process started with pid [411376]
+[INFO] [logging_node-16]: process started with pid [411378]
+[INFO] [component_container_mt-17]: process started with pid [411380]
+[INFO] [map_hash_generator-18]: process started with pid [411382]
+[INFO] [autoware_map_projection_loader_node-19]: process started with pid [411384]
+[INFO] [autoware_manual_lane_change_handler_node-20]: process started with pid [411386]
+[INFO] [component_container_mt-21]: process started with pid [411390]
+[INFO] [goal_pose_visualizer-22]: process started with pid [411401]
+[INFO] [autoware_scenario_selector_node-23]: process started with pid [411415]
+[INFO] [external_velocity_limit_selector-24]: process started with pid [411435]
+[INFO] [component_container-25]: process started with pid [411449]
+[INFO] [autoware_hazard_lights_selector_node-26]: process started with pid [411458]
+[INFO] [component_container_mt-27]: process started with pid [411460]
+[INFO] [component_container_mt-28]: process started with pid [411462]
+[INFO] [component_container_mt-29]: process started with pid [411464]
+[INFO] [planning_evaluator-30]: process started with pid [411475]
+[INFO] [autoware_remaining_distance_time_calculator_node-31]: process started with pid [411487]
+[INFO] [relay-32]: process started with pid [411506]
+[INFO] [component_container_mt-33]: process started with pid [411524]
+[INFO] [component_container_mt-34]: process started with pid [411555]
+[INFO] [component_container_mt-35]: process started with pid [411558]
+[INFO] [initial_pose_adaptor_node-36]: process started with pid [411560]
+[INFO] [routing_adaptor_node-37]: process started with pid [411573]
+[INFO] [autoware_dummy_perception_publisher_node-38]: process started with pid [411577]
+[INFO] [multi_object_tracker_node-39]: process started with pid [411581]
+[INFO] [map_based_prediction-40]: process started with pid [411588]
+[INFO] [autoware_perception_analytics_publisher_node-41]: process started with pid [411591]
+[INFO] [autoware_pose_initializer_node-42]: process started with pid [411597]
+[INFO] [autoware_vehicle_door_simulator_node-43]: process started with pid [411605]
+[INFO] [autoware_simple_planning_simulator_node-44]: process started with pid [411608]
+[component_container_mt-2] [37;1m2026-07-18 01:41:46.993 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_duplicated_node_checker_node-4] [37;1m2026-07-18 01:41:46.925 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[processing_time_checker_node-5] [37;1m2026-07-18 01:41:46.925 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_pipeline_latency_monitor_node-6] [37;1m2026-07-18 01:41:47.099 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container-9] [37;1m2026-07-18 01:41:46.940 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container-10] [37;1m2026-07-18 01:41:46.994 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_mrm_handler_node-14] [37;1m2026-07-18 01:41:47.065 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_dummy_diag_publisher_node-15] [37;1m2026-07-18 01:41:46.942 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[logging_node-16] [37;1m2026-07-18 01:41:47.056 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container_mt-17] [37;1m2026-07-18 01:41:47.050 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container_mt-27] [37;1m2026-07-18 01:41:47.097 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[external_velocity_limit_selector-24] [37;1m2026-07-18 01:41:47.144 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[goal_pose_visualizer-22] [37;1m2026-07-18 01:41:47.158 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_map_projection_loader_node-19] [37;1m2026-07-18 01:41:47.156 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_hazard_lights_selector_node-26] [37;1m2026-07-18 01:41:47.159 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_dummy_perception_publisher_node-38] [37;1m2026-07-18 01:41:47.179 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container_mt-28] [37;1m2026-07-18 01:41:47.182 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_scenario_selector_node-23] [37;1m2026-07-18 01:41:47.183 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_remaining_distance_time_calculator_node-31] [37;1m2026-07-18 01:41:47.192 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[multi_object_tracker_node-39] [37;1m2026-07-18 01:41:47.196 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container_mt-29] [37;1m2026-07-18 01:41:47.208 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[map_based_prediction-40] [37;1m2026-07-18 01:41:47.222 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_simple_planning_simulator_node-44] [37;1m2026-07-18 01:41:47.230 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_pose_initializer_node-42] [37;1m2026-07-18 01:41:47.231 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container-10] [37;1m2026-07-18 01:41:47.248 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32481: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[logging_node-16] [37;1m2026-07-18 01:41:47.245 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32481: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[robot_state_publisher-3] [WARN] [1784306507.335095351] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[robot_state_publisher-3] [INFO] [1784306507.335296426] [robot_state_publisher]: got segment base_footprint
+[robot_state_publisher-3] [INFO] [1784306507.335357962] [robot_state_publisher]: got segment base_link
+[robot_state_publisher-3] [INFO] [1784306507.335365179] [robot_state_publisher]: got segment camera0/camera_link
+[robot_state_publisher-3] [INFO] [1784306507.335370632] [robot_state_publisher]: got segment camera0/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784306507.335376370] [robot_state_publisher]: got segment camera1/camera_link
+[robot_state_publisher-3] [INFO] [1784306507.335381840] [robot_state_publisher]: got segment camera1/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784306507.335387281] [robot_state_publisher]: got segment camera2/camera_link
+[robot_state_publisher-3] [INFO] [1784306507.335392596] [robot_state_publisher]: got segment camera2/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784306507.335397912] [robot_state_publisher]: got segment camera3/camera_link
+[robot_state_publisher-3] [INFO] [1784306507.335403001] [robot_state_publisher]: got segment camera3/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784306507.335408198] [robot_state_publisher]: got segment camera4/camera_link
+[robot_state_publisher-3] [INFO] [1784306507.335413174] [robot_state_publisher]: got segment camera4/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784306507.335418613] [robot_state_publisher]: got segment camera5/camera_link
+[robot_state_publisher-3] [INFO] [1784306507.335424065] [robot_state_publisher]: got segment camera5/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784306507.335429459] [robot_state_publisher]: got segment fl_steer_link
+[robot_state_publisher-3] [INFO] [1784306507.335434876] [robot_state_publisher]: got segment fl_wheel_link
+[robot_state_publisher-3] [INFO] [1784306507.335440127] [robot_state_publisher]: got segment fr_steer_link
+[robot_state_publisher-3] [INFO] [1784306507.335445377] [robot_state_publisher]: got segment fr_wheel_link
+[robot_state_publisher-3] [INFO] [1784306507.335450678] [robot_state_publisher]: got segment gnss_link
+[robot_state_publisher-3] [INFO] [1784306507.335456088] [robot_state_publisher]: got segment livox_frame
+[robot_state_publisher-3] [INFO] [1784306507.335461385] [robot_state_publisher]: got segment rl_steer_link
+[robot_state_publisher-3] [INFO] [1784306507.335466786] [robot_state_publisher]: got segment rl_wheel_link
+[robot_state_publisher-3] [INFO] [1784306507.335471901] [robot_state_publisher]: got segment rr_steer_link
+[robot_state_publisher-3] [INFO] [1784306507.335477140] [robot_state_publisher]: got segment rr_wheel_link
+[robot_state_publisher-3] [INFO] [1784306507.335482641] [robot_state_publisher]: got segment sensor_kit_base_link
+[robot_state_publisher-3] [INFO] [1784306507.335487914] [robot_state_publisher]: got segment tamagawa/imu_link
+[robot_state_publisher-3] [INFO] [1784306507.335493252] [robot_state_publisher]: got segment traffic_light_left_camera/camera_link
+[robot_state_publisher-3] [INFO] [1784306507.335498830] [robot_state_publisher]: got segment traffic_light_left_camera/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784306507.335504445] [robot_state_publisher]: got segment traffic_light_right_camera/camera_link
+[robot_state_publisher-3] [INFO] [1784306507.335509945] [robot_state_publisher]: got segment traffic_light_right_camera/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784306507.335515418] [robot_state_publisher]: got segment velodyne_left
+[robot_state_publisher-3] [INFO] [1784306507.335520820] [robot_state_publisher]: got segment velodyne_left_base_link
+[robot_state_publisher-3] [INFO] [1784306507.335526088] [robot_state_publisher]: got segment velodyne_rear
+[robot_state_publisher-3] [INFO] [1784306507.335531477] [robot_state_publisher]: got segment velodyne_rear_base_link
+[robot_state_publisher-3] [INFO] [1784306507.335536943] [robot_state_publisher]: got segment velodyne_right
+[robot_state_publisher-3] [INFO] [1784306507.335542169] [robot_state_publisher]: got segment velodyne_right_base_link
+[robot_state_publisher-3] [INFO] [1784306507.335547560] [robot_state_publisher]: got segment velodyne_top
+[robot_state_publisher-3] [INFO] [1784306507.335553031] [robot_state_publisher]: got segment velodyne_top_base_link
+[autoware_mrm_handler_node-14] [37;1m2026-07-18 01:41:47.436 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32481: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_pipeline_latency_monitor_node-6] [37;1m2026-07-18 01:41:47.453 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32481: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container_mt-27] [37;1m2026-07-18 01:41:47.453 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32481: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[speed_limit_guard-1] [37;1m2026-07-18 01:41:47.489 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32413: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[external_velocity_limit_selector-24] [37;1m2026-07-18 01:41:49.486 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32481: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[component_container_mt-17] [37;1m2026-07-18 01:41:49.486 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32481: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_dummy_perception_publisher_node-38] [37;1m2026-07-18 01:41:49.509 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32481: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[map_based_prediction-40] [37;1m2026-07-18 01:41:49.625 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32481: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_simple_planning_simulator_node-44] [37;1m2026-07-18 01:41:49.621 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32481: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[speed_limit_guard-1] [37;1m2026-07-18 01:41:49.625 [31;1m[[37;1mRTPS_TRANSPORT_SHM[31;1m Error] [37mFailed init_port fastrtps_port32481: open_and_lock_file failed[34;1m -> Function [36mopen_port_internal[m
+[autoware_map_projection_loader_node-19] Load /home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/autoware/map_projector_info.yaml
+[multi_object_tracker_node-39] [INFO] [1784306509.801455880] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing detected_objects input stream index 0
+[multi_object_tracker_node-39] [INFO] [1784306509.801592646] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 1
+[multi_object_tracker_node-39] [INFO] [1784306509.801614219] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 2
+[multi_object_tracker_node-39] [INFO] [1784306509.806179044] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 3
+[multi_object_tracker_node-39] [INFO] [1784306509.807544099] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 4
+[multi_object_tracker_node-39] [INFO] [1784306509.807576423] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 5
+[multi_object_tracker_node-39] [INFO] [1784306509.807590312] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 6
+[multi_object_tracker_node-39] [INFO] [1784306509.807602061] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 7
+[multi_object_tracker_node-39] [INFO] [1784306509.807613655] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 8
+[multi_object_tracker_node-39] [INFO] [1784306509.807628779] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 9
+[multi_object_tracker_node-39] [INFO] [1784306509.807640477] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 10
+[multi_object_tracker_node-39] [INFO] [1784306509.807651975] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 11
+[autoware_scenario_selector_node-23] [INFO] [1784306510.199380449] [planning.scenario_planning.scenario_selector]: Waiting for current pose.
+[autoware_pipeline_latency_monitor_node-6] [INFO] [1784306510.417546539] [system.pipeline_latency_monitor]: PipelineLatencyMonitorNode initialized
+[autoware_mrm_handler_node-14] [INFO] [1784306510.569771210] [system.mrm_handler]: waiting for operation_mode_availability msg...
+[autoware_duplicated_node_checker_node-4] [WARN] [1784306511.017842956] [system.duplicated_node_checker]: /planning/scenario_planning/autoware_hazard_lights_selector node is duplicated.
+[component_container-8] [INFO] [1784306512.109542104] [system.component_state_monitor.container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_topic_state_monitor/lib/libautoware_topic_state_monitor.so
+[component_container-8] [INFO] [1784306512.121044034] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-8] [INFO] [1784306512.121104207] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container_mt-27] [INFO] [1784306512.170767851] [planning.scenario_planning.lane_driving.behavior_planning.behavior_planning_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_behavior_path_planner/lib/libautoware_behavior_path_planner_lib.so
+[logging_node-16] [WARN] [1784306512.569663839] [logging_diag_graph]: The target mode is not available for the following reasons:
+[logging_node-16] - /autoware/modes/autonomous ERROR
+[logging_node-16]     - /autoware/map ERROR
+[logging_node-16]         - /autoware/map/topic_rate_check/vector_map STALE
+[logging_node-16]         - /autoware/map/topic_rate_check/pointcloud_map STALE
+[logging_node-16]     - /autoware/localization ERROR
+[logging_node-16]         - /autoware/localization/state STALE
+[logging_node-16]         - [anonymous group] ERROR
+[logging_node-16]             - /autoware/localization/topic_rate_check/transform STALE
+[logging_node-16]             - /autoware/localization/topic_rate_check/pose_twist_fusion STALE
+[logging_node-16]             - /autoware/localization/scan_matching_status STALE
+[logging_node-16]             - /autoware/localization/accuracy STALE
+[logging_node-16]             - /autoware/localization/sensor_fusion_status STALE
+[logging_node-16]     - /autoware/planning ERROR
+[logging_node-16]         - /autoware/planning/routing/state STALE
+[logging_node-16]         - [anonymous group] ERROR
+[logging_node-16]             - /autoware/planning/topic_rate_check/route STALE
+[logging_node-16]             - /autoware/planning/topic_rate_check/trajectory STALE
+[logging_node-16]             - /autoware/planning/trajectory_validation ERROR
+[logging_node-16]     - /autoware/perception ERROR
+[logging_node-16]         - /autoware/perception/topic_rate_check/objects STALE
+[logging_node-16]         - /autoware/perception/topic_rate_check/pointcloud STALE
+[logging_node-16]     - /autoware/control ERROR
+[logging_node-16]         - /autoware/control/topic_rate_check/trajectory_follower STALE
+[logging_node-16]         - /autoware/control/topic_rate_check/control_command STALE
+[logging_node-16]         - /autoware/control/node_alive_monitoring/command_gate ERROR
+[logging_node-16]             - /autoware/control/node_alive_monitoring/vehicle_cmd_gate STALE
+[logging_node-16]             - /autoware/control/node_alive_monitoring/control_command_gate STALE
+[logging_node-16]         - /autoware/control/emergency_braking STALE
+[logging_node-16]         - /autoware/control/performance_monitoring/lane_departure STALE
+[logging_node-16]         - /autoware/control/performance_monitoring/control_state STALE
+[logging_node-16]     - /autoware/vehicle ERROR
+[logging_node-16]         - /autoware/vehicle/topic_rate_check/velocity STALE
+[logging_node-16]         - /autoware/vehicle/topic_rate_check/steering STALE
+[logging_node-16]     - /autoware/system ERROR
+[logging_node-16]         - /autoware/system/duplicated_node_checker ERROR
+[logging_node-16]         - /autoware/system/topic_rate_check/emergency_control_command STALE
+[logging_node-16]         - /autoware/system/emergency_stop_operation ERROR
+[logging_node-16]             - /autoware/system/emergency_stop_operation/vehicle_cmd_gate STALE
+[logging_node-16]             - /autoware/system/emergency_stop_operation/control_command_gate STALE
+[logging_node-16]     - /adapi/mrm_request/delegate STALE
+[logging_node-16] 
+[autoware_mrm_handler_node-14] [INFO] [1784306512.570843595] [system.mrm_handler]: waiting for mrm comfortable stop to become available...
+[component_container_mt-27] [INFO] [1784306512.645251426] [planning.scenario_planning.lane_driving.behavior_planning.behavior_planning_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::behavior_path_planner::BehaviorPathPlannerNode>
+[component_container_mt-27] [INFO] [1784306512.645317256] [planning.scenario_planning.lane_driving.behavior_planning.behavior_planning_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::behavior_path_planner::BehaviorPathPlannerNode>
+[autoware_scenario_selector_node-23] [INFO] [1784306515.299293819] [planning.scenario_planning.scenario_selector]: Waiting for current pose.
+[logging_node-16] [WARN] [1784306515.869771543] [logging_diag_graph]: The target mode is not available for the following reasons:
+[logging_node-16] - /autoware/modes/autonomous ERROR
+[logging_node-16]     - /autoware/map ERROR
+[logging_node-16]         - /autoware/map/topic_rate_check/vector_map STALE
+[logging_node-16]     - /autoware/localization ERROR
+[logging_node-16]         - [anonymous group] ERROR
+[logging_node-16]             - /autoware/localization/topic_rate_check/transform STALE
+[logging_node-16]     - /autoware/planning ERROR
+[logging_node-16]         - /autoware/planning/routing/state STALE
+[logging_node-16]         - [anonymous group] ERROR
+[logging_node-16]             - /autoware/planning/topic_rate_check/route STALE
+[logging_node-16]             - /autoware/planning/topic_rate_check/trajectory STALE
+[logging_node-16]     - /autoware/perception ERROR
+[logging_node-16]         - /autoware/perception/topic_rate_check/objects STALE
+[logging_node-16]     - /autoware/control ERROR
+[logging_node-16]         - /autoware/control/topic_rate_check/trajectory_follower STALE
+[logging_node-16]         - /autoware/control/topic_rate_check/control_command STALE
+[logging_node-16]         - /autoware/control/node_alive_monitoring/command_gate ERROR
+[logging_node-16]             - /autoware/control/node_alive_monitoring/vehicle_cmd_gate STALE
+[logging_node-16]             - /autoware/control/node_alive_monitoring/control_command_gate STALE
+[logging_node-16]         - /autoware/control/emergency_braking STALE
+[logging_node-16]         - /autoware/control/performance_monitoring/lane_departure STALE
+[logging_node-16]         - /autoware/control/performance_monitoring/control_state STALE
+[logging_node-16]     - /autoware/vehicle ERROR
+[logging_node-16]         - /autoware/vehicle/topic_rate_check/velocity STALE
+[logging_node-16]         - /autoware/vehicle/topic_rate_check/steering STALE
+[logging_node-16]     - /autoware/system ERROR
+[logging_node-16]         - /autoware/system/duplicated_node_checker ERROR
+[logging_node-16]         - /autoware/system/topic_rate_check/emergency_control_command STALE
+[logging_node-16]         - /autoware/system/emergency_stop_operation ERROR
+[logging_node-16]             - /autoware/system/emergency_stop_operation/vehicle_cmd_gate STALE
+[logging_node-16]             - /autoware/system/emergency_stop_operation/control_command_gate STALE
+[logging_node-16] 
+[component_container-8] [INFO] [1784306515.914095250] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-8] [INFO] [1784306515.914162443] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[autoware_duplicated_node_checker_node-4] [WARN] [1784306516.021912658] [system.duplicated_node_checker]: /planning/planning_evaluator node is duplicated.
+[autoware_mrm_handler_node-14] [INFO] [1784306517.669843744] [system.mrm_handler]: waiting for mrm comfortable stop to become available...
+[autoware_dummy_perception_publisher_node-38] [WARN] [1784306517.787100084] [simulation.dummy_perception_publisher]: "map" passed to lookupTransform argument target_frame does not exist. 

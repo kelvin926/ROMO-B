@@ -59,8 +59,9 @@ serial bridge. The optional Autoware procedure is kept separate in
 
 Generated data belongs in `data/local/`. Create a manifest with
 `scripts/register_artifact.sh`; it calculates size and SHA-256. `uri: pending`
-is accepted during software development but must be replaced before the first
-real-data acceptance run.
+is accepted during software development. Compact files at or below 10 MiB are
+tracked for handoff. Recording databases remain ignored and their URI must be
+replaced before another host needs the original data.
 
 With a pose graph argument, `pcd_to_occupancy` compares obstacle height to the
 nearest recorded base pose, raycasts only pose-to-return lines as free, and

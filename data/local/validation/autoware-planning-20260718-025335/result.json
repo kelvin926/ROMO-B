@@ -1,0 +1,31 @@
+{
+  "baseline_near_obstacle_speed_mps": 0.20001624524593353,
+  "baseline_speed_range_mps": [
+    0.0,
+    0.20002040266990662
+  ],
+  "baseline_trajectory_points": 141,
+  "centerline_points": 239,
+  "checks": {
+    "baseline_moving_near_obstacle": true,
+    "baseline_trajectory": true,
+    "expected_avoid_response": true,
+    "forward_only_trajectory": true,
+    "obstacle_conflicts_with_baseline": true,
+    "planned_speed_at_or_below_0_2_mps": true,
+    "post_obstacle_trajectory": true,
+    "routing_api_accepted": true
+  },
+  "maximum_clearance_m": 0.8350659588535394,
+  "minimum_near_obstacle_speed_mps": 0.1996239870786667,
+  "object_diameter_m": 0.4,
+  "obstacle_offset_m": 0.3,
+  "obstacle_xy": [
+    -9.12122479045364,
+    0.788682465627693
+  ],
+  "required_clearance_m": 0.6000000000000001,
+  "response": "avoid",
+  "response_count": 2,
+  "result": "PASS"
+}

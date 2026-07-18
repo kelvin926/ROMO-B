@@ -1,0 +1,12 @@
+{
+  "result": "PASS",
+  "service": "/api/routing/set_route_points",
+  "waypoint_file": "/home/hyunseo/ROMO-B/data/local/validation/autoware-waypoint-sender-20260718-092414/test_waypoints.yaml",
+  "intermediate_waypoints": 1,
+  "goal_xy": [
+    15.730018999999999,
+    0.43049299999999996
+  ],
+  "maximum_speed_mps": 0.1,
+  "note": "Route set only; this command never arms or engages the robot"
+}

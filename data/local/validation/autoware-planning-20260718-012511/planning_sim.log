@@ -1,0 +1,513 @@
+[INFO] [launch]: All log files can be found below /home/hyunseo/.ros/log/2026-07-18-01-25-11-868981-hyunseo-2204-402737
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [speed_limit_guard-1]: process started with pid [402816]
+[INFO] [component_container_mt-2]: process started with pid [402818]
+[INFO] [robot_state_publisher-3]: process started with pid [402820]
+[INFO] [autoware_duplicated_node_checker_node-4]: process started with pid [402822]
+[INFO] [processing_time_checker_node-5]: process started with pid [402824]
+[INFO] [autoware_pipeline_latency_monitor_node-6]: process started with pid [402826]
+[INFO] [service_log_checker_node-7]: process started with pid [402828]
+[INFO] [component_container-8]: process started with pid [402830]
+[INFO] [component_container-9]: process started with pid [402832]
+[INFO] [component_container-10]: process started with pid [402834]
+[INFO] [aggregator_node-11]: process started with pid [402836]
+[INFO] [converter_node-12]: process started with pid [402838]
+[INFO] [autoware_hazard_status_converter_node-13]: process started with pid [402840]
+[INFO] [autoware_mrm_handler_node-14]: process started with pid [402842]
+[INFO] [autoware_dummy_diag_publisher_node-15]: process started with pid [402844]
+[INFO] [logging_node-16]: process started with pid [402846]
+[INFO] [component_container_mt-17]: process started with pid [402848]
+[INFO] [map_hash_generator-18]: process started with pid [402850]
+[INFO] [autoware_map_projection_loader_node-19]: process started with pid [402853]
+[INFO] [autoware_manual_lane_change_handler_node-20]: process started with pid [402947]
+[INFO] [component_container_mt-21]: process started with pid [402953]
+[INFO] [goal_pose_visualizer-22]: process started with pid [402962]
+[INFO] [autoware_scenario_selector_node-23]: process started with pid [402964]
+[INFO] [external_velocity_limit_selector-24]: process started with pid [402969]
+[INFO] [component_container-25]: process started with pid [402971]
+[INFO] [autoware_hazard_lights_selector_node-26]: process started with pid [402973]
+[INFO] [component_container_mt-27]: process started with pid [402978]
+[INFO] [component_container_mt-28]: process started with pid [402986]
+[INFO] [component_container_mt-29]: process started with pid [402992]
+[INFO] [planning_evaluator-30]: process started with pid [403002]
+[INFO] [autoware_remaining_distance_time_calculator_node-31]: process started with pid [403014]
+[INFO] [relay-32]: process started with pid [403018]
+[INFO] [component_container_mt-33]: process started with pid [403023]
+[INFO] [component_container_mt-34]: process started with pid [403026]
+[INFO] [component_container_mt-35]: process started with pid [403032]
+[INFO] [initial_pose_adaptor_node-36]: process started with pid [403051]
+[INFO] [routing_adaptor_node-37]: process started with pid [403074]
+[INFO] [autoware_dummy_perception_publisher_node-38]: process started with pid [403081]
+[INFO] [multi_object_tracker_node-39]: process started with pid [403098]
+[INFO] [map_based_prediction-40]: process started with pid [403105]
+[INFO] [autoware_perception_analytics_publisher_node-41]: process started with pid [403122]
+[INFO] [autoware_pose_initializer_node-42]: process started with pid [403134]
+[INFO] [autoware_vehicle_door_simulator_node-43]: process started with pid [403137]
+[INFO] [autoware_simple_planning_simulator_node-44]: process started with pid [403139]
+[autoware_pipeline_latency_monitor_node-6] [INFO] [1784305528.662624036] [system.pipeline_latency_monitor]: PipelineLatencyMonitorNode initialized
+[robot_state_publisher-3] [WARN] [1784305528.783151150] [kdl_parser]: The root link base_link has an inertia specified in the URDF, but KDL does not support a root link with an inertia.  As a workaround, you can add an extra dummy link to your URDF.
+[robot_state_publisher-3] [INFO] [1784305528.784417742] [robot_state_publisher]: got segment base_footprint
+[robot_state_publisher-3] [INFO] [1784305528.784486176] [robot_state_publisher]: got segment base_link
+[robot_state_publisher-3] [INFO] [1784305528.784497489] [robot_state_publisher]: got segment camera0/camera_link
+[robot_state_publisher-3] [INFO] [1784305528.784506285] [robot_state_publisher]: got segment camera0/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784305528.784514622] [robot_state_publisher]: got segment camera1/camera_link
+[robot_state_publisher-3] [INFO] [1784305528.784522667] [robot_state_publisher]: got segment camera1/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784305528.784530881] [robot_state_publisher]: got segment camera2/camera_link
+[robot_state_publisher-3] [INFO] [1784305528.784538752] [robot_state_publisher]: got segment camera2/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784305528.784546590] [robot_state_publisher]: got segment camera3/camera_link
+[robot_state_publisher-3] [INFO] [1784305528.784554224] [robot_state_publisher]: got segment camera3/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784305528.784562036] [robot_state_publisher]: got segment camera4/camera_link
+[robot_state_publisher-3] [INFO] [1784305528.784569749] [robot_state_publisher]: got segment camera4/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784305528.784577617] [robot_state_publisher]: got segment camera5/camera_link
+[robot_state_publisher-3] [INFO] [1784305528.784585014] [robot_state_publisher]: got segment camera5/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784305528.784592843] [robot_state_publisher]: got segment fl_steer_link
+[robot_state_publisher-3] [INFO] [1784305528.784600492] [robot_state_publisher]: got segment fl_wheel_link
+[robot_state_publisher-3] [INFO] [1784305528.784607984] [robot_state_publisher]: got segment fr_steer_link
+[robot_state_publisher-3] [INFO] [1784305528.784615548] [robot_state_publisher]: got segment fr_wheel_link
+[robot_state_publisher-3] [INFO] [1784305528.784622843] [robot_state_publisher]: got segment gnss_link
+[robot_state_publisher-3] [INFO] [1784305528.784630550] [robot_state_publisher]: got segment livox_frame
+[robot_state_publisher-3] [INFO] [1784305528.784638313] [robot_state_publisher]: got segment rl_steer_link
+[robot_state_publisher-3] [INFO] [1784305528.784645938] [robot_state_publisher]: got segment rl_wheel_link
+[robot_state_publisher-3] [INFO] [1784305528.784653488] [robot_state_publisher]: got segment rr_steer_link
+[robot_state_publisher-3] [INFO] [1784305528.784661043] [robot_state_publisher]: got segment rr_wheel_link
+[robot_state_publisher-3] [INFO] [1784305528.784668587] [robot_state_publisher]: got segment sensor_kit_base_link
+[robot_state_publisher-3] [INFO] [1784305528.784676434] [robot_state_publisher]: got segment tamagawa/imu_link
+[robot_state_publisher-3] [INFO] [1784305528.784684151] [robot_state_publisher]: got segment traffic_light_left_camera/camera_link
+[robot_state_publisher-3] [INFO] [1784305528.784692300] [robot_state_publisher]: got segment traffic_light_left_camera/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784305528.784700104] [robot_state_publisher]: got segment traffic_light_right_camera/camera_link
+[robot_state_publisher-3] [INFO] [1784305528.784708265] [robot_state_publisher]: got segment traffic_light_right_camera/camera_optical_link
+[robot_state_publisher-3] [INFO] [1784305528.784716481] [robot_state_publisher]: got segment velodyne_left
+[robot_state_publisher-3] [INFO] [1784305528.784724333] [robot_state_publisher]: got segment velodyne_left_base_link
+[robot_state_publisher-3] [INFO] [1784305528.784732126] [robot_state_publisher]: got segment velodyne_rear
+[robot_state_publisher-3] [INFO] [1784305528.784739864] [robot_state_publisher]: got segment velodyne_rear_base_link
+[robot_state_publisher-3] [INFO] [1784305528.784747704] [robot_state_publisher]: got segment velodyne_right
+[robot_state_publisher-3] [INFO] [1784305528.784755523] [robot_state_publisher]: got segment velodyne_right_base_link
+[robot_state_publisher-3] [INFO] [1784305528.784763182] [robot_state_publisher]: got segment velodyne_top
+[robot_state_publisher-3] [INFO] [1784305528.784771182] [robot_state_publisher]: got segment velodyne_top_base_link
+[autoware_map_projection_loader_node-19] Load /home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/autoware/map_projector_info.yaml
+[autoware_scenario_selector_node-23] [INFO] [1784305528.932231110] [planning.scenario_planning.scenario_selector]: Waiting for current pose.
+[component_container-9] [INFO] [1784305528.963918251] [system.mrm_comfortable_stop_operator.mrm_comfortable_stop_operator_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_mrm_comfortable_stop_operator/lib/libautoware_mrm_comfortable_stop_operator_component.so
+[component_container-9] [INFO] [1784305528.967004153] [system.mrm_comfortable_stop_operator.mrm_comfortable_stop_operator_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::mrm_comfortable_stop_operator::MrmComfortableStopOperator>
+[component_container-9] [INFO] [1784305528.967045111] [system.mrm_comfortable_stop_operator.mrm_comfortable_stop_operator_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::mrm_comfortable_stop_operator::MrmComfortableStopOperator>
+[autoware_mrm_handler_node-14] [INFO] [1784305528.982983666] [system.mrm_handler]: waiting for mrm comfortable stop to become available...
+[logging_node-16] [WARN] [1784305529.015538473] [logging_diag_graph]: The target mode is not available for the following reasons:
+[logging_node-16] - /autoware/modes/autonomous ERROR
+[logging_node-16]     - /autoware/map ERROR
+[logging_node-16]         - /autoware/map/topic_rate_check/vector_map STALE
+[logging_node-16]     - /autoware/localization ERROR
+[logging_node-16]         - /autoware/localization/state STALE
+[logging_node-16]         - [anonymous group] ERROR
+[logging_node-16]             - /autoware/localization/topic_rate_check/transform STALE
+[logging_node-16]     - /autoware/planning ERROR
+[logging_node-16]         - /autoware/planning/routing/state STALE
+[logging_node-16]         - [anonymous group] ERROR
+[logging_node-16]             - /autoware/planning/topic_rate_check/route STALE
+[logging_node-16]             - /autoware/planning/topic_rate_check/trajectory STALE
+[logging_node-16]             - /autoware/planning/trajectory_validation ERROR
+[logging_node-16]     - /autoware/perception ERROR
+[logging_node-16]         - /autoware/perception/topic_rate_check/objects STALE
+[logging_node-16]     - /autoware/control ERROR
+[logging_node-16]         - /autoware/control/topic_rate_check/trajectory_follower STALE
+[logging_node-16]         - /autoware/control/topic_rate_check/control_command STALE
+[logging_node-16]         - /autoware/control/node_alive_monitoring/command_gate ERROR
+[logging_node-16]             - /autoware/control/node_alive_monitoring/vehicle_cmd_gate STALE
+[logging_node-16]             - /autoware/control/node_alive_monitoring/control_command_gate STALE
+[logging_node-16]         - /autoware/control/emergency_braking STALE
+[logging_node-16]         - /autoware/control/performance_monitoring/lane_departure STALE
+[logging_node-16]         - /autoware/control/performance_monitoring/control_state STALE
+[logging_node-16]     - /autoware/vehicle ERROR
+[logging_node-16]         - /autoware/vehicle/topic_rate_check/velocity STALE
+[logging_node-16]         - /autoware/vehicle/topic_rate_check/steering STALE
+[logging_node-16]     - /autoware/system ERROR
+[logging_node-16]         - /autoware/system/topic_rate_check/emergency_control_command STALE
+[logging_node-16]         - /autoware/system/emergency_stop_operation ERROR
+[logging_node-16]             - /autoware/system/emergency_stop_operation/vehicle_cmd_gate STALE
+[logging_node-16]             - /autoware/system/emergency_stop_operation/control_command_gate STALE
+[logging_node-16]     - /adapi/mrm_request/delegate STALE
+[logging_node-16] 
+[component_container-10] [INFO] [1784305529.046815369] [system.mrm_emergency_stop_operator.mrm_emergency_stop_operator_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_mrm_emergency_stop_operator/lib/libautoware_mrm_emergency_stop_operator_component.so
+[component_container-10] [INFO] [1784305529.063574904] [system.mrm_emergency_stop_operator.mrm_emergency_stop_operator_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::mrm_emergency_stop_operator::MrmEmergencyStopOperator>
+[component_container-10] [INFO] [1784305529.063619017] [system.mrm_emergency_stop_operator.mrm_emergency_stop_operator_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::mrm_emergency_stop_operator::MrmEmergencyStopOperator>
+[component_container-8] [INFO] [1784305529.090813711] [system.component_state_monitor.container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_component_state_monitor/lib/libautoware_component_state_monitor.so
+[component_container-8] [INFO] [1784305529.095832486] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::component_state_monitor::StateMonitor>
+[component_container-8] [INFO] [1784305529.099511747] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::component_state_monitor::StateMonitor>
+[component_container_mt-21] [INFO] [1784305529.100639474] [planning.mission_planning.mission_planner_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_mission_planner_universe/lib/libautoware_mission_planner_universe_component.so
+[component_container_mt-21] [INFO] [1784305529.140598850] [planning.mission_planning.mission_planner_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::mission_planner_universe::MissionPlanner>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/mrm_comfortable_stop_operator' in container '/system/mrm_comfortable_stop_operator/mrm_comfortable_stop_operator_container'
+[component_container_mt-21] [INFO] [1784305529.140646717] [planning.mission_planning.mission_planner_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::mission_planner_universe::MissionPlanner>
+[multi_object_tracker_node-39] [INFO] [1784305529.171245754] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing detected_objects input stream index 0
+[multi_object_tracker_node-39] [INFO] [1784305529.171320486] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 1
+[multi_object_tracker_node-39] [INFO] [1784305529.171326455] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 2
+[multi_object_tracker_node-39] [INFO] [1784305529.171329736] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 3
+[multi_object_tracker_node-39] [INFO] [1784305529.171334364] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 4
+[multi_object_tracker_node-39] [INFO] [1784305529.171337753] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 5
+[multi_object_tracker_node-39] [INFO] [1784305529.171340940] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 6
+[multi_object_tracker_node-39] [INFO] [1784305529.171345444] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 7
+[multi_object_tracker_node-39] [INFO] [1784305529.171348731] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 8
+[multi_object_tracker_node-39] [INFO] [1784305529.171351852] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 9
+[multi_object_tracker_node-39] [INFO] [1784305529.171354835] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 10
+[multi_object_tracker_node-39] [INFO] [1784305529.171359147] [perception.object_recognition.tracking.multi_object_tracker]: InputManager::init Initializing none input stream index 11
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/mrm_emergency_stop_operator' in container '/system/mrm_emergency_stop_operator/mrm_emergency_stop_operator_container'
+[autoware_mrm_handler_node-14] [INFO] [1784305529.283486240] [system.mrm_handler]: waiting for mrm emergency stop to become available...
+[component_container_mt-17] [INFO] [1784305529.306168145] [map.map_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_map_loader/lib/libpointcloud_map_loader_node.so
+[component_container_mt-17] [INFO] [1784305529.394707418] [map.map_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::map_loader::PointCloudMapLoaderNode>
+[component_container_mt-17] [INFO] [1784305529.394758652] [map.map_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::map_loader::PointCloudMapLoaderNode>
+[component_container_mt-28] [INFO] [1784305529.743263217] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_surround_obstacle_checker/lib/libautoware_surround_obstacle_checker.so
+[component_container_mt-28] [INFO] [1784305529.806311641] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::surround_obstacle_checker::SurroundObstacleCheckerNode>
+[component_container_mt-28] [INFO] [1784305529.806370168] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::surround_obstacle_checker::SurroundObstacleCheckerNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/component_state_monitor/component' in container '/system/component_state_monitor/container'
+[component_container-8] [INFO] [1784305529.815381015] [system.component_state_monitor.container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_topic_state_monitor/lib/libautoware_topic_state_monitor.so
+[component_container-8] [INFO] [1784305529.828468394] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-8] [INFO] [1784305529.828521713] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-25] [INFO] [1784305529.837119140] [planning.scenario_planning.velocity_smoother_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_velocity_smoother/lib/libautoware_velocity_smoother_node.so
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/map/pointcloud_map_loader' in container '/map/map_container'
+[component_container_mt-33] [INFO] [1784305529.889375231] [control.control_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_shift_decider/lib/libautoware_shift_decider_node.so
+[component_container_mt-27] [INFO] [1784305529.906644128] [planning.scenario_planning.lane_driving.behavior_planning.behavior_planning_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_behavior_velocity_planner/lib/libautoware_behavior_velocity_planner_lib.so
+[component_container_mt-33] [INFO] [1784305529.906777784] [control.control_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::shift_decider::ShiftDecider>
+[component_container_mt-33] [INFO] [1784305529.906900005] [control.control_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::shift_decider::ShiftDecider>
+[component_container-25] [INFO] [1784305529.923322740] [planning.scenario_planning.velocity_smoother_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::velocity_smoother::VelocitySmootherNode>
+[component_container-25] [INFO] [1784305529.923379571] [planning.scenario_planning.velocity_smoother_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::velocity_smoother::VelocitySmootherNode>
+[autoware_simple_planning_simulator_node-44] [INFO] [1784305529.977473053] [simulation.simple_planning_simulator]: waiting initialization...
+[autoware_mrm_handler_node-14] [INFO] [1784305529.985299669] [system.mrm_handler]: MRM State changed: NORMAL -> MRM_OPERATING
+[autoware_mrm_handler_node-14] [WARN] [1784305529.985370890] [system.mrm_handler]: no mrm operation available: operate emergency_stop
+[autoware_mrm_handler_node-14] [WARN] [1784305529.991072294] [system.mrm_handler]: EMERGENCY_STOP is operated.
+[component_container_mt-27] [INFO] [1784305530.015953875] [planning.scenario_planning.lane_driving.behavior_planning.behavior_planning_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::behavior_velocity_planner::BehaviorVelocityPlannerNode>
+[component_container_mt-27] [INFO] [1784305530.016021778] [planning.scenario_planning.lane_driving.behavior_planning.behavior_planning_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::behavior_velocity_planner::experimental::BehaviorVelocityPlannerNode>
+[component_container_mt-27] [INFO] [1784305530.016036602] [planning.scenario_planning.lane_driving.behavior_planning.behavior_planning_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::behavior_velocity_planner::experimental::BehaviorVelocityPlannerNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/control/autoware_shift_decider' in container '/control/control_container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/topic_state_monitor_vector_map' in container '/system/component_state_monitor/container'
+[component_container_mt-33] [INFO] [1784305530.057303188] [control.control_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_trajectory_follower_node/lib/libcontroller_node.so
+[component_container-8] [INFO] [1784305530.057856488] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-8] [INFO] [1784305530.057902153] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planning/mission_planning/mission_planner' in container '/planning/mission_planning/mission_planner_container'
+[component_container_mt-29] [INFO] [1784305530.076722101] [planning.planning_validator_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_planning_validator/lib/libautoware_planning_validator_component.so
+[autoware_mrm_handler_node-14] [WARN] [1784305530.083587959] [system.mrm_handler]: no mrm operation available: operate emergency_stop
+[component_container_mt-33] [INFO] [1784305530.105390699] [control.control_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::motion::control::trajectory_follower_node::Controller>
+[component_container_mt-33] [INFO] [1784305530.105442529] [control.control_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::motion::control::trajectory_follower_node::Controller>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/topic_state_monitor_object_recognition_objects' in container '/system/component_state_monitor/container'
+[component_container-8] [INFO] [1784305530.125336783] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-8] [INFO] [1784305530.125510635] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container_mt-29] [INFO] [1784305530.129874822] [planning.planning_validator_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::planning_validator::PlanningValidatorNode>
+[component_container_mt-29] [INFO] [1784305530.129925707] [planning.planning_validator_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::planning_validator::PlanningValidatorNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planning/scenario_planning/velocity_smoother' in container '/planning/scenario_planning/velocity_smoother_container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planning/scenario_planning/lane_driving/motion_planning/surround_obstacle_checker' in container '/planning/scenario_planning/lane_driving/motion_planning/motion_planning_container'
+[component_container_mt-28] [INFO] [1784305530.147395917] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_path_smoother/lib/libautoware_path_smoother.so
+[component_container_mt-28] [INFO] [1784305530.151173476] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::path_smoother::ElasticBandSmoother>
+[component_container_mt-28] [INFO] [1784305530.151227554] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::path_smoother::ElasticBandSmoother>
+[component_container_mt-21] [INFO] [1784305530.156894958] [planning.mission_planning.mission_planner]: waiting lanelet map... Route API is not ready.
+[autoware_mrm_handler_node-14] [WARN] [1784305530.183045326] [system.mrm_handler]: no mrm operation available: operate emergency_stop
+[component_container-8] [INFO] [1784305530.186412483] [system.topic_state_monitor_vector_map]: /map/vector_map has not received. Set ERROR in diagnostics.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/topic_state_monitor_scenario_planning_trajectory' in container '/system/component_state_monitor/container'
+[component_container-8] [INFO] [1784305530.195938990] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-8] [INFO] [1784305530.195991726] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planning/scenario_planning/lane_driving/behavior_planning/behavior_velocity_planner' in container '/planning/scenario_planning/lane_driving/behavior_planning/behavior_planning_container'
+[component_container_mt-27] [INFO] [1784305530.204777911] [planning.scenario_planning.lane_driving.behavior_planning.behavior_planning_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_behavior_path_planner/lib/libautoware_behavior_path_planner_lib.so
+[component_container_mt-28] [INFO] [1784305530.221105889] [planning.scenario_planning.lane_driving.motion_planning.surround_obstacle_checker]: waiting for current velocity...
+[component_container_mt-27] [INFO] [1784305530.242477543] [planning.scenario_planning.lane_driving.behavior_planning.behavior_planning_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::behavior_path_planner::BehaviorPathPlannerNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planning/scenario_planning/lane_driving/motion_planning/elastic_band_smoother' in container '/planning/scenario_planning/lane_driving/motion_planning/motion_planning_container'
+[component_container_mt-27] [INFO] [1784305530.242531969] [planning.scenario_planning.lane_driving.behavior_planning.behavior_planning_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::behavior_path_planner::BehaviorPathPlannerNode>
+[component_container_mt-28] [INFO] [1784305530.248464164] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_path_optimizer/lib/libautoware_path_optimizer.so
+[component_container_mt-2] [INFO] [1784305530.251546991] [pointcloud_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/pointcloud_to_laserscan/lib/libpointcloud_to_laserscan.so
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/topic_state_monitor_mission_planning_route' in container '/system/component_state_monitor/container'
+[component_container-8] [INFO] [1784305530.253555544] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-8] [INFO] [1784305530.253599114] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container_mt-17] [INFO] [1784305530.261529837] [map.map_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_map_loader/lib/liblanelet2_map_loader_node.so
+[component_container_mt-28] [INFO] [1784305530.274132660] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::path_optimizer::PathOptimizer>
+[component_container_mt-28] [INFO] [1784305530.274192128] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::path_optimizer::PathOptimizer>
+[component_container_mt-2] [INFO] [1784305530.276153924] [pointcloud_container]: Found class: rclcpp_components::NodeFactoryTemplate<pointcloud_to_laserscan::PointCloudToLaserScanNode>
+[component_container_mt-2] [INFO] [1784305530.276210391] [pointcloud_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<pointcloud_to_laserscan::PointCloudToLaserScanNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/control/trajectory_follower/controller_node_exe' in container '/control/control_container'
+[autoware_mrm_handler_node-14] [WARN] [1784305530.283005321] [system.mrm_handler]: no mrm operation available: operate emergency_stop
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/interface' in container '/adapi/container'
+[component_container_mt-17] [INFO] [1784305530.284837669] [map.map_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::map_loader::Lanelet2MapLoaderNode>
+[component_container_mt-17] [INFO] [1784305530.284890083] [map.map_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::map_loader::Lanelet2MapLoaderNode>
+[component_container_mt-33] [INFO] [1784305530.296442973] [control.control_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_vehicle_cmd_gate/lib/libvehicle_cmd_gate_node.so
+[component_container_mt-21] [INFO] [1784305530.299857263] [planning.mission_planning.mission_planner_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::mission_planner_universe::MissionPlanner>
+[component_container_mt-21] [INFO] [1784305530.299914791] [planning.mission_planning.mission_planner_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::mission_planner_universe::RouteSelector>
+[component_container_mt-21] [INFO] [1784305530.299928122] [planning.mission_planning.mission_planner_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::mission_planner_universe::RouteSelector>
+[component_container_mt-33] [INFO] [1784305530.303129493] [control.trajectory_follower.controller_node_exe]: Waiting for acceleration data
+[component_container_mt-33] [INFO] [1784305530.303203960] [control.trajectory_follower.controller_node_exe]: Control is skipped since input data is not ready.
+[component_container_mt-33] [INFO] [1784305530.309533733] [control.control_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::vehicle_cmd_gate::VehicleCmdGate>
+[component_container_mt-33] [INFO] [1784305530.309581012] [control.control_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::vehicle_cmd_gate::VehicleCmdGate>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/topic_state_monitor_trajectory_follower_control_cmd' in container '/system/component_state_monitor/container'
+[component_container_mt-34] [INFO] [1784305530.318313226] [control.control_check_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_lane_departure_checker/lib/libautoware_lane_departure_checker.so
+[component_container-8] [INFO] [1784305530.318652566] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-8] [INFO] [1784305530.318693357] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/map/lanelet2_map_loader' in container '/map/map_container'
+[component_container_mt-34] [INFO] [1784305530.374136532] [control.control_check_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::lane_departure_checker::LaneDepartureCheckerNode>
+[component_container_mt-34] [INFO] [1784305530.374186910] [control.control_check_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::lane_departure_checker::LaneDepartureCheckerNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planning/planning_validator' in container '/planning/planning_validator_container'
+[component_container_mt-17] [INFO] [1784305530.380837277] [map.map_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_lanelet2_map_visualizer/lib/liblanelet2_map_visualization_node.so
+[component_container_mt-17] [INFO] [1784305530.383285234] [map.lanelet2_map_loader]: Loaded map format_version: 1
+[component_container_mt-17] [INFO] [1784305530.383325814] [map.map_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::lanelet2_map_visualizer::Lanelet2MapVisualizationNode>
+[component_container_mt-17] [INFO] [1784305530.385553019] [map.map_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::lanelet2_map_visualizer::Lanelet2MapVisualizationNode>
+[autoware_mrm_handler_node-14] [WARN] [1784305530.383263523] [system.mrm_handler]: no mrm operation available: operate emergency_stop
+[component_container_mt-17] [INFO] [1784305530.392880778] [map.lanelet2_map_loader]: Succeeded to load lanelet2_map. Map is published.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/occupancy_grid_map/pointcloud_to_laserscan_node' in container 'pointcloud_container'
+[component_container_mt-2] [INFO] [1784305530.438765249] [pointcloud_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_probabilistic_occupancy_grid_map/lib/liblaserscan_based_occupancy_grid_map.so
+[component_container-8] [INFO] [1784305530.450060457] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-8] [INFO] [1784305530.450112221] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/topic_state_monitor_control_command_control_cmd' in container '/system/component_state_monitor/container'
+[component_container_mt-21] [INFO] [1784305530.457639800] [planning.mission_planning.mission_planner]: waiting odometry... Route API is not ready.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planning/mission_planning/route_selector' in container '/planning/mission_planning/mission_planner_container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/map/lanelet2_map_visualization' in container '/map/map_container'
+[component_container_mt-17] [INFO] [1784305530.469172150] [map.lanelet2_map_visualization]: Map is loaded
+[component_container_mt-17] 
+[component_container_mt-2] [INFO] [1784305530.475294857] [pointcloud_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::occupancy_grid_map::LaserscanBasedOccupancyGridMapNode>
+[component_container_mt-17] [INFO] [1784305530.475362905] [map.map_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_map_tf_generator/lib/libvector_map_tf_generator_node.so
+[component_container_mt-2] [INFO] [1784305530.475592846] [pointcloud_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::occupancy_grid_map::LaserscanBasedOccupancyGridMapNode>
+[autoware_mrm_handler_node-14] [WARN] [1784305530.483758090] [system.mrm_handler]: no mrm operation available: operate emergency_stop
+[component_container_mt-17] [INFO] [1784305530.490397965] [map.map_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::map_tf_generator::VectorMapTFGeneratorNode>
+[component_container_mt-17] [INFO] [1784305530.490510494] [map.map_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::map_tf_generator::VectorMapTFGeneratorNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/localization' in container '/adapi/container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/control/trajectory_follower/lane_departure_checker_node' in container '/control/control_check_container'
+[component_container_mt-34] [INFO] [1784305530.526005182] [control.control_check_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_control_validator/lib/libautoware_control_validator_component.so
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planning/scenario_planning/lane_driving/motion_planning/path_optimizer' in container '/planning/scenario_planning/lane_driving/motion_planning/motion_planning_container'
+[component_container_mt-28] [INFO] [1784305530.530258410] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_motion_velocity_planner/lib/libautoware_motion_velocity_planner_lib.so
+[component_container_mt-34] [INFO] [1784305530.532778325] [control.control_check_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::control_validator::ControlValidator>
+[component_container_mt-34] [INFO] [1784305530.532829168] [control.control_check_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::control_validator::ControlValidator>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/topic_state_monitor_vehicle_status_velocity_status' in container '/system/component_state_monitor/container'
+[component_container-8] [INFO] [1784305530.562032032] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container_mt-17] [INFO] [1784305530.571734461] [map.vector_map_tf_generator]: broadcast static tf. map_frame:map, viewer_frame:viewer, x:27.1949, y:-11.0573, z:0
+[component_container-8] [INFO] [1784305530.576649567] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/map/vector_map_tf_generator' in container '/map/map_container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/occupancy_grid_map/occupancy_grid_map_node' in container 'pointcloud_container'
+[autoware_mrm_handler_node-14] [WARN] [1784305530.582962218] [system.mrm_handler]: no mrm operation available: operate emergency_stop
+[component_container_mt-34] [INFO] [1784305530.633187219] [control.trajectory_follower.lane_departure_checker_node]: waiting for current_twist msg...
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/routing' in container '/adapi/container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/control/control_validator' in container '/control/control_check_container'
+[component_container_mt-34] [INFO] [1784305530.660910375] [control.control_check_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_autonomous_emergency_braking/lib/libautoware_autonomous_emergency_braking_node.so
+[component_container_mt-28] [INFO] [1784305530.676653246] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::motion_velocity_planner::MotionVelocityPlannerNode>
+[component_container_mt-28] [INFO] [1784305530.676709399] [planning.scenario_planning.lane_driving.motion_planning.motion_planning_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::motion_velocity_planner::MotionVelocityPlannerNode>
+[autoware_mrm_handler_node-14] [WARN] [1784305530.683055154] [system.mrm_handler]: no mrm operation available: operate emergency_stop
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/topic_state_monitor_system_emergency_control_cmd' in container '/system/component_state_monitor/container'
+[component_container-8] [INFO] [1784305530.692674853] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-8] [INFO] [1784305530.692735181] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/control/vehicle_cmd_gate' in container '/control/control_container'
+[component_container_mt-33] [INFO] [1784305530.716611510] [control.control_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_operation_mode_transition_manager/lib/libautoware_operation_mode_transition_manager_node.so
+[component_container_mt-33] [INFO] [1784305530.721769081] [control.control_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::operation_mode_transition_manager::AutonomousModeTransitionFlagNode>
+[component_container_mt-33] [INFO] [1784305530.721822043] [control.control_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::operation_mode_transition_manager::OperationModeTransitionManager>
+[component_container_mt-33] [INFO] [1784305530.721829622] [control.control_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::operation_mode_transition_manager::OperationModeTransitionManager>
+[autoware_mrm_handler_node-14] [WARN] [1784305530.783809075] [system.mrm_handler]: no mrm operation available: operate emergency_stop
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/topic_state_monitor_vehicle_status_steering_status' in container '/system/component_state_monitor/container'
+[component_container-8] [INFO] [1784305530.807987960] [system.component_state_monitor.container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container-8] [INFO] [1784305530.808033543] [system.component_state_monitor.container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::topic_state_monitor::TopicStateMonitorNode>
+[component_container_mt-34] [INFO] [1784305530.823540600] [control.control_check_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::motion::control::autonomous_emergency_braking::AEB>
+[component_container_mt-34] [INFO] [1784305530.823591999] [control.control_check_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::motion::control::autonomous_emergency_braking::AEB>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/autoware_state' in container '/adapi/container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/control/autoware_operation_mode_transition_manager' in container '/control/control_container'
+[autoware_mrm_handler_node-14] [WARN] [1784305530.883012511] [system.mrm_handler]: no mrm operation available: operate emergency_stop
+[initial_pose_adaptor_node-36] [INFO] [1784305530.903116765] [default_adapi.helpers.autoware_initial_pose_adaptor]: fit_target: vector_map, frame: map
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/system/topic_state_monitor_transform_map_to_base_link' in container '/system/component_state_monitor/container'
+[autoware_scenario_selector_node-23] [INFO] [1784305530.932085673] [planning.scenario_planning.scenario_selector]: Waiting for route.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/diagnostics' in container '/adapi/container'
+[autoware_mrm_handler_node-14] [INFO] [1784305530.982955830] [system.mrm_handler]: MRM State changed: MRM_OPERATING -> MRM_SUCCEEDED
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/control/autonomous_emergency_braking' in container '/control/control_check_container'
+[component_container_mt-34] [INFO] [1784305531.005026920] [control.control_check_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_collision_detector/lib/libautoware_collision_detector.so
+[component_container_mt-34] [INFO] [1784305531.008766203] [control.control_check_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::collision_detector::CollisionDetectorNode>
+[component_container_mt-34] [INFO] [1784305531.008818964] [control.control_check_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::collision_detector::CollisionDetectorNode>
+[component_container_mt-34] [INFO] [1784305531.020078132] [control.trajectory_follower.lane_departure_checker_node]: waiting for route msg...
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/fail_safe' in container '/adapi/container'
+[component_container_mt-33] [WARN] [1784305531.139092306] [control.vehicle_cmd_gate]: Emergency!
+[component_container_mt-33] [ERROR] [1784305531.139204345] [control.vehicle_cmd_gate]: [VehicleCmdFilter] Acceleration change limit by longitudinal jerk: constraint(delta)=±0.000 [m/s^2], input_acc=-1.500 [m/s^2], output_acc=0.000 [m/s^2]
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/control/collision_detector' in container '/control/control_check_container'
+[component_container_mt-34] [INFO] [1784305531.289094444] [control.control_check_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_obstacle_collision_checker/lib/libobstacle_collision_checker.so
+[component_container_mt-34] [INFO] [1784305531.291573763] [control.control_check_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::obstacle_collision_checker::ObstacleCollisionCheckerNode>
+[component_container_mt-34] [INFO] [1784305531.291622554] [control.control_check_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::obstacle_collision_checker::ObstacleCollisionCheckerNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/heartbeat' in container '/adapi/container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/manual/local' in container '/adapi/container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/control/obstacle_collision_checker' in container '/control/control_check_container'
+[component_container_mt-34] [INFO] [1784305531.697893327] [control.control_check_container]: Load Library: /home/hyunseo/ROMO-B/autoware/install/autoware_predicted_path_checker/lib/libautoware_predicted_path_checker.so
+[component_container_mt-34] [INFO] [1784305531.701809375] [control.control_check_container]: Found class: rclcpp_components::NodeFactoryTemplate<autoware::predicted_path_checker::PredictedPathCheckerNode>
+[component_container_mt-34] [INFO] [1784305531.701867473] [control.control_check_container]: Instantiate class: rclcpp_components::NodeFactoryTemplate<autoware::predicted_path_checker::PredictedPathCheckerNode>
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/manual/remote' in container '/adapi/container'
+[component_container_mt-34] [INFO] [1784305531.795585876] [control.obstacle_collision_checker]: waiting for obstacle_pointcloud msg...
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/control/predicted_path_checker' in container '/control/control_check_container'
+[component_container_mt-33] [WARN] [1784305532.172092344] [control.vehicle_cmd_gate]: Emergency!
+[component_container_mt-34] [INFO] [1784305532.262667313] [control.predicted_path_checker]: waiting for reference_trajectory msg...
+[component_container_mt-27] added a slot with 1 modules
+[component_container_mt-27] side_shift registered in slot_configuration is not registered, skipping
+[component_container_mt-27] avoidance_by_lane_change registered in slot_configuration is not registered, skipping
+[component_container_mt-27] lane_change_left registered in slot_configuration is not registered, skipping
+[component_container_mt-27] lane_change_right registered in slot_configuration is not registered, skipping
+[component_container_mt-27] external_request_lane_change_left registered in slot_configuration is not registered, skipping
+[component_container_mt-27] external_request_lane_change_right registered in slot_configuration is not registered, skipping
+[component_container_mt-27] added a slot with 2 modules
+[component_container_mt-27] added a slot with 1 modules
+[component_container_mt-27] added a slot with 1 modules
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/motion' in container '/adapi/container'
+[initial_pose_adaptor_node-36] [INFO] [1784305532.980779273] [default_adapi.helpers.autoware_initial_pose_adaptor]: fit_target: vector_map, frame: map
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/mrm_request' in container '/adapi/container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planning/scenario_planning/lane_driving/behavior_planning/behavior_path_planner' in container '/planning/scenario_planning/lane_driving/behavior_planning/behavior_planning_container'
+[logging_node-16] [WARN] [1784305533.116160013] [logging_diag_graph]: The target mode is not available for the following reasons:
+[logging_node-16] - /autoware/modes/autonomous ERROR
+[logging_node-16]     - /autoware/planning ERROR
+[logging_node-16]         - /autoware/planning/routing/state ERROR
+[logging_node-16]         - [anonymous group] ERROR
+[logging_node-16]             - /autoware/planning/topic_rate_check/route ERROR
+[logging_node-16]             - /autoware/planning/topic_rate_check/trajectory ERROR
+[logging_node-16]     - /autoware/control ERROR
+[logging_node-16]         - /autoware/control/topic_rate_check/trajectory_follower ERROR
+[logging_node-16] 
+[component_container_mt-33] [WARN] [1784305533.175432697] [control.vehicle_cmd_gate]: Emergency!
+[component_container-8] [INFO] [1784305533.215351948] [system.topic_state_monitor_trajectory_follower_control_cmd]: /control/trajectory_follower/control_cmd has not received. Set ERROR in diagnostics.
+[component_container_mt-33] [WARN] [1784305534.205335962] [control.vehicle_cmd_gate]: Emergency!
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/planning/scenario_planning/lane_driving/motion_planning/motion_velocity_planner' in container '/planning/scenario_planning/lane_driving/motion_planning/motion_planning_container'
+[component_container_mt-34] [INFO] [1784305534.595674089] [control.obstacle_collision_checker]: waiting for reference_trajectory msg...
+[initial_pose_adaptor_node-36] [INFO] [1784305534.986977714] [default_adapi.helpers.autoware_initial_pose_adaptor]: fit_target: vector_map, frame: map
+[component_container_mt-33] [WARN] [1784305535.208390469] [control.vehicle_cmd_gate]: Emergency!
+[component_container_mt-33] [INFO] [1784305535.313189861] [control.trajectory_follower.controller_node_exe]: Waiting for trajectory data
+[component_container_mt-33] [INFO] [1784305535.313247549] [control.trajectory_follower.controller_node_exe]: Control is skipped since input data is not ready.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/operation_mode' in container '/adapi/container'
+[autoware_mrm_handler_node-14] [INFO] [1784305535.883051575] [system.mrm_handler]: MRM State changed: MRM_SUCCEEDED -> NORMAL
+[autoware_mrm_handler_node-14] [WARN] [1784305535.883590059] [system.mrm_handler]: EMERGENCY_STOP is canceled.
+[component_container_mt-33] [INFO] [1784305535.904558546] [control.vehicle_cmd_gate]: The operation mode is changed, but the GearCommand is not received yet:
+[component_container_mt-35] [INFO] [1784305535.922000304] [adapi.node.autoware_state]: AutowareState: Initializing => WaitingForRoute
+[autoware_scenario_selector_node-23] [INFO] [1784305535.934412881] [planning.scenario_planning.scenario_selector]: Waiting for route.
+[component_container_mt-34] [INFO] [1784305536.020095246] [control.trajectory_follower.lane_departure_checker_node]: waiting for route msg...
+[component_container_mt-21] [INFO] [1784305536.022369472] [route_handler]: getMainLanelets: lanelet_sequence = [ids: 481 484 487 490 493 496 499 502 505 508 511 514 517 520 ]
+[autoware_manual_lane_change_handler_node-20] [INFO] [1784305536.023457907] [ManualLaneChangeHandler]: Received new route with 14 segments
+[component_container_mt-21] [INFO] [1784305536.024394187] [planning.mission_planning.mission_planner]: Route set via set_waypoint_route
+[component_container_mt-21] [INFO] [1784305536.024436618] [planning.mission_planning.mission_planner]: Initial pose - x: -12.233396, y: 0.560678, z: 0.000000
+[component_container_mt-21] [INFO] [1784305536.024456201] [planning.mission_planning.mission_planner]: Initial orientation - qx: 0.000000, qy: -0.000000, qz: -0.044927, qw: 0.998990
+[component_container_mt-21] [INFO] [1784305536.024471150] [planning.mission_planning.mission_planner]: Goal pose - x: 19.412881, y: -31.054851, z: 0.000000
+[component_container_mt-21] [INFO] [1784305536.024484784] [planning.mission_planning.mission_planner]: Goal orientation - qx: 0.000000, qy: 0.000000, qz: 0.999175, qw: 0.040621
+[component_container_mt-34] [INFO] [1784305536.120293995] [control.trajectory_follower.lane_departure_checker_node]: waiting for reference_trajectory msg...
+[component_container-8] [INFO] [1784305536.286266898] [system.topic_state_monitor_scenario_planning_trajectory]: /planning/trajectory has not received. Set ERROR in diagnostics.
+[logging_node-16] [WARN] [1784305536.613383884] [logging_diag_graph]: The target mode is not available for the following reasons:
+[logging_node-16] - /autoware/modes/autonomous ERROR
+[logging_node-16]     - /autoware/planning ERROR
+[logging_node-16]         - /autoware/planning/routing/state STALE
+[logging_node-16]         - [anonymous group] ERROR
+[logging_node-16]             - /autoware/planning/topic_rate_check/trajectory ERROR
+[logging_node-16]     - /autoware/control ERROR
+[logging_node-16]         - /autoware/control/topic_rate_check/trajectory_follower ERROR
+[logging_node-16] 
+[component_container-8] [WARN] [1784305536.944783579] [system.topic_state_monitor_control_command_control_cmd]: /control/command/control_cmd topic is timeout. Set ERROR in diagnostics.
+[initial_pose_adaptor_node-36] [INFO] [1784305536.995707006] [default_adapi.helpers.autoware_initial_pose_adaptor]: fit_target: vector_map, frame: map
+[component_container_mt-34] [INFO] [1784305537.362627012] [control.predicted_path_checker]: waiting for reference_trajectory msg...
+[component_container_mt-27] [INFO] [1784305538.115307197] [planning.scenario_planning.lane_driving.behavior_planning.behavior_path_planner]: waiting for route
+[component_container_mt-27] [INFO] [1784305538.115393518] [planning.scenario_planning.lane_driving.behavior_planning.behavior_path_planner]: waiting for operation_mode
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/perception' in container '/adapi/container'
+[component_container_mt-33] [WARN] [1784305538.947244588] [control.autoware_operation_mode_transition_manager]: Subscribed control_cmd is timed out.
+[initial_pose_adaptor_node-36] [INFO] [1784305539.005950532] [default_adapi.helpers.autoware_initial_pose_adaptor]: fit_target: vector_map, frame: map
+[component_container_mt-34] [WARN] [1784305539.007404006] [control.obstacle_collision_checker]: failed to get transform from map to base_link: Lookup would require extrapolation into the future.  Requested time 1784305538.919822 but the latest data is at time 1784305538.852927, when looking up transform from frame [base_link] to frame [map]
+[component_container_mt-34] [INFO] [1784305539.007472424] [control.obstacle_collision_checker]: waiting for obstacle_transform...
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/planning' in container '/adapi/container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/vehicle_status' in container '/adapi/container'
+[component_container-8] [INFO] [1784305539.287137020] [system.topic_state_monitor_scenario_planning_trajectory]: /planning/trajectory has not received. Set ERROR in diagnostics.
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/vehicle_command' in container '/adapi/container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/vehicle_metrics' in container '/adapi/container'
+[component_container_mt-34] [INFO] [1784305539.596619718] [control.autonomous_emergency_braking]: [AEB] waiting for control predicted trajectory
+[component_container_mt-34] [INFO] [1784305539.596775580] [control.obstacle_collision_checker]: waiting for reference_trajectory msg...
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/vehicle_info' in container '/adapi/container'
+[INFO] [launch_ros.actions.load_composable_nodes]: Loaded node '/adapi/node/vehicle_door' in container '/adapi/container'
+[component_container-8] [WARN] [1784305540.044220268] [system.topic_state_monitor_control_command_control_cmd]: /control/command/control_cmd topic is timeout. Set ERROR in diagnostics.
+[component_container_mt-33] [INFO] [1784305540.324281150] [control.trajectory_follower.controller_node_exe]: Waiting for trajectory data
+[component_container_mt-33] [INFO] [1784305540.324366269] [control.trajectory_follower.controller_node_exe]: Control is skipped since input data is not ready.
+[component_container_mt-33] [INFO] [1784305540.904562197] [control.vehicle_cmd_gate]: The operation mode is changed, but the GearCommand is not received yet:
+[initial_pose_adaptor_node-36] [INFO] [1784305541.015168330] [default_adapi.helpers.autoware_initial_pose_adaptor]: fit_target: vector_map, frame: map
+[component_container_mt-34] [INFO] [1784305541.121565015] [control.trajectory_follower.lane_departure_checker_node]: waiting for reference_trajectory msg...
+[component_container_mt-33] [WARN] [1784305542.047019062] [control.autoware_operation_mode_transition_manager]: Subscribed control_cmd is timed out.
+[component_container-8] [INFO] [1784305542.314660984] [system.topic_state_monitor_trajectory_follower_control_cmd]: /control/trajectory_follower/control_cmd has not received. Set ERROR in diagnostics.
+[component_container_mt-34] [INFO] [1784305542.362657829] [control.predicted_path_checker]: waiting for reference_trajectory msg...
+[initial_pose_adaptor_node-36] [INFO] [1784305543.019903061] [default_adapi.helpers.autoware_initial_pose_adaptor]: fit_target: vector_map, frame: map
+[component_container-8] [WARN] [1784305543.143908504] [system.topic_state_monitor_control_command_control_cmd]: /control/command/control_cmd topic is timeout. Set ERROR in diagnostics.
+[component_container_mt-27] [INFO] [1784305543.215478911] [planning.scenario_planning.lane_driving.behavior_planning.behavior_path_planner]: waiting for route
+[component_container_mt-34] [INFO] [1784305544.695514649] [control.obstacle_collision_checker]: waiting for reference_trajectory msg...
+[component_container_mt-34] [INFO] [1784305544.696021776] [control.autonomous_emergency_braking]: [AEB] waiting for control predicted trajectory
+[initial_pose_adaptor_node-36] [INFO] [1784305545.026532816] [default_adapi.helpers.autoware_initial_pose_adaptor]: fit_target: vector_map, frame: map
+[component_container_mt-33] [WARN] [1784305545.047136667] [control.autoware_operation_mode_transition_manager]: Subscribed control_cmd is timed out.
+[component_container-8] [INFO] [1784305545.314848927] [system.topic_state_monitor_trajectory_follower_control_cmd]: /control/trajectory_follower/control_cmd has not received. Set ERROR in diagnostics.
+[component_container_mt-33] [INFO] [1784305545.333378464] [control.trajectory_follower.controller_node_exe]: Waiting for trajectory data
+[component_container_mt-33] [INFO] [1784305545.333449072] [control.trajectory_follower.controller_node_exe]: Control is skipped since input data is not ready.
+[component_container_mt-33] [INFO] [1784305545.905579951] [control.vehicle_cmd_gate]: The operation mode is changed, but the GearCommand is not received yet:
+[component_container-8] [WARN] [1784305546.143981117] [system.topic_state_monitor_control_command_control_cmd]: /control/command/control_cmd topic is timeout. Set ERROR in diagnostics.
+[component_container_mt-34] [INFO] [1784305546.220141732] [control.trajectory_follower.lane_departure_checker_node]: waiting for reference_trajectory msg...
+[component_container_mt-27] [INFO] [1784305546.448449626] [planning.scenario_planning.lane_driving.behavior_planning.behavior_path_planner.bidirectional_traffic]: Found 0 bidirectional lanes
+[initial_pose_adaptor_node-36] [INFO] [1784305547.034306717] [default_adapi.helpers.autoware_initial_pose_adaptor]: fit_target: vector_map, frame: map
+[component_container_mt-34] [INFO] [1784305547.463482263] [control.predicted_path_checker]: waiting for reference_trajectory msg...
+[component_container_mt-34] [WARN] [1784305547.705878093] [control.obstacle_collision_checker]: failed to get transform from map to base_link: Lookup would require extrapolation into the future.  Requested time 1784305547.619941 but the latest data is at time 1784305547.552435, when looking up transform from frame [base_link] to frame [map]
+[component_container_mt-34] [INFO] [1784305547.705944218] [control.obstacle_collision_checker]: waiting for obstacle_transform...
+[logging_node-16] [WARN] [1784305547.713577004] [logging_diag_graph]: The target mode is not available for the following reasons:
+[logging_node-16] - /autoware/modes/autonomous ERROR
+[logging_node-16]     - /autoware/planning ERROR
+[logging_node-16]         - /autoware/planning/routing/state STALE
+[logging_node-16]     - /autoware/control ERROR
+[logging_node-16]         - /autoware/control/topic_rate_check/control_command ERROR
+[logging_node-16] 
+[component_container_mt-28] [WARN] [1784305547.902972894] [planning.scenario_planning.lane_driving.motion_planning.motion_velocity_planner]: Initializing previous route pointer.. Reset output.
+[component_container_mt-34] [ERROR] [1784305548.064040303] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-35] [INFO] [1784305548.122077604] [adapi.node.autoware_state]: AutowareState: WaitingForRoute => Planning
+[component_container_mt-34] [ERROR] [1784305548.163484998] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305548.265100855] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305548.363456217] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305548.463428129] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305548.563971205] [predicted_path_checker]: Trajectory size is less than 2.
+[logging_node-16] [INFO] [1784305548.613428812] [logging_diag_graph]: The target mode is available now.
+[component_container_mt-34] [ERROR] [1784305548.663550523] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305548.763596380] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305548.863624469] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305548.963574148] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305549.063421876] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305549.163582863] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305549.263429069] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305549.363605052] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305549.463554259] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305549.564804107] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container-8] [WARN] [1784305549.586297113] [system.topic_state_monitor_scenario_planning_trajectory]: /planning/trajectory topic rate has dropped to the warning level. Set WARN in diagnostics.
+[component_container_mt-34] [ERROR] [1784305549.663460082] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305549.763450302] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305549.863757824] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305549.964762470] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305550.063375387] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305550.163555981] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305550.263330898] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305550.366054892] [predicted_path_checker]: Trajectory size is less than 2.
+[logging_node-16] [INFO] [1784305550.413475720] [logging_diag_graph]: The target mode is available now.
+[component_container_mt-34] [ERROR] [1784305550.463553038] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305550.563392598] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305550.663491093] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305550.765318577] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-35] [INFO] [1784305550.822520021] [adapi.node.autoware_state]: AutowareState: Planning => WaitingForEngage
+[component_container_mt-34] [ERROR] [1784305550.863337497] [predicted_path_checker]: Trajectory size is less than 2.
+[logging_node-16] [WARN] [1784305550.913374711] [logging_diag_graph]: The target mode is not available for the following reasons:
+[logging_node-16] - /autoware/modes/autonomous WARN 
+[logging_node-16]     - /autoware/planning WARN 
+[logging_node-16]         - [anonymous group] WARN 
+[logging_node-16]             - /autoware/planning/topic_rate_check/trajectory WARN 
+[logging_node-16] 
+[component_container_mt-34] [ERROR] [1784305550.963380970] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305551.063403844] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-35] [INFO] [1784305551.123496851] [adapi.node.autoware_state]: AutowareState: WaitingForEngage => Planning
+[component_container_mt-34] [ERROR] [1784305551.166334690] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305551.264342615] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305551.372097910] [predicted_path_checker]: Trajectory size is less than 2.
+[logging_node-16] [INFO] [1784305551.413554399] [logging_diag_graph]: The target mode is available now.
+[component_container_mt-34] [ERROR] [1784305551.464053018] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305551.563388350] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305551.664604548] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-35] [INFO] [1784305551.722692245] [adapi.node.autoware_state]: AutowareState: Planning => WaitingForEngage
+[component_container_mt-34] [ERROR] [1784305551.764509818] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305551.864210398] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-35] [INFO] [1784305551.922653578] [adapi.node.autoware_state]: AutowareState: WaitingForEngage => Planning
+[component_container_mt-34] [ERROR] [1784305551.963387862] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305552.063957187] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305552.163585905] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305552.263584621] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305552.363410771] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305552.463402126] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305552.563326353] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305552.663463848] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container-8] [WARN] [1784305552.686215629] [system.topic_state_monitor_scenario_planning_trajectory]: /planning/trajectory topic rate has dropped to the warning level. Set WARN in diagnostics.
+[component_container_mt-34] [ERROR] [1784305552.763772492] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305552.863433537] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305552.963477589] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305553.063464306] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305553.163576785] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [ERROR] [1784305553.263557881] [predicted_path_checker]: Trajectory size is less than 2.
+[component_container_mt-34] [WARN] [1784305553.305831910] [control.obstacle_collision_checker]: failed to get transform from map to base_link: Lookup would require extrapolation into the future.  Requested time 1784305553.219825 but the latest data is at time 1784305553.203367, when looking up transform from frame [base_link] to frame [map]
+[component_container_mt-34] [INFO] [1784305553.305901573] [control.obstacle_collision_checker]: waiting for obstacle_transform...
+[component_container_mt-34] [ERROR] [1784305553.363353650] [predicted_path_checker]: Trajectory size is less than 2.
+[logging_node-16] [INFO] [1784305553.413401067] [logging_diag_graph]: The target mode is available now.
+[component_container_mt-34] [ERROR] [1784305553.465598201] [predicted_path_checker]: Trajectory size is less than 2.

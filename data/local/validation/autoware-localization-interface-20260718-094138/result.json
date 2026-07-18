@@ -1,0 +1,14 @@
+{
+  "checks": {
+    "direct_initialize_accepted": true,
+    "direct_initialize_forwarded": true,
+    "empty_initialize_rejected": true,
+    "healthy_alignment_initializes": true,
+    "pose_enters_initializing": true,
+    "reinitialization_revokes_state": true,
+    "rviz_pose_forwarded_in_map": true,
+    "starts_uninitialized": true,
+    "unhealthy_alignment_not_initialized": true
+  },
+  "result": "PASS"
+}

@@ -1,0 +1,176 @@
+[INFO] [launch]: All log files can be found below /home/hyunseo/.ros/log/2026-07-18-02-57-41-519704-hyunseo-2204-442069
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [map_server-1]: process started with pid [442209]
+[INFO] [planner_server-2]: process started with pid [442211]
+[INFO] [controller_server-3]: process started with pid [442213]
+[INFO] [bt_navigator-4]: process started with pid [442215]
+[INFO] [twist_mux-5]: process started with pid [442217]
+[INFO] [velocity_smoother-6]: process started with pid [442219]
+[INFO] [collision_monitor-7]: process started with pid [442221]
+[INFO] [waypoint_manager-8]: process started with pid [442223]
+[INFO] [lifecycle_manager-9]: process started with pid [442225]
+[velocity_smoother-6] [INFO] [1784311061.691894673] [velocity_smoother]: 
+[velocity_smoother-6] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-6] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-6] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[twist_mux-5] [INFO] [1784311061.709269322] [twist_mux]: Topic handler 'topics.navigation' subscribed to topic '/cmd_vel_nav': timeout = 0.300000s , priority = 10.
+[lifecycle_manager-9] [INFO] [1784311061.709726092] [lifecycle_manager_navigation]: Creating
+[collision_monitor-7] [INFO] [1784311061.709799738] [collision_monitor]: 
+[collision_monitor-7] 	collision_monitor lifecycle node launched. 
+[collision_monitor-7] 	Waiting on external lifecycle transitions to activate
+[collision_monitor-7] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[twist_mux-5] [INFO] [1784311061.712646506] [twist_mux]: Topic handler 'topics.teleop' subscribed to topic '/cmd_vel_teleop': timeout = 0.300000s , priority = 100.
+[lifecycle_manager-9] [INFO] [1784311061.715464743] [lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[planner_server-2] [INFO] [1784311061.728965229] [planner_server]: 
+[planner_server-2] 	planner_server lifecycle node launched. 
+[planner_server-2] 	Waiting on external lifecycle transitions to activate
+[planner_server-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[bt_navigator-4] [INFO] [1784311061.759331218] [bt_navigator]: 
+[bt_navigator-4] 	bt_navigator lifecycle node launched. 
+[bt_navigator-4] 	Waiting on external lifecycle transitions to activate
+[bt_navigator-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[bt_navigator-4] [INFO] [1784311061.760232921] [bt_navigator]: Creating
+[planner_server-2] [INFO] [1784311061.760259182] [planner_server]: Creating
+[planner_server-2] [INFO] [1784311061.772527866] [global_costmap.global_costmap]: 
+[planner_server-2] 	global_costmap lifecycle node launched. 
+[planner_server-2] 	Waiting on external lifecycle transitions to activate
+[planner_server-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-3] [INFO] [1784311061.774821794] [controller_server]: 
+[controller_server-3] 	controller_server lifecycle node launched. 
+[controller_server-3] 	Waiting on external lifecycle transitions to activate
+[controller_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-2] [INFO] [1784311061.783850613] [global_costmap.global_costmap]: Creating Costmap
+[map_server-1] [INFO] [1784311061.801184985] [map_server]: 
+[map_server-1] 	map_server lifecycle node launched. 
+[map_server-1] 	Waiting on external lifecycle transitions to activate
+[map_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-1] [INFO] [1784311061.801292912] [map_server]: Creating
+[lifecycle_manager-9] [INFO] [1784311061.806257565] [lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-9] [INFO] [1784311061.806294082] [lifecycle_manager_navigation]: [34m[1mConfiguring map_server[0m[0m
+[map_server-1] [INFO] [1784311061.806491165] [map_server]: Configuring
+[map_server-1] [INFO] [1784311061.806549203] [map_io]: Loading yaml file: /home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/nav2-raycast/map.yaml
+[map_server-1] [INFO] [1784311061.806823886] [map_io]: resolution: 0.05
+[map_server-1] [INFO] [1784311061.806831080] [map_io]: origin[0]: -29.6923
+[map_server-1] [INFO] [1784311061.806834168] [map_io]: origin[1]: -35.4288
+[map_server-1] [INFO] [1784311061.806836866] [map_io]: origin[2]: 0
+[map_server-1] [INFO] [1784311061.806839556] [map_io]: free_thresh: 0.25
+[map_server-1] [INFO] [1784311061.806841964] [map_io]: occupied_thresh: 0.65
+[map_server-1] [INFO] [1784311061.806844682] [map_io]: mode: trinary
+[map_server-1] [INFO] [1784311061.806847871] [map_io]: negate: 0
+[map_server-1] [INFO] [1784311061.807146299] [map_io]: Loading image_file: /home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/nav2-raycast/map.pgm
+[controller_server-3] [INFO] [1784311061.832629044] [controller_server]: Creating controller server
+[controller_server-3] [INFO] [1784311061.840995571] [local_costmap.local_costmap]: 
+[controller_server-3] 	local_costmap lifecycle node launched. 
+[controller_server-3] 	Waiting on external lifecycle transitions to activate
+[controller_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-3] [INFO] [1784311061.848451402] [local_costmap.local_costmap]: Creating Costmap
+[map_server-1] [INFO] [1784311061.965042750] [map_io]: Read map /home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/nav2-raycast/map.pgm: 1843 X 940 map @ 0.05 m/cell
+[lifecycle_manager-9] [INFO] [1784311061.981503305] [lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[planner_server-2] [INFO] [1784311061.981732132] [planner_server]: Configuring
+[planner_server-2] [INFO] [1784311061.981775435] [global_costmap.global_costmap]: Configuring
+[planner_server-2] [INFO] [1784311061.990717693] [global_costmap.global_costmap]: Using plugin "static_layer"
+[planner_server-2] [INFO] [1784311061.997914949] [global_costmap.global_costmap]: Subscribing to the map topic (/map) with transient local durability
+[planner_server-2] [INFO] [1784311062.000610949] [global_costmap.global_costmap]: Initialized plugin "static_layer"
+[planner_server-2] [INFO] [1784311062.000653139] [global_costmap.global_costmap]: Using plugin "obstacle_layer"
+[planner_server-2] [INFO] [1784311062.001058323] [global_costmap.global_costmap]: Subscribed to Topics: pointcloud
+[planner_server-2] [INFO] [1784311062.005078119] [global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+[planner_server-2] [INFO] [1784311062.005121862] [global_costmap.global_costmap]: Using plugin "inflation_layer"
+[planner_server-2] [INFO] [1784311062.005656034] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[planner_server-2] [ERROR] [1784311062.014388849] [global_costmap.global_costmap]: The configured inflation radius (0.250) is smaller than the computed inscribed radius (0.329) of your footprint, it is highly recommended to set inflation radius to be at least as big as the inscribed radius to avoid collisions
+[planner_server-2] [INFO] [1784311062.028086229] [planner_server]: Created global planner plugin GridBased of type nav2_smac_planner/SmacPlannerHybrid
+[planner_server-2] [INFO] [1784311062.028164655] [planner_server]: Configuring GridBased of type SmacPlannerHybrid
+[planner_server-2] [INFO] [1784311062.028892054] [planner_server]: Even sized heuristic lookup table size set 400.000000, increasing size by 1 to make odd
+[planner_server-2] [INFO] [1784311063.418899724] [planner_server]: Configured plugin GridBased of type SmacPlannerHybrid with maximum iterations 100000, max on approach iterations 1000, and not allowing unknown traversal. Tolerance 0.25.Using motion model: Dubin.
+[planner_server-2] [INFO] [1784311063.418947123] [planner_server]: Planner Server has GridBased  planners available.
+[lifecycle_manager-9] [INFO] [1784311063.425411006] [lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-3] [INFO] [1784311063.425579784] [controller_server]: Configuring controller interface
+[controller_server-3] [INFO] [1784311063.425701349] [controller_server]: getting goal checker plugins..
+[controller_server-3] [INFO] [1784311063.425807071] [controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-3] [INFO] [1784311063.425839528] [local_costmap.local_costmap]: Configuring
+[controller_server-3] [INFO] [1784311063.430861465] [local_costmap.local_costmap]: Using plugin "voxel_layer"
+[controller_server-3] [INFO] [1784311063.435227668] [local_costmap.local_costmap]: Subscribed to Topics: pointcloud
+[controller_server-3] [INFO] [1784311063.438412382] [local_costmap.local_costmap]: Initialized plugin "voxel_layer"
+[controller_server-3] [INFO] [1784311063.438437462] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-3] [INFO] [1784311063.438808226] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-3] [ERROR] [1784311063.447053669] [local_costmap.local_costmap]: The configured inflation radius (0.250) is smaller than the computed inscribed radius (0.329) of your footprint, it is highly recommended to set inflation radius to be at least as big as the inscribed radius to avoid collisions
+[controller_server-3] [INFO] [1784311063.460879314] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[controller_server-3] [INFO] [1784311063.462692977] [controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-3] [INFO] [1784311063.462849816] [controller_server]: Controller Server has goal_checker  goal checkers available.
+[controller_server-3] [INFO] [1784311063.466674186] [controller_server]: Created controller : FollowPath of type nav2_mppi_controller::MPPIController
+[controller_server-3] [INFO] [1784311063.467429559] [controller_server]: Controller period is equal to model dt. Control sequence shifting is ON
+[controller_server-3] [INFO] [1784311063.472797650] [controller_server]: ConstraintCritic instantiated with 1 power and 4.000000 weight.
+[controller_server-3] [INFO] [1784311063.472824727] [controller_server]: Critic loaded : mppi::critics::ConstraintCritic
+[controller_server-3] [INFO] [1784311063.473248768] [controller_server]: InflationCostCritic instantiated with 1 power and 300.000000 / 0.015000 weights. Critic will collision check based on footprint cost.
+[controller_server-3] [INFO] [1784311063.473276179] [controller_server]: Critic loaded : mppi::critics::CostCritic
+[controller_server-3] [INFO] [1784311063.473531586] [controller_server]: GoalCritic instantiated with 1 power and 5.000000 weight.
+[controller_server-3] [INFO] [1784311063.473548670] [controller_server]: Critic loaded : mppi::critics::GoalCritic
+[controller_server-3] [INFO] [1784311063.473742956] [controller_server]: GoalAngleCritic instantiated with 1 power, 3.000000 weight, and 0.500000 angular threshold.
+[controller_server-3] [INFO] [1784311063.473758620] [controller_server]: Critic loaded : mppi::critics::GoalAngleCritic
+[controller_server-3] [INFO] [1784311063.474341350] [controller_server]: ReferenceTrajectoryCritic instantiated with 1 power and 10.000000 weight
+[controller_server-3] [INFO] [1784311063.474371162] [controller_server]: Critic loaded : mppi::critics::PathAlignCritic
+[controller_server-3] [INFO] [1784311063.474700971] [controller_server]: Critic loaded : mppi::critics::PathFollowCritic
+[controller_server-3] [INFO] [1784311063.475086828] [controller_server]: PathAngleCritic instantiated with 1 power and 2.000000 weight. Reversing not allowed.
+[controller_server-3] [INFO] [1784311063.475105460] [controller_server]: Critic loaded : mppi::critics::PathAngleCritic
+[controller_server-3] [INFO] [1784311063.475321788] [controller_server]: PreferForwardCritic instantiated with 1 power and 20.000000 weight.
+[controller_server-3] [INFO] [1784311063.475338329] [controller_server]: Critic loaded : mppi::critics::PreferForwardCritic
+[controller_server-3] [INFO] [1784311063.476818292] [controller_server]: Optimizer reset
+[controller_server-3] [INFO] [1784311063.480204011] [MPPIController]: Configured MPPI Controller: FollowPath
+[controller_server-3] [INFO] [1784311063.480234427] [controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-9] [INFO] [1784311063.486339928] [lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1784311063.486503388] [bt_navigator]: Configuring
+[lifecycle_manager-9] [INFO] [1784311063.557604923] [lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-6] [INFO] [1784311063.557724671] [velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-9] [INFO] [1784311063.560858060] [lifecycle_manager_navigation]: [34m[1mConfiguring collision_monitor[0m[0m
+[collision_monitor-7] [INFO] [1784311063.560980699] [collision_monitor]: Configuring
+[collision_monitor-7] [INFO] [1784311063.566684838] [collision_monitor]: [StopZone]: Creating Polygon
+[collision_monitor-7] [INFO] [1784311063.567496388] [collision_monitor]: [SlowdownZone]: Creating Polygon
+[collision_monitor-7] [INFO] [1784311063.567963224] [collision_monitor]: [pointcloud]: Creating PointCloud
+[lifecycle_manager-9] [INFO] [1784311063.570282275] [lifecycle_manager_navigation]: [34m[1mActivating map_server[0m[0m
+[map_server-1] [INFO] [1784311063.570396556] [map_server]: Activating
+[map_server-1] [INFO] [1784311063.572084297] [map_server]: Creating bond (map_server) to lifecycle manager.
+[planner_server-2] [INFO] [1784311063.584015967] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 1843 X 940 at 0.050000 m/pix
+[lifecycle_manager-9] [INFO] [1784311063.678896583] [lifecycle_manager_navigation]: Server map_server connected with bond.
+[lifecycle_manager-9] [INFO] [1784311063.678953083] [lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+[planner_server-2] [INFO] [1784311063.679159285] [planner_server]: Activating
+[planner_server-2] [INFO] [1784311063.679200736] [global_costmap.global_costmap]: Activating
+[planner_server-2] [INFO] [1784311063.679211419] [global_costmap.global_costmap]: Checking transform
+[planner_server-2] [INFO] [1784311063.679292079] [global_costmap.global_costmap]: start
+[planner_server-2] [INFO] [1784311063.729971117] [planner_server]: Activating plugin GridBased of type SmacPlannerHybrid
+[planner_server-2] [INFO] [1784311063.730678441] [planner_server]: Creating bond (planner_server) to lifecycle manager.
+[lifecycle_manager-9] [INFO] [1784311063.833589236] [lifecycle_manager_navigation]: Server planner_server connected with bond.
+[lifecycle_manager-9] [INFO] [1784311063.833625451] [lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+[controller_server-3] [INFO] [1784311063.833785230] [controller_server]: Activating
+[controller_server-3] [INFO] [1784311063.833810216] [local_costmap.local_costmap]: Activating
+[controller_server-3] [INFO] [1784311063.833817658] [local_costmap.local_costmap]: Checking transform
+[controller_server-3] [INFO] [1784311063.833881048] [local_costmap.local_costmap]: start
+[controller_server-3] [WARN] [1784311063.934409946] [controller_server]: Parameter controller_server.verbose not found
+[controller_server-3] [INFO] [1784311063.935799863] [controller_server]: Optimizer reset
+[controller_server-3] [INFO] [1784311063.935929972] [MPPIController]: Activated MPPI Controller: FollowPath
+[controller_server-3] [INFO] [1784311063.935943665] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-9] [INFO] [1784311064.039962851] [lifecycle_manager_navigation]: Server controller_server connected with bond.
+[lifecycle_manager-9] [INFO] [1784311064.040002020] [lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1784311064.040230746] [bt_navigator]: Activating
+[bt_navigator-4] [INFO] [1784311064.047834096] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[lifecycle_manager-9] [INFO] [1784311064.150850471] [lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[lifecycle_manager-9] [INFO] [1784311064.150883524] [lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-6] [INFO] [1784311064.151147608] [velocity_smoother]: Activating
+[velocity_smoother-6] [INFO] [1784311064.151210077] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-9] [INFO] [1784311064.254826065] [lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[lifecycle_manager-9] [INFO] [1784311064.254889498] [lifecycle_manager_navigation]: [34m[1mActivating collision_monitor[0m[0m
+[collision_monitor-7] [INFO] [1784311064.255192620] [collision_monitor]: Activating
+[collision_monitor-7] [INFO] [1784311064.255313068] [collision_monitor]: Creating bond (collision_monitor) to lifecycle manager.
+[lifecycle_manager-9] [INFO] [1784311064.361315036] [lifecycle_manager_navigation]: Server collision_monitor connected with bond.
+[lifecycle_manager-9] [INFO] [1784311064.361346388] [lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-9] [INFO] [1784311064.361352213] [lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
+[collision_monitor-7] [INFO] [1784311069.901591825] [collision_monitor]: Robot to stop due to StopZone polygon
+[collision_monitor-7] [WARN] [1784311071.101458078] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.229517 seconds. Ignoring the source.
+[collision_monitor-7] [INFO] [1784311071.101501575] [collision_monitor]: Robot to continue normal operation
+[collision_monitor-7] [WARN] [1784311071.151370628] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.279431 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784311071.201570778] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.329632 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784311071.251376101] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.379438 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784311071.301611317] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.429673 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784311071.351365326] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.479427 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784311071.401510616] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.529572 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784311071.451307827] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.579370 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784311071.501594385] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.629656 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784311071.551408551] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.679467 seconds. Ignoring the source.

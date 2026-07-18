@@ -1,0 +1,35 @@
+{
+  "checks": {
+    "closure_distance": true,
+    "consecutive_rejects": true,
+    "duration": true,
+    "fitness_p95": true,
+    "healthy_ratio": true,
+    "reinitialization": true,
+    "status_count": true,
+    "trajectory_length": true
+  },
+  "closure_distance_m": 0.4643558457236511,
+  "final_position_xyz_m": [
+    -0.3759767413139343,
+    0.14114910364151,
+    -0.2379835844039917
+  ],
+  "fitness_max": 3.120371,
+  "fitness_median": 0.014464999999999999,
+  "fitness_p95": 0.17629309999999992,
+  "healthy_count": 3794,
+  "healthy_ratio": 1.0,
+  "initial_position_xyz_m": [
+    -0.000363973,
+    0.00251974,
+    -0.00277453
+  ],
+  "max_consecutive_rejected_updates": 0,
+  "pose_count": 3795,
+  "reinitialization_true_count": 0,
+  "replay_duration_sec": 380.270574092865,
+  "result": "PASS",
+  "status_count": 3794,
+  "trajectory_length_m": 294.15813030198774
+}

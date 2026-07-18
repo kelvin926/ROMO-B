@@ -1,0 +1,7 @@
+{
+  "result": "FAIL",
+  "mode": "minimum_command_characterization",
+  "requested_speed_mps": 0.01,
+  "commanded_speed_raw": 1,
+  "error": "bridge reported E-stop or watchdog fault"
+}

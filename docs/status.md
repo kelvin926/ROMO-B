@@ -126,7 +126,8 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - Run clone-to-build-to-simulation once on a second clean Ubuntu 22.04/Humble
   host. This laptop's complete local build and isolated validations pass.
 - Replace the pending external artifact URIs before another researcher needs to
-  retrieve the bag, PCD, or generated maps off this laptop.
+  retrieve the large bag or localization databases. Compact PCD/Nav2/Lanelet2
+  maps and validation evidence are now tracked in Git.
 
 ## Waiting for hardware validation
 
@@ -137,7 +138,7 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - Perform one supervised 0.10 m/s short route, then a box avoidance/stop test,
   then a walking-person intrusion test with an operator holding the E-stop.
 - Actual PCU response to invalid fields and Alive/feedback timeout.
-- External storage URI for bags, PCDs, and maps.
+- External storage URI for the ignored bag and localization databases.
 
 Until these items pass `docs/hardware_acceptance.md`, autonomous motion is not
 approved.

@@ -1,0 +1,32 @@
+{
+  "checks": {
+    "one_intermediate_waypoint": true,
+    "planned_speed_at_or_below_0_2_mps": true,
+    "route_state_set": true,
+    "sender_exit_success": true,
+    "sender_report_pass": true,
+    "trajectory_forward_only": true,
+    "trajectory_generated": true,
+    "yaml_speed_limit_selected": true
+  },
+  "planned_speed_range_mps": [
+    0.0,
+    0.20000000298023224
+  ],
+  "result": "PASS",
+  "selected_speed_limit_min_mps": 0.10000000149011612,
+  "sender_report": {
+    "goal_xy": [
+      15.730018999999999,
+      0.43049299999999996
+    ],
+    "intermediate_waypoints": 1,
+    "maximum_speed_mps": 0.1,
+    "note": "Route set only; this command never arms or engages the robot",
+    "result": "PASS",
+    "service": "/api/routing/set_route_points",
+    "waypoint_file": "/home/hyunseo/ROMO-B/data/local/validation/autoware-waypoint-sender-20260718-094147/test_waypoints.yaml"
+  },
+  "trajectory_points": 139,
+  "waypoint_file": "/home/hyunseo/ROMO-B/data/local/validation/autoware-waypoint-sender-20260718-094147/test_waypoints.yaml"
+}

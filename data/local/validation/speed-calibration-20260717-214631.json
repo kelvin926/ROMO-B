@@ -1,0 +1,8 @@
+{
+  "result": "FAIL",
+  "mode": "speed_validation",
+  "requested_speed_mps": 0.05,
+  "requested_steer_deg": -3.0,
+  "commanded_speed_raw": 5,
+  "error": "overspeed feedback 0.110 m/s > 0.100 m/s"
+}

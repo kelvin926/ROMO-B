@@ -1,0 +1,16 @@
+{
+  "checks": {
+    "cluster_detected": true,
+    "detected_as_unknown": true,
+    "future_path_generated": true,
+    "map_transform_applied": true,
+    "predicted_as_unknown": true,
+    "predicted_object_published": true
+  },
+  "predicted_position_xy": [
+    2.099428391456604,
+    0.0
+  ],
+  "prediction_point_count": 7,
+  "result": "PASS"
+}

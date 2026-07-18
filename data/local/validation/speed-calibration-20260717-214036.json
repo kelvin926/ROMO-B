@@ -1,0 +1,5 @@
+{
+  "result": "FAIL",
+  "requested_speed_mps": 0.01,
+  "error": "bridge must be connected, disarmed, 2WIS, fault-free, and stopped"
+}

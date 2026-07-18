@@ -1,0 +1,6 @@
+[INFO] [launch]: All log files can be found below /home/hyunseo/.ros/log/2026-07-18-01-39-59-428183-hyunseo-2204-410218
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [euclidean_cluster_node-1]: process started with pid [410240]
+[INFO] [object_tracker-2]: process started with pid [410242]
+[INFO] [relay-3]: process started with pid [410244]
+[object_tracker-2] [WARN] [1784306399.977026572] [romo_b_autoware_object_tracker]: Object transform unavailable: "map" passed to lookupTransform argument target_frame does not exist. 

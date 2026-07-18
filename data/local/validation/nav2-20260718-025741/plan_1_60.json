@@ -1,0 +1,11 @@
+{
+  "goal_vertex": 60,
+  "minimum_forward_projection_m": 0.07156118404897095,
+  "path_length_m": 87.21855933738925,
+  "planning_time_sec": 0.011073349000000001,
+  "pose_count": 643,
+  "result": "PASS",
+  "result_code": 4,
+  "reverse_segment_count": 0,
+  "start_vertex": 1
+}

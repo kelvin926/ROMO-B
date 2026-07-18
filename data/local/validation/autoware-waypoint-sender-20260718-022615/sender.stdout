@@ -1,0 +1,4 @@
+{
+  "result": "FAIL",
+  "error": "Autoware rejected route: The planned route is empty."
+}

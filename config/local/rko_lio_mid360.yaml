@@ -1,0 +1,5 @@
+/**:
+  ros__parameters:
+    extrinsic_imu2base_quat_xyzw_xyz: [0.0, 0.0, 0.0, 1.0, 0.27, 0.0, 0.258]
+    extrinsic_lidar2base_quat_xyzw_xyz: [0.0, 0.0, 0.0, 1.0, 0.27, 0.0, 0.258]
+    initialization_phase: true

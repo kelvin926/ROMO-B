@@ -1,0 +1,21 @@
+{
+  "pose_graph": "/home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/pose_graph.g2o",
+  "pointcloud_map": "/home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/map.pcd",
+  "reversal_indices": [
+    68,
+    134
+  ],
+  "source_pose_count": 143,
+  "centerline_point_count": 239,
+  "lanelet_count": 14,
+  "lane_width_m": 2.4,
+  "speed_limit_kph": 0.72,
+  "start": [
+    -14.2266,
+    0.724734
+  ],
+  "end": [
+    17.8283,
+    -30.9959
+  ]
+}

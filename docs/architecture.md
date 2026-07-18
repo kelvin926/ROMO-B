@@ -34,7 +34,8 @@ map -- lidar localization --> odom -- robot_localization --> base_link
 
 Only the listed component owns each transform. Raw wheel odometry does not
 publish TF. The static `base_link -> livox_frame` transform is invalid until its
-measured values are placed in the ignored hardware-local configuration.
+measured values are placed in `config/local/hardware.yaml`. The approved
+hardware configuration is tracked for handoff to users of this same platform.
 
 The pinned Livox driver publishes Mid-360 acceleration in `g`. The hardware
 launch keeps that vendor stream private on `/sensing/imu/livox_raw` and
@@ -58,5 +59,5 @@ launch keeps that vendor stream private on `/sensing/imu/livox_raw` and
 
 Nav2 remains the V1 baseline runtime and does not require Lanelet2. Autoware
 Universe 1.8.0 is also integrated as an optional corridor research runtime in a
-separate ignored source workspace; it requires the generated Lanelet2/PCD map
-bundle but shares ROMO-B's tracked adapters and final safety pipeline.
+separate ignored source workspace; it uses the tracked compact Lanelet2/PCD map
+bundle and shares ROMO-B's tracked adapters and final safety pipeline.

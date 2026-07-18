@@ -1,0 +1,17 @@
+{
+  "checks": {
+    "autoware_control_disabled_is_zero": true,
+    "disarmed_is_zero": true,
+    "feedback_timeout_is_zero": true,
+    "fully_enabled_moves_forward": true,
+    "localization_loss_is_zero": true,
+    "selected_yaml_limit_clamps_to_0_1_mps": true,
+    "unlocalized_is_zero": true
+  },
+  "enabled_command": {
+    "angular_z": 0.0,
+    "linear_x": 0.2
+  },
+  "result": "PASS",
+  "yaml_limited_command_mps": 0.10000000149011612
+}

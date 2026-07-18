@@ -1,0 +1,27 @@
+[INFO] [launch]: All log files can be found below /home/hyunseo/.ros/log/2026-07-18-02-55-18-428277-hyunseo-2204-438950
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [euclidean_cluster_node-1]: process started with pid [438967]
+[INFO] [object_tracker-2]: process started with pid [438969]
+[INFO] [relay-3]: process started with pid [438971]
+[object_tracker-2] [WARN] [1784310918.963245464] [romo_b_autoware_object_tracker]: Object transform unavailable: "map" passed to lookupTransform argument target_frame does not exist. 
+[relay-3] [INFO] [1784310919.668688403] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[euclidean_cluster_node-1] [INFO] [1784310919.668742023] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[object_tracker-2] Traceback (most recent call last):
+[object_tracker-2]   File "/home/hyunseo/ROMO-B/robot_ws/install/romo_b_autoware/lib/romo_b_autoware/object_tracker", line 33, in <module>
+[object_tracker-2]     sys.exit(load_entry_point('romo-b-autoware', 'console_scripts', 'object_tracker')())
+[object_tracker-2]   File "/home/hyunseo/ROMO-B/robot_ws/build/romo_b_autoware/romo_b_autoware/object_tracker.py", line 216, in main
+[object_tracker-2]     rclpy.spin(node)
+[object_tracker-2]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
+[object_tracker-2]     executor.spin_once()
+[object_tracker-2]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 808, in spin_once
+[object_tracker-2]     self._spin_once_impl(timeout_sec)
+[object_tracker-2]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 797, in _spin_once_impl
+[object_tracker-2]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[object_tracker-2]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 780, in wait_for_ready_callbacks
+[object_tracker-2]     return next(self._cb_iter)
+[object_tracker-2]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 681, in _wait_for_ready_callbacks
+[object_tracker-2]     raise ExternalShutdownException()
+[object_tracker-2] rclpy.executors.ExternalShutdownException
+[INFO] [euclidean_cluster_node-1]: process has finished cleanly [pid 438967]
+[INFO] [relay-3]: process has finished cleanly [pid 438971]
+[ERROR] [object_tracker-2]: process has died [pid 438969, exit code 1, cmd '/home/hyunseo/ROMO-B/robot_ws/install/romo_b_autoware/lib/romo_b_autoware/object_tracker --ros-args -r __node:=romo_b_autoware_object_tracker --params-file /home/hyunseo/ROMO-B/robot_ws/install/romo_b_autoware/share/romo_b_autoware/config/object_tracker.yaml'].

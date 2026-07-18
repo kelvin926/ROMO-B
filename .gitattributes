@@ -1,0 +1,5 @@
+*.pcd binary
+*.pgm binary
+*.png binary
+*.g2o whitespace=-trailing-space
+data/local/**/*.log whitespace=-trailing-space

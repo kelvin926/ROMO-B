@@ -1,0 +1,4 @@
+{
+  "error": "Autoware did not produce a baseline trajectory",
+  "result": "FAIL"
+}

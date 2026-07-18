@@ -148,10 +148,11 @@ loop-closure checks pass. Still review every generated map before motion.
 ## Repository policy
 
 Project code, configuration, scripts, documentation, and dependency locks are
-tracked. Vendor checkouts, Autoware, build products, hardware-local settings,
-rosbags, PCDs, and generated maps live below this repository but are ignored.
-Large artifacts are recorded under `data/manifests/` with a SHA-256 and later an
-external URI.
+tracked. Exact hardware settings plus compact maps, screenshots, and validation
+evidence are also tracked so another lab member can reproduce this platform.
+Vendor checkouts, Autoware, build products, and recording databases remain
+ignored. Each tracked file is limited to 10 MiB; larger artifacts are recorded
+under `data/manifests/` with a SHA-256 and external URI.
 
 Validated atomic commits are pushed directly to `main`. Repository ruleset
 `Protect main history` blocks branch deletion and non-fast-forward/force pushes

@@ -1,0 +1,23 @@
+schema_version: 1
+serial:
+  device: /dev/romo_b_pcu
+  baud: 115200
+  data_bits: 8
+  parity: none
+  stop_bits: 1
+  command_endian: little
+  adapter_serial: FTDI_FT232R_USB_UART_A5069RR4
+  wiring: pending
+lidar:
+  host_ip: 192.168.1.5
+  lidar_ip: 192.168.1.113
+  interface: enxc84d44208014
+  frame_id: livox_frame
+  calibrated: true
+  transform:
+    x: 0.27
+    y: 0.0
+    z: 0.258
+    roll: 0.0
+    pitch: 0.0
+    yaw: 0.0

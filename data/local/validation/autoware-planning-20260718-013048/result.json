@@ -1,0 +1,28 @@
+{
+  "baseline_near_obstacle_speed_mps": 0.2006891369819641,
+  "baseline_speed_range_mps": [
+    0.0,
+    0.2006932497024536
+  ],
+  "baseline_trajectory_points": 141,
+  "centerline_points": 239,
+  "checks": {
+    "avoidance_or_stop": true,
+    "baseline_moving_near_obstacle": true,
+    "baseline_trajectory": true,
+    "forward_only_trajectory": true,
+    "obstacle_on_baseline": true,
+    "planned_speed_at_or_below_0_2_mps": false,
+    "post_obstacle_trajectory": true,
+    "routing_api_accepted": true
+  },
+  "maximum_clearance_m": 6.395779245085086e-08,
+  "minimum_near_obstacle_speed_mps": 0.0,
+  "obstacle_xy": [
+    -9.133305005643837,
+    0.4889257836609342
+  ],
+  "response": "stop",
+  "response_count": 3,
+  "result": "FAIL"
+}

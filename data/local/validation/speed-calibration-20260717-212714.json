@@ -1,0 +1,5 @@
+{
+  "result": "FAIL",
+  "requested_speed_mps": 0.01,
+  "error": "overspeed feedback 0.290 m/s > 0.100 m/s"
+}

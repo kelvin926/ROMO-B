@@ -1,0 +1,4 @@
+{
+  "error": "Autoware did not reach an unset, routable state",
+  "result": "FAIL"
+}

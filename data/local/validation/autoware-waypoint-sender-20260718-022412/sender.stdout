@@ -1,0 +1,4 @@
+{
+  "result": "FAIL",
+  "error": "Disable Autoware Control before changing the route"
+}

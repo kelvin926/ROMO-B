@@ -1,0 +1,718 @@
+[INFO] [launch]: All log files can be found below /home/hyunseo/.ros/log/2026-07-17-21-13-29-338135-hyunseo-2204-44516
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [map_server-1]: process started with pid [44553]
+[INFO] [planner_server-2]: process started with pid [44555]
+[INFO] [controller_server-3]: process started with pid [44557]
+[INFO] [bt_navigator-4]: process started with pid [44559]
+[INFO] [twist_mux-5]: process started with pid [44561]
+[INFO] [velocity_smoother-6]: process started with pid [44563]
+[INFO] [collision_monitor-7]: process started with pid [44565]
+[INFO] [waypoint_manager-8]: process started with pid [44567]
+[INFO] [lifecycle_manager-9]: process started with pid [44569]
+[twist_mux-5] [INFO] [1784290409.404125574] [twist_mux]: Topic handler 'topics.navigation' subscribed to topic '/cmd_vel_nav': timeout = 0.300000s , priority = 10.
+[twist_mux-5] [INFO] [1784290409.405606366] [twist_mux]: Topic handler 'topics.teleop' subscribed to topic '/cmd_vel_teleop': timeout = 0.300000s , priority = 100.
+[velocity_smoother-6] [INFO] [1784290409.425754290] [velocity_smoother]: 
+[velocity_smoother-6] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-6] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-6] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[lifecycle_manager-9] [INFO] [1784290409.429283202] [lifecycle_manager_navigation]: Creating
+[lifecycle_manager-9] [INFO] [1784290409.437289254] [lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[bt_navigator-4] [INFO] [1784290409.449753728] [bt_navigator]: 
+[bt_navigator-4] 	bt_navigator lifecycle node launched. 
+[bt_navigator-4] 	Waiting on external lifecycle transitions to activate
+[bt_navigator-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[bt_navigator-4] [INFO] [1784290409.450627082] [bt_navigator]: Creating
+[planner_server-2] [INFO] [1784290409.455464849] [planner_server]: 
+[planner_server-2] 	planner_server lifecycle node launched. 
+[planner_server-2] 	Waiting on external lifecycle transitions to activate
+[planner_server-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-2] [INFO] [1784290409.458643709] [planner_server]: Creating
+[map_server-1] [INFO] [1784290409.473275133] [map_server]: 
+[map_server-1] 	map_server lifecycle node launched. 
+[map_server-1] 	Waiting on external lifecycle transitions to activate
+[map_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-1] [INFO] [1784290409.473453624] [map_server]: Creating
+[controller_server-3] [INFO] [1784290409.478961522] [controller_server]: 
+[controller_server-3] 	controller_server lifecycle node launched. 
+[controller_server-3] 	Waiting on external lifecycle transitions to activate
+[controller_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-3] [INFO] [1784290409.487614494] [controller_server]: Creating controller server
+[collision_monitor-7] [INFO] [1784290409.487996115] [collision_monitor]: 
+[collision_monitor-7] 	collision_monitor lifecycle node launched. 
+[collision_monitor-7] 	Waiting on external lifecycle transitions to activate
+[collision_monitor-7] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-2] [INFO] [1784290409.489405435] [global_costmap.global_costmap]: 
+[planner_server-2] 	global_costmap lifecycle node launched. 
+[planner_server-2] 	Waiting on external lifecycle transitions to activate
+[planner_server-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-2] [INFO] [1784290409.490871508] [global_costmap.global_costmap]: Creating Costmap
+[controller_server-3] [INFO] [1784290409.504778521] [local_costmap.local_costmap]: 
+[controller_server-3] 	local_costmap lifecycle node launched. 
+[controller_server-3] 	Waiting on external lifecycle transitions to activate
+[controller_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-3] [INFO] [1784290409.505213831] [local_costmap.local_costmap]: Creating Costmap
+[lifecycle_manager-9] [INFO] [1784290409.603145784] [lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-9] [INFO] [1784290409.603199166] [lifecycle_manager_navigation]: [34m[1mConfiguring map_server[0m[0m
+[map_server-1] [INFO] [1784290409.603465606] [map_server]: Configuring
+[map_server-1] [INFO] [1784290409.603546190] [map_io]: Loading yaml file: /home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/nav2-raycast/map.yaml
+[map_server-1] [INFO] [1784290409.603838056] [map_io]: resolution: 0.05
+[map_server-1] [INFO] [1784290409.603850763] [map_io]: origin[0]: -29.6923
+[map_server-1] [INFO] [1784290409.603865090] [map_io]: origin[1]: -35.4288
+[map_server-1] [INFO] [1784290409.603872000] [map_io]: origin[2]: 0
+[map_server-1] [INFO] [1784290409.603879065] [map_io]: free_thresh: 0.25
+[map_server-1] [INFO] [1784290409.603885752] [map_io]: occupied_thresh: 0.65
+[map_server-1] [INFO] [1784290409.603892760] [map_io]: mode: trinary
+[map_server-1] [INFO] [1784290409.603900328] [map_io]: negate: 0
+[map_server-1] [INFO] [1784290409.604088981] [map_io]: Loading image_file: /home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/nav2-raycast/map.pgm
+[map_server-1] [INFO] [1784290409.727730730] [map_io]: Read map /home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/nav2-raycast/map.pgm: 1843 X 940 map @ 0.05 m/cell
+[lifecycle_manager-9] [INFO] [1784290409.733031568] [lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[planner_server-2] [INFO] [1784290409.733309343] [planner_server]: Configuring
+[planner_server-2] [INFO] [1784290409.733354227] [global_costmap.global_costmap]: Configuring
+[planner_server-2] [INFO] [1784290409.736577108] [global_costmap.global_costmap]: Using plugin "static_layer"
+[planner_server-2] [INFO] [1784290409.738742342] [global_costmap.global_costmap]: Subscribing to the map topic (/map) with transient local durability
+[planner_server-2] [INFO] [1784290409.739476993] [global_costmap.global_costmap]: Initialized plugin "static_layer"
+[planner_server-2] [INFO] [1784290409.739495142] [global_costmap.global_costmap]: Using plugin "obstacle_layer"
+[planner_server-2] [INFO] [1784290409.739665242] [global_costmap.global_costmap]: Subscribed to Topics: pointcloud
+[planner_server-2] [INFO] [1784290409.741113528] [global_costmap.global_costmap]: Initialized plugin "obstacle_layer"
+[planner_server-2] [INFO] [1784290409.741137291] [global_costmap.global_costmap]: Using plugin "inflation_layer"
+[planner_server-2] [INFO] [1784290409.741430763] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[planner_server-2] [INFO] [1784290409.750925588] [planner_server]: Created global planner plugin GridBased of type nav2_smac_planner/SmacPlannerHybrid
+[planner_server-2] [INFO] [1784290409.750991036] [planner_server]: Configuring GridBased of type SmacPlannerHybrid
+[planner_server-2] [INFO] [1784290409.751996267] [planner_server]: Even sized heuristic lookup table size set 400.000000, increasing size by 1 to make odd
+[planner_server-2] [INFO] [1784290411.104181811] [planner_server]: Configured plugin GridBased of type SmacPlannerHybrid with maximum iterations 100000, max on approach iterations 1000, and not allowing unknown traversal. Tolerance 0.25.Using motion model: Dubin.
+[planner_server-2] [INFO] [1784290411.104237325] [planner_server]: Planner Server has GridBased  planners available.
+[lifecycle_manager-9] [INFO] [1784290411.119381230] [lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-3] [INFO] [1784290411.119592223] [controller_server]: Configuring controller interface
+[controller_server-3] [INFO] [1784290411.119691993] [controller_server]: getting goal checker plugins..
+[controller_server-3] [INFO] [1784290411.119828996] [controller_server]: Controller frequency set to 20.0000Hz
+[controller_server-3] [INFO] [1784290411.119858772] [local_costmap.local_costmap]: Configuring
+[controller_server-3] [INFO] [1784290411.123032460] [local_costmap.local_costmap]: Using plugin "voxel_layer"
+[controller_server-3] [INFO] [1784290411.124952638] [local_costmap.local_costmap]: Subscribed to Topics: pointcloud
+[controller_server-3] [INFO] [1784290411.127648228] [local_costmap.local_costmap]: Initialized plugin "voxel_layer"
+[controller_server-3] [INFO] [1784290411.127671655] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-3] [INFO] [1784290411.128070934] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-3] [INFO] [1784290411.133743124] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[controller_server-3] [INFO] [1784290411.134212565] [controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-3] [INFO] [1784290411.134368841] [controller_server]: Controller Server has goal_checker  goal checkers available.
+[controller_server-3] [INFO] [1784290411.134985029] [controller_server]: Created controller : FollowPath of type nav2_mppi_controller::MPPIController
+[controller_server-3] [INFO] [1784290411.135718402] [controller_server]: Controller period is equal to model dt. Control sequence shifting is ON
+[controller_server-3] [INFO] [1784290411.136604075] [controller_server]: ConstraintCritic instantiated with 1 power and 4.000000 weight.
+[controller_server-3] [INFO] [1784290411.136633477] [controller_server]: Critic loaded : mppi::critics::ConstraintCritic
+[controller_server-3] [INFO] [1784290411.137115195] [controller_server]: InflationCostCritic instantiated with 1 power and 300.000000 / 0.015000 weights. Critic will collision check based on footprint cost.
+[controller_server-3] [INFO] [1784290411.137144290] [controller_server]: Critic loaded : mppi::critics::CostCritic
+[controller_server-3] [INFO] [1784290411.137320060] [controller_server]: GoalCritic instantiated with 1 power and 5.000000 weight.
+[controller_server-3] [INFO] [1784290411.137334118] [controller_server]: Critic loaded : mppi::critics::GoalCritic
+[controller_server-3] [INFO] [1784290411.137476643] [controller_server]: GoalAngleCritic instantiated with 1 power, 3.000000 weight, and 0.500000 angular threshold.
+[controller_server-3] [INFO] [1784290411.137492763] [controller_server]: Critic loaded : mppi::critics::GoalAngleCritic
+[controller_server-3] [INFO] [1784290411.137884036] [controller_server]: ReferenceTrajectoryCritic instantiated with 1 power and 10.000000 weight
+[controller_server-3] [INFO] [1784290411.137908356] [controller_server]: Critic loaded : mppi::critics::PathAlignCritic
+[controller_server-3] [INFO] [1784290411.138189793] [controller_server]: Critic loaded : mppi::critics::PathFollowCritic
+[controller_server-3] [INFO] [1784290411.138568159] [controller_server]: PathAngleCritic instantiated with 1 power and 2.000000 weight. Reversing not allowed.
+[controller_server-3] [INFO] [1784290411.138587380] [controller_server]: Critic loaded : mppi::critics::PathAngleCritic
+[controller_server-3] [INFO] [1784290411.138781953] [controller_server]: PreferForwardCritic instantiated with 1 power and 20.000000 weight.
+[controller_server-3] [INFO] [1784290411.138799127] [controller_server]: Critic loaded : mppi::critics::PreferForwardCritic
+[controller_server-3] [INFO] [1784290411.140186619] [controller_server]: Optimizer reset
+[controller_server-3] [INFO] [1784290411.141675185] [MPPIController]: Configured MPPI Controller: FollowPath
+[controller_server-3] [INFO] [1784290411.141692064] [controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-9] [INFO] [1784290411.144720249] [lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1784290411.144871350] [bt_navigator]: Configuring
+[lifecycle_manager-9] [INFO] [1784290411.177444269] [lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-6] [INFO] [1784290411.177633751] [velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-9] [INFO] [1784290411.179497941] [lifecycle_manager_navigation]: [34m[1mConfiguring collision_monitor[0m[0m
+[collision_monitor-7] [INFO] [1784290411.179689751] [collision_monitor]: Configuring
+[collision_monitor-7] [INFO] [1784290411.183372982] [collision_monitor]: [StopZone]: Creating Polygon
+[collision_monitor-7] [INFO] [1784290411.184340107] [collision_monitor]: [SlowdownZone]: Creating Polygon
+[collision_monitor-7] [INFO] [1784290411.185170920] [collision_monitor]: [pointcloud]: Creating PointCloud
+[lifecycle_manager-9] [INFO] [1784290411.187040237] [lifecycle_manager_navigation]: [34m[1mActivating map_server[0m[0m
+[map_server-1] [INFO] [1784290411.187170198] [map_server]: Activating
+[map_server-1] [INFO] [1784290411.188447473] [map_server]: Creating bond (map_server) to lifecycle manager.
+[planner_server-2] [INFO] [1784290411.201297529] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 1843 X 940 at 0.050000 m/pix
+[lifecycle_manager-9] [INFO] [1784290411.291251776] [lifecycle_manager_navigation]: Server map_server connected with bond.
+[lifecycle_manager-9] [INFO] [1784290411.291316374] [lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+[planner_server-2] [INFO] [1784290411.291583277] [planner_server]: Activating
+[planner_server-2] [INFO] [1784290411.291630476] [global_costmap.global_costmap]: Activating
+[planner_server-2] [INFO] [1784290411.291643589] [global_costmap.global_costmap]: Checking transform
+[planner_server-2] [INFO] [1784290411.291738211] [global_costmap.global_costmap]: start
+[planner_server-2] [INFO] [1784290411.842527650] [planner_server]: Activating plugin GridBased of type SmacPlannerHybrid
+[planner_server-2] [INFO] [1784290411.843422686] [planner_server]: Creating bond (planner_server) to lifecycle manager.
+[lifecycle_manager-9] [INFO] [1784290411.946068378] [lifecycle_manager_navigation]: Server planner_server connected with bond.
+[lifecycle_manager-9] [INFO] [1784290411.946132866] [lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+[controller_server-3] [INFO] [1784290411.946386001] [controller_server]: Activating
+[controller_server-3] [INFO] [1784290411.946441608] [local_costmap.local_costmap]: Activating
+[controller_server-3] [INFO] [1784290411.946485823] [local_costmap.local_costmap]: Checking transform
+[controller_server-3] [INFO] [1784290411.946582151] [local_costmap.local_costmap]: start
+[controller_server-3] [WARN] [1784290412.097405619] [controller_server]: Parameter controller_server.verbose not found
+[controller_server-3] [INFO] [1784290412.098596686] [controller_server]: Optimizer reset
+[controller_server-3] [INFO] [1784290412.098769348] [MPPIController]: Activated MPPI Controller: FollowPath
+[controller_server-3] [INFO] [1784290412.098797189] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-9] [INFO] [1784290412.201852451] [lifecycle_manager_navigation]: Server controller_server connected with bond.
+[lifecycle_manager-9] [INFO] [1784290412.201916293] [lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1784290412.202278287] [bt_navigator]: Activating
+[bt_navigator-4] [INFO] [1784290412.209958528] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[lifecycle_manager-9] [INFO] [1784290412.312634045] [lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[lifecycle_manager-9] [INFO] [1784290412.312678923] [lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-6] [INFO] [1784290412.312935330] [velocity_smoother]: Activating
+[velocity_smoother-6] [INFO] [1784290412.313008147] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-9] [INFO] [1784290412.416498715] [lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[lifecycle_manager-9] [INFO] [1784290412.416558364] [lifecycle_manager_navigation]: [34m[1mActivating collision_monitor[0m[0m
+[collision_monitor-7] [INFO] [1784290412.417793821] [collision_monitor]: Activating
+[collision_monitor-7] [INFO] [1784290412.417898400] [collision_monitor]: Creating bond (collision_monitor) to lifecycle manager.
+[lifecycle_manager-9] [INFO] [1784290412.521421231] [lifecycle_manager_navigation]: Server collision_monitor connected with bond.
+[lifecycle_manager-9] [INFO] [1784290412.521470720] [lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-9] [INFO] [1784290412.521484676] [lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
+[collision_monitor-7] [INFO] [1784290417.613344009] [collision_monitor]: Robot to stop due to StopZone polygon
+[controller_server-3] [WARN] [1784290417.646867184] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290417.746867092] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290417.846871946] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290417.946829044] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290418.046769608] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290418.146839636] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290418.246839442] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290418.346805079] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290418.446799115] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290418.546848678] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290418.646793173] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290418.746793188] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[collision_monitor-7] [WARN] [1784290418.813193550] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.223086 seconds. Ignoring the source.
+[collision_monitor-7] [INFO] [1784290418.813274242] [collision_monitor]: Robot to continue normal operation
+[controller_server-3] [WARN] [1784290418.846876952] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[collision_monitor-7] [WARN] [1784290418.863396007] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.273295 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784290418.913312492] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.323212 seconds. Ignoring the source.
+[controller_server-3] [WARN] [1784290418.946870179] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[collision_monitor-7] [WARN] [1784290418.963537365] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.373434 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784290419.013235230] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.423134 seconds. Ignoring the source.
+[controller_server-3] [WARN] [1784290419.046943518] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[collision_monitor-7] [WARN] [1784290419.063735535] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.473634 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784290419.113168366] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.523068 seconds. Ignoring the source.
+[controller_server-3] [WARN] [1784290419.146863382] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[collision_monitor-7] [WARN] [1784290419.163541675] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.573438 seconds. Ignoring the source.
+[collision_monitor-7] [WARN] [1784290419.213204981] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.623103 seconds. Ignoring the source.
+[controller_server-3] [WARN] [1784290419.246838948] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[collision_monitor-7] [WARN] [1784290419.263830397] [collision_monitor]: [pointcloud]: Latest source and current collision monitor node timestamps differ on 0.673706 seconds. Ignoring the source.
+[controller_server-3] [WARN] [1784290419.346947926] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290419.446811933] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290419.546832166] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290419.646801342] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290419.746852104] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290419.846863698] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290419.946834608] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290420.046847598] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290420.146792125] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290420.246892559] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290420.346883994] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290420.446790807] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290420.546925844] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290420.646783224] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290420.746781239] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290420.846881434] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290420.946796258] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290421.046827585] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290421.146893266] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290421.246893038] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290421.346803346] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290421.446792731] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290421.546866220] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290421.646870646] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290421.746890330] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290421.846885136] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290421.946789034] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290422.046870128] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290422.146863264] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290422.246873084] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290422.346785643] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290422.446801316] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290422.546882913] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290422.646789316] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290422.746795684] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290422.846790685] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290422.946805877] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290423.046783872] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290423.146835143] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290423.246819254] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290423.346832310] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290423.446872237] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290423.546838850] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290423.646785810] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290423.746820992] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290423.846786696] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290423.946801670] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290424.046802912] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290424.146786895] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290424.246799180] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290424.346879971] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290424.446830053] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290424.546794621] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290424.646787966] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290424.746845472] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290424.846818350] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290424.946789569] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290425.046823260] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290425.146820419] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290425.246822777] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290425.346825732] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290425.446807150] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290425.546857722] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290425.646906776] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290425.746828792] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290425.846840617] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290425.946838328] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290426.046858449] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290426.146796558] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290426.246773510] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290426.346825307] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290426.446812568] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290426.546757755] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290426.646836058] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290426.746807607] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290426.846764004] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290426.946766190] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290427.046817570] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290427.146754795] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290427.246802485] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290427.346856622] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290427.446796633] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290427.546801736] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290427.646814073] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290427.746879136] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290427.846888003] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290427.946801353] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290428.046820649] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290428.146772936] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290428.246819575] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290428.346815272] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290428.446795784] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290428.546876120] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290428.646865198] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290428.746826653] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290428.846803722] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290428.946955526] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290429.046816380] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290429.146809491] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290429.246832780] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290429.346898600] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290429.446880919] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290429.546856387] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290429.646828432] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290429.746826596] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290429.847012233] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290429.946775956] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290430.046856147] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290430.146977633] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290430.246925533] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290430.346853626] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290430.446815489] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290430.546847026] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290430.646800296] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290430.747016338] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290430.846984850] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290430.946811120] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290431.046796432] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290431.146802501] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290431.246911882] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290431.346819530] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290431.446788391] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290431.546854346] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290431.646853832] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290431.746804623] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290431.846804183] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290431.946823160] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290432.047052247] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290432.146810615] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290432.246947503] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290432.346779242] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290432.446805619] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290432.546934280] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290432.646899199] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290432.747004753] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290432.846957144] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290432.946782795] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290433.047120518] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290433.147016226] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290433.246845146] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290433.346980531] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290433.446896697] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290433.546772321] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290433.647085420] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290433.746972498] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290433.846742349] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290433.946812055] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290434.046874024] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290434.146772936] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290434.246984961] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290434.346957418] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290434.446776457] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290434.546796446] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290434.646943466] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290434.746924667] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290434.847006681] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290434.946959948] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290435.047018983] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290435.147011020] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290435.246806149] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290435.346817390] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290435.446818372] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290435.547009646] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290435.646802018] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290435.747008597] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290435.847025345] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290435.946803585] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290436.046799747] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290436.146799204] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290436.247155395] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290436.346806580] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290436.446980516] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290436.547031835] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290436.646780281] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290436.746781578] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290436.846941599] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290436.946786069] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290437.047028622] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290437.146797061] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290437.247028695] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290437.346795474] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290437.447062461] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290437.546785224] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290437.646793568] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290437.747009896] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290437.846764008] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290437.946764146] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290438.046765619] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290438.146767367] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290438.246787267] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290438.346979938] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290438.446778803] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290438.547072538] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290438.647069930] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290438.746780265] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290438.846822321] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290438.946786506] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290439.046786909] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290439.146836065] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290439.246818676] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290439.346818650] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290439.446793847] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290439.546790706] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290439.646814885] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290439.747160712] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290439.847051451] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290439.946824341] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290440.047159690] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290440.146796889] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290440.246938891] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290440.347006141] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290440.446776539] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290440.547036290] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290440.647034994] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290440.747049128] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290440.846891509] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290440.946753936] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290441.046764653] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290441.146789186] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290441.246790235] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290441.346997254] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290441.446774037] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290441.546798063] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290441.646987640] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290441.746983650] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290441.846999832] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290441.946771902] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290442.046769586] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290442.146877509] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290442.246766673] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290442.347042195] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290442.446907273] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290442.546785098] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290442.646803441] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290442.746797538] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290442.846794424] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290442.946776361] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290443.047095857] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290443.146898260] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290443.246811417] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290443.346827045] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290443.446795392] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290443.546783473] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290443.646948824] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290443.746831239] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290443.846823520] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290443.946808292] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290444.046985639] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290444.146798487] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290444.246978131] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290444.347000041] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290444.446783599] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290444.546797815] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290444.646814215] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290444.746864062] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290444.846982282] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290444.946843010] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290445.047008778] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290445.146987852] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290445.246979218] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290445.346845126] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290445.446798056] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290445.546804905] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290445.646881992] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290445.746759759] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290445.846837327] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290445.946758714] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290446.046957421] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290446.146794212] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290446.246933235] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290446.346807970] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290446.446984288] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290446.546827413] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290446.647080816] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290446.746922411] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290446.846990940] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290446.946981574] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290447.046873309] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290447.146795904] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290447.247013087] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290447.346959162] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290447.446798496] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290447.546847932] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290447.646799372] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290447.746817138] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290447.846941415] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290447.946782362] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290448.046824574] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290448.146790908] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290448.246945139] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290448.346955128] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290448.446792264] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290448.546802665] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290448.646801506] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290448.746934088] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290448.846998535] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290448.946810809] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290449.046858619] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290449.146909419] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290449.246885015] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290449.346788912] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290449.446795871] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290449.546945370] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290449.646912486] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290449.746894502] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290449.846876165] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290449.946928391] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290450.046924645] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290450.146947809] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290450.246812882] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290450.346881593] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290450.446910858] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290450.546894157] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290450.646786556] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290450.747050837] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290450.846793613] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290450.946799039] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290451.046794402] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290451.146845604] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290451.246784908] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290451.347092616] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290451.446872795] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290451.546779475] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290451.646755998] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290451.746851518] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290451.846797194] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290451.946776656] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290452.046822541] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290452.146818238] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290452.246778603] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290452.346777019] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290452.446763715] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290452.546775794] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290452.646796829] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290452.746750742] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290452.846816576] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290452.946765120] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290453.046791010] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290453.146741565] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290453.246821163] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290453.346756492] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290453.446829873] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290453.546816431] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290453.646771975] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290453.746960796] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290453.846792835] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290453.946849991] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290454.046828394] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290454.146797252] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290454.246786978] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290454.346836749] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290454.446779169] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290454.546887948] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290454.646777905] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290454.746747656] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290454.846761519] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290454.946849866] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290455.046830238] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290455.146859577] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290455.246829550] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290455.346816889] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290455.446774165] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290455.546851974] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290455.646807159] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290455.746789073] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290455.846848408] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290455.946777722] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290456.046828536] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290456.146767262] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290456.246813215] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290456.346791396] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290456.446761128] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290456.546805180] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290456.646811559] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290456.746816518] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290456.846761783] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290456.946766071] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290457.046795724] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290457.146797230] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290457.246801659] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290457.346808251] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290457.446822855] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290457.546795274] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290457.646797562] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290457.746913185] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290457.847004350] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290457.946906502] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290458.046836174] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290458.146810538] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290458.246760121] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290458.346815426] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290458.446799640] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290458.546768598] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290458.646761734] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290458.746816683] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290458.846902365] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290458.946828887] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290459.046868934] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290459.146840885] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290459.246982756] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290459.346907872] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290459.446801949] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290459.546822821] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290459.646916125] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290459.746921152] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290459.846793564] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290459.946796870] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290460.046886296] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290460.146799308] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290460.246867113] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290460.346875174] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290460.446919959] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290460.546808132] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290460.646824464] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290460.746786991] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290460.846828074] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290460.946797023] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290461.046863604] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290461.147266874] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290461.246872995] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290461.346936235] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290461.446797822] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290461.546862686] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290461.646920785] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290461.746814113] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290461.846796551] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290461.946840352] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290462.046778413] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290462.146896413] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290462.246872534] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290462.346769673] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290462.446859574] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290462.546890396] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290462.646791075] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290462.746835093] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290462.846768190] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290462.946854282] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290463.046881558] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290463.146794795] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[controller_server-3] [WARN] [1784290463.246784088] [local_costmap.local_costmap]: Sensor origin at (0.00, 0.00 -0.17) is out of map bounds (-2.95, -2.95, 0.00) to (3.03, 3.03, 1.74). The costmap cannot raytrace for it.
+[map_server-1] [INFO] [1784290463.293831468] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[map_server-1] [INFO] [1784290463.293901961] [map_server]: Running Nav2 LifecycleNode rcl preshutdown (map_server)
+[map_server-1] [INFO] [1784290463.293951794] [map_server]: Deactivating
+[map_server-1] [INFO] [1784290463.293961588] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[bt_navigator-4] [INFO] [1784290463.293890575] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[bt_navigator-4] [INFO] [1784290463.293969207] [bt_navigator]: Running Nav2 LifecycleNode rcl preshutdown (bt_navigator)
+[bt_navigator-4] [INFO] [1784290463.294028523] [bt_navigator]: Deactivating
+[bt_navigator-4] [INFO] [1784290463.294051988] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[collision_monitor-7] [INFO] [1784290463.293901780] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[collision_monitor-7] [INFO] [1784290463.293986024] [collision_monitor]: Running Nav2 LifecycleNode rcl preshutdown (collision_monitor)
+[collision_monitor-7] [INFO] [1784290463.294040320] [collision_monitor]: Deactivating
+[collision_monitor-7] [INFO] [1784290463.294060572] [collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
+[controller_server-3] [INFO] [1784290463.293899460] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[controller_server-3] [INFO] [1784290463.293976070] [controller_server]: Running Nav2 LifecycleNode rcl preshutdown (controller_server)
+[controller_server-3] [INFO] [1784290463.294035404] [controller_server]: Deactivating
+[controller_server-3] [INFO] [1784290463.294062527] [MPPIController]: Deactivated MPPI Controller: FollowPath
+[planner_server-2] [INFO] [1784290463.293889566] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[planner_server-2] [INFO] [1784290463.294012857] [planner_server]: Running Nav2 LifecycleNode rcl preshutdown (planner_server)
+[planner_server-2] [INFO] [1784290463.294084551] [planner_server]: Deactivating
+[controller_server-3] [INFO] [1784290463.294080679] [local_costmap.local_costmap]: Deactivating
+[lifecycle_manager-9] [INFO] [1784290463.293979360] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[lifecycle_manager-9] [INFO] [1784290463.294032003] [lifecycle_manager_navigation]: Running Nav2 LifecycleManager rcl preshutdown (lifecycle_manager_navigation)
+[lifecycle_manager-9] [INFO] [1784290463.294058163] [lifecycle_manager_navigation]: [34m[1mTerminating bond timer...[0m[0m
+[planner_server-2] [INFO] [1784290463.294135294] [global_costmap.global_costmap]: Deactivating
+[twist_mux-5] [INFO] [1784290463.294194129] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[velocity_smoother-6] [INFO] [1784290463.293872362] [rclcpp]: signal_handler(SIGINT/SIGTERM)
+[velocity_smoother-6] [INFO] [1784290463.294934132] [velocity_smoother]: Running Nav2 LifecycleNode rcl preshutdown (velocity_smoother)
+[velocity_smoother-6] [INFO] [1784290463.294984022] [velocity_smoother]: Deactivating
+[velocity_smoother-6] [INFO] [1784290463.295000436] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[map_server-1] [INFO] [1784290463.304168384] [map_server]: Cleaning up
+[collision_monitor-7] [INFO] [1784290463.304274872] [collision_monitor]: Cleaning up
+[collision_monitor-7] [INFO] [1784290463.304313866] [collision_monitor]: [StopZone]: Destroying Polygon
+[collision_monitor-7] [INFO] [1784290463.304329653] [collision_monitor]: [SlowdownZone]: Destroying Polygon
+[collision_monitor-7] [INFO] [1784290463.304341040] [collision_monitor]: [pointcloud]: Destroying PointCloud
+[bt_navigator-4] [INFO] [1784290463.304285593] [bt_navigator]: Cleaning up
+[map_server-1] [INFO] [1784290463.304339428] [map_server]: Destroying bond (map_server) to lifecycle manager.
+[velocity_smoother-6] [INFO] [1784290463.305406451] [velocity_smoother]: Cleaning up
+[velocity_smoother-6] [INFO] [1784290463.305443104] [velocity_smoother]: Destroying bond (velocity_smoother) to lifecycle manager.
+[collision_monitor-7] [INFO] [1784290463.305941457] [collision_monitor]: Destroying bond (collision_monitor) to lifecycle manager.
+[map_server-1] [INFO] [1784290463.306740712] [map_server]: Destroying
+[velocity_smoother-6] [INFO] [1784290463.306829609] [velocity_smoother]: Destroying
+[collision_monitor-7] [INFO] [1784290463.309180709] [collision_monitor]: Destroying
+[bt_navigator-4] [INFO] [1784290463.321465781] [bt_navigator]: Completed Cleaning up
+[bt_navigator-4] [INFO] [1784290463.321508125] [bt_navigator]: Destroying bond (bt_navigator) to lifecycle manager.
+[bt_navigator-4] [INFO] [1784290463.322832111] [bt_navigator]: Destroying
+[waypoint_manager-8] Traceback (most recent call last):
+[waypoint_manager-8]   File "/home/hyunseo/ROMO-B/robot_ws/install/romo_b_waypoints/lib/romo_b_waypoints/waypoint_manager", line 33, in <module>
+[waypoint_manager-8]     sys.exit(load_entry_point('romo-b-waypoints', 'console_scripts', 'waypoint_manager')())
+[waypoint_manager-8]   File "/home/hyunseo/ROMO-B/robot_ws/build/romo_b_waypoints/romo_b_waypoints/node.py", line 195, in main
+[waypoint_manager-8]     rclpy.spin(node)
+[waypoint_manager-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
+[waypoint_manager-8]     executor.spin_once()
+[waypoint_manager-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 808, in spin_once
+[waypoint_manager-8]     self._spin_once_impl(timeout_sec)
+[waypoint_manager-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 797, in _spin_once_impl
+[waypoint_manager-8]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[waypoint_manager-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 780, in wait_for_ready_callbacks
+[waypoint_manager-8]     return next(self._cb_iter)
+[waypoint_manager-8]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 681, in _wait_for_ready_callbacks
+[waypoint_manager-8]     raise ExternalShutdownException()
+[waypoint_manager-8] rclpy.executors.ExternalShutdownException
+[controller_server-3] [INFO] [1784290463.346932456] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-3] [INFO] [1784290463.357218437] [controller_server]: Cleaning up
+[controller_server-3] [INFO] [1784290463.357297939] [MPPIController]: Cleaned up MPPI Controller: FollowPath
+[controller_server-3] [INFO] [1784290463.357422362] [local_costmap.local_costmap]: Cleaning up
+[controller_server-3] [INFO] [1784290463.363566675] [controller_server]: Destroying bond (controller_server) to lifecycle manager.
+[controller_server-3] [INFO] [1784290463.365257903] [local_costmap.local_costmap]: Destroying
+[lifecycle_manager-9] [INFO] [1784290463.365450713] [lifecycle_manager_navigation]: Destroying lifecycle_manager_navigation
+[controller_server-3] [INFO] [1784290463.368034581] [controller_server]: Destroying
+[INFO] [twist_mux-5]: process has finished cleanly [pid 44561]
+[INFO] [velocity_smoother-6]: process has finished cleanly [pid 44563]
+[INFO] [map_server-1]: process has finished cleanly [pid 44553]
+[INFO] [collision_monitor-7]: process has finished cleanly [pid 44565]
+[INFO] [bt_navigator-4]: process has finished cleanly [pid 44559]
+[INFO] [lifecycle_manager-9]: process has finished cleanly [pid 44569]
+[INFO] [controller_server-3]: process has finished cleanly [pid 44557]
+[ERROR] [waypoint_manager-8]: process has died [pid 44567, exit code 1, cmd '/home/hyunseo/ROMO-B/robot_ws/install/romo_b_waypoints/lib/romo_b_waypoints/waypoint_manager --ros-args --params-file /tmp/launch_params_b6xbjspt'].
+[planner_server-2] [INFO] [1784290463.792003372] [planner_server]: Deactivating plugin GridBased of type SmacPlannerHybrid
+[planner_server-2] [INFO] [1784290463.792041799] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-2] [INFO] [1784290463.802147581] [planner_server]: Cleaning up
+[planner_server-2] [INFO] [1784290463.804165325] [global_costmap.global_costmap]: Cleaning up
+[planner_server-2] [INFO] [1784290463.805787434] [planner_server]: Cleaning up plugin GridBased of type SmacPlannerHybrid
+[planner_server-2] [INFO] [1784290463.805970315] [planner_server]: Destroying plugin GridBased of type SmacPlannerHybrid
+[planner_server-2] [INFO] [1784290463.807066788] [planner_server]: Destroying bond (planner_server) to lifecycle manager.
+[planner_server-2] [INFO] [1784290463.808497908] [global_costmap.global_costmap]: Destroying
+[planner_server-2] [INFO] [1784290463.809683926] [planner_server]: Destroying
+[INFO] [planner_server-2]: process has finished cleanly [pid 44555]

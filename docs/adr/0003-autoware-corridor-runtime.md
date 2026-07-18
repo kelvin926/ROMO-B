@@ -14,7 +14,7 @@ through the same `twist_mux`, velocity smoother, Collision Monitor,
 `/cmd_vel_safe`, and serial bridge used by Nav2. The field launch starts in
 receive-only mode and no launch file arms or engages the platform.
 
-The large Autoware source/build tree and generated map remain ignored local
-artifacts. Exact source revisions, tracked presets, adapters, validation tools,
-and artifact manifests make the runtime reproducible without committing those
-large products.
+The large Autoware source/build tree and recording databases remain ignored
+local artifacts. The compact generated map, exact hardware settings, presets,
+adapters, validation evidence, and artifact manifests are tracked so the same
+platform can be handed over without reconstructing its calibrated inputs.

@@ -1,0 +1,9 @@
+schema_version: 1
+frame_id: map
+mode: continuous
+default_speed_mps: 0.1
+waypoints:
+- x: 0.7376769999999999
+  y: 0.23869200000000002
+- x: 15.730018999999999
+  y: 0.43049299999999996

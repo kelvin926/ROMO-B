@@ -9,21 +9,12 @@
 /vendor_ws/
 /autoware/
 
-# Hardware-local and generated data
-config/local/
-data/local/
-data/maps/
-data/bags/
+# Hardware settings, compact maps, screenshots, and validation evidence are
+# tracked for lab handoff. Large recording/database payloads stay external and
+# are identified by the manifests under data/manifests/.
 *.bag
 *.db3
 *.mcap
-*.pcd
-*.ply
-*.pgm
-
-# Small deterministic CI fixtures are intentionally tracked.
-!robot_ws/src/romo_b_perception/test/fixture.pcd
-!robot_ws/src/romo_b_navigation/config/maps/empty.pgm
 
 # Editor, Python and test caches
 .idea/
