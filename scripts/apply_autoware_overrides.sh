@@ -77,4 +77,7 @@ merge_yaml_override \
   "$repo_root/config/autoware/planning/velocity_smoother.override.yaml" \
   "$velocity_config/velocity_smoother.param.yaml"
 
-printf 'Applied ROMO-B Autoware 1.8.0 presets, speed cap, and UNKNOWN avoidance configs.\n'
+python3 "$repo_root/scripts/customize_autoware_rviz.py" \
+  --autoware-root "$autoware_root"
+
+printf 'Applied ROMO-B Autoware presets, safety configs, and LiDAR-first RViz layout.\n'

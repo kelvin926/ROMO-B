@@ -116,6 +116,12 @@ if [[ "$mode" == "--autoware" ]]; then
   else
     fail 'Autoware overrides are stale; run apply_autoware_overrides.sh and rebuild'
   fi
+  if python3 "$repo_root/scripts/customize_autoware_rviz.py" \
+       --autoware-root "$autoware_root" --check; then
+    pass 'ROMO-B LiDAR-first Autoware RViz layout applied'
+  else
+    fail 'Autoware RViz layout is stale; run apply_autoware_overrides.sh'
+  fi
   static_target="$autoware_root/src/launcher/autoware_launch/autoware_launch/config/planning/scenario_planning/lane_driving/behavior_planning/behavior_path_planner/autoware_behavior_path_static_obstacle_avoidance_module/static_obstacle_avoidance.param.yaml"
   if python3 - "$static_target" <<'PY'
 import sys, yaml

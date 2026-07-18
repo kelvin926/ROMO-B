@@ -90,6 +90,13 @@ USE_RVIZ=true ./scripts/run_autoware_planning_sim.sh
 
 In the Autoware RViz window:
 
+The generated ROMO-B layout is LiDAR-first. Expand `ROMO-B Field` in the
+Displays panel to inspect the PCD map, Lanelet2 road, filtered Mid-360 cloud,
+recognized obstacles, active route, final goal, and planned trajectory. The
+camera-only image docks and polar range rings are intentionally omitted. The
+left `AutowareStatePanel` remains the authoritative localization, routing,
+motion, MRM, and emergency-state view.
+
 1. Use `2D Pose Estimate` on a lane and drag the arrow along the lane.
 2. Use `RouteTool` (preferred) or `2D Goal Pose` farther along the same
    corridor.

@@ -114,9 +114,12 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   stop. Baseline planning stayed forward-only with a measured maximum of
   0.200000003 m/s. The velocity smoother, persistent planning candidate, and
   physical follower independently enforce the low-speed limits.
-- The Autoware RViz configuration loads the Lanelet2/PCD map, live Mid-360
-  cloud, UNKNOWN objects, route and trajectory, localization tools,
-  `RouteTool`, dummy-object tools for simulation, and the Autoware state panel.
+- The generated Autoware RViz configuration is a LiDAR-first field layout. Its
+  expanded `ROMO-B Field` group contains the Lanelet2/PCD map, filtered
+  Mid-360 cloud, UNKNOWN objects, active route, final goal, and trajectory;
+  camera-only docks and polar rings are removed while localization/route tools,
+  dummy-object simulation tools, and the Autoware state panel remain. A fresh
+  visual simulation repeated the 0.835 m UNKNOWN-object avoidance pass.
 
 ## Reproduction still required
 
