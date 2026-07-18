@@ -109,6 +109,35 @@ TEST(TwistMapping, RejectsReverseAndPureRotation)
   EXPECT_TRUE(rb::map_twist(0.0, 0.0, limits).valid);
 }
 
+TEST(TwistMapping, ConvertsRosRotationToPcuPivotWithOppositeSign)
+{
+  rb::ControlLimits limits;
+  limits.allow_pivot = true;
+  limits.max_pivot_speed_mps = 0.20;
+
+  const auto counter_clockwise = rb::map_twist(0.0, 0.4, limits);
+  ASSERT_TRUE(counter_clockwise.valid);
+  EXPECT_EQ(counter_clockwise.steer_mode, rb::SteerMode::kPivot);
+  EXPECT_LT(counter_clockwise.speed_mps, 0.0);
+  EXPECT_NEAR(counter_clockwise.speed_mps, -0.1013, 1.0e-3);
+
+  const auto clockwise = rb::map_twist(0.0, -0.4, limits);
+  ASSERT_TRUE(clockwise.valid);
+  EXPECT_EQ(clockwise.steer_mode, rb::SteerMode::kPivot);
+  EXPECT_GT(clockwise.speed_mps, 0.0);
+}
+
+TEST(TwistMapping, ClampsPivotWheelSpeed)
+{
+  rb::ControlLimits limits;
+  limits.allow_pivot = true;
+  limits.max_pivot_speed_mps = 0.10;
+  const auto output = rb::map_twist(0.0, 2.0, limits);
+  ASSERT_TRUE(output.valid);
+  EXPECT_TRUE(output.clamped);
+  EXPECT_DOUBLE_EQ(output.speed_mps, -0.10);
+}
+
 TEST(Odometry, RecoversEquivalentLeftTurn)
 {
   rb::Feedback feedback;
@@ -119,4 +148,18 @@ TEST(Odometry, RecoversEquivalentLeftTurn)
   EXPECT_NEAR(motion.center_speed_mps, 0.20, 1.0e-9);
   EXPECT_GT(motion.equivalent_steer_rad, 0.0);
   EXPECT_GT(motion.yaw_rate_radps, 0.0);
+}
+
+TEST(Odometry, ConvertsPivotFeedbackToRosYawSign)
+{
+  rb::Feedback feedback;
+  feedback.steer_mode = rb::SteerMode::kPivot;
+  feedback.wheel_speed_mps = {0.10, -0.10, 0.10, -0.10};
+  const auto clockwise = rb::estimate_vehicle_motion(feedback);
+  EXPECT_DOUBLE_EQ(clockwise.center_speed_mps, 0.0);
+  EXPECT_LT(clockwise.yaw_rate_radps, 0.0);
+
+  feedback.wheel_speed_mps = {-0.10, 0.10, -0.10, 0.10};
+  const auto counter_clockwise = rb::estimate_vehicle_motion(feedback);
+  EXPECT_GT(counter_clockwise.yaw_rate_radps, 0.0);
 }

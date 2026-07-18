@@ -81,4 +81,6 @@ python3 "$repo_root/scripts/check_nav2_plan.py" "$pose_graph" 70 130 \
   | tee "$output_dir/plan_70_130.json"
 python3 "$repo_root/scripts/check_cmd_pipeline.py" \
   | tee "$output_dir/command_pipeline.json"
+python3 "$repo_root/scripts/check_rotation_shim.py" \
+  | tee "$output_dir/rotation_shim.json"
 printf 'PASS: Nav2 preflight outputs are in %s\n' "$output_dir"

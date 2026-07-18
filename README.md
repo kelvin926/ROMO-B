@@ -10,8 +10,8 @@ The protocol source of truth is the tracked
 [verified manual extraction](ROMO-B_manual_verified_complete.md).
 
 The supported host is **Ubuntu 22.04 x86_64 with ROS 2 Humble**. The V1 runtime
-uses forward-only 2WIS Ackermann motion. Pivot, 4WIS, reverse recovery, and
-rotate-in-place are deliberately disabled.
+uses forward-only 2WIS Ackermann motion while driving and the PCU's Pivot mode
+for Nav2 path/goal-heading alignment. 4WIS and reverse recovery remain disabled.
 
 > **Safety:** This software and a single LiDAR are not safety-rated. Keep the
 > physical/RC E-stop available, lift the wheels for first motion tests, and do
@@ -86,7 +86,7 @@ ros2 launch romo_b_bringup hardware.launch.py use_livox:=true
 ros2 launch romo_b_bringup localization.launch.py \
   pcd_map:=data/local/maps/mapping_run/map.pcd
 
-# Forward-only waypoint navigation
+# Forward waypoint navigation with Pivot heading alignment
 ros2 launch romo_b_navigation navigation.launch.py \
   map:=data/local/maps/map.yaml
 ```

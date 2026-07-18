@@ -18,9 +18,9 @@ Teleop /cmd_vel_teleop --------------------------------------/       |
 ```
 
 The serial bridge never consumes an unfiltered Nav2, Autoware, or teleop
-command. V1 uses 2WIS only, maps `Twist` to an equivalent steering angle,
-rejects pure rotation and reverse commands, and clamps the selected safety
-profile.
+command. V1 maps moving `Twist` commands to 2WIS steering and maps zero-linear
+pure rotation to the PCU's Pivot mode in the navigation profile. It rejects
+reverse and 4WIS commands and clamps the selected profile.
 
 The serial encoder always writes zero to the HLV E-stop field. Software fault
 handling is limited to zero speed plus a Manual/disarmed handoff; only the
@@ -58,11 +58,11 @@ launch keeps that vendor stream private on `/sensing/imu/livox_raw` and
 - A 0.05 m occupancy map is derived from the PCD for the Nav2 static layer.
 - `lidar_localization_ros2` owns global localization.
 - Smac Hybrid-A* plans forward-only Dubins paths with a 0.80 m minimum radius.
-- Regulated Pure Pursuit uses a speed-scaled 0.60--1.20 m lookahead, while the
-  serial bridge independently rate-limits and low-pass filters steering.
+- Rotation Shim performs collision-checked Pivot alignment when the initial
+  path differs by more than 0.70 rad and when satisfying the final goal yaw.
+  Ackermann MPPI handles normal path tracking and local obstacle detours; the
+  serial bridge independently rate-limits and low-pass filters 2WIS steering.
   Collision Monitor provides a separate slowdown/stop layer from PointCloud2.
-- Goal completion is position-only because forward-only 2WIS cannot guarantee
-  an arbitrary clicked final yaw; the final command is continuously held at zero.
 - The optional Autoware corridor runtime uses the generated Lanelet2 map,
   clusters live Mid-360 returns as UNKNOWN objects, and publishes a
   forward-only low-speed trajectory through the same Collision Monitor path.

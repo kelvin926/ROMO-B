@@ -9,7 +9,7 @@ import rclpy
 from rclpy.node import Node
 from std_srvs.srv import SetBool
 
-from .protocol import CommandParser, ackermann_feedback, encode_feedback
+from .protocol import CommandParser, ackermann_feedback, encode_feedback, pivot_feedback
 
 
 class PcuSimulator(Node):
@@ -88,7 +88,10 @@ class PcuSimulator(Node):
         enabled = fresh and self.command["auto_mode"] and not self.command["estop"]
         speed = self.command["speed_mps"] if enabled else 0.0
         steer = self.command["steer_deg"] if enabled else 0.0
-        speeds, angles = ackermann_feedback(speed, steer)
+        if self.command["steer_mode"] == 2:
+            speeds, angles = pivot_feedback(speed)
+        else:
+            speeds, angles = ackermann_feedback(speed, steer)
         auto_mode = bool(self.get_parameter("auto_switch").value) and self.command["auto_mode"]
         frame = encode_feedback(
             auto_mode,

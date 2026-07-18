@@ -57,6 +57,18 @@ def ackermann_feedback(speed_mps, steer_deg, wheelbase=0.323, track=0.390):
     return speeds, [math.degrees(fl_angle), math.degrees(fr_angle), 0.0, 0.0]
 
 
+def pivot_feedback(speed_mps):
+    """Mirror the ROMO-B PCU Pivot feedback convention.
+
+    Positive command speed is clockwise: FL/RL are positive and FR/RR are
+    negative. Wheel steering feedback is the fixed X pattern from the manual.
+    """
+    return (
+        [speed_mps, -speed_mps, speed_mps, -speed_mps],
+        [30.0, -30.0, -30.0, 30.0],
+    )
+
+
 def encode_feedback(auto_mode, estop, steer_mode, speeds, steering_deg, alive):
     frame = bytearray(25)
     frame[:3] = HEADER

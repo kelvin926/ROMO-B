@@ -144,8 +144,9 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   during physical turns. The corridor controller now uses a 0.5 m/s Ackermann
   MPPI profile with a 4-second prediction horizon and full-footprint cost
   scoring. Its reduced path-alignment weight permits local lateral detours
-  around people while retaining filtered/rate-limited steering, position-only
-  goal completion, and a 120-second progress allowance.
+  around people while retaining filtered/rate-limited 2WIS steering and a
+  120-second progress allowance. Rotation Shim now invokes the PCU Pivot mode
+  for large initial-path heading errors and final goal yaw alignment.
 - The obstacle pipeline now rejects floor/near/far noise and small isolated
   groups. A transient local-costmap plugin rebuilds dynamic obstacles at 5 Hz
   from only the latest 0.35 seconds of Mid-360 data, so departed people do not
@@ -159,10 +160,15 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   of a straight path. Ackermann MPPI produced 13 moving detour commands in 33
   settled samples (0.258 m/s maximum forward command and 0.111 rad/s maximum
   absolute yaw rate) without launching the serial bridge.
-- The corrected nine-package subset builds locally. All 25 package tests pass,
-  and the PTY state-machine test passes under Cyclone DDS, including motion,
-  command soft-stop/recovery and feedback/ALIVE arm-retaining Auto recovery
-  without software E-stop transmission.
+- A separate isolated Rotation Shim test produced a zero-linear CCW Pivot
+  command and verified it traversed the velocity smoother, Collision Monitor,
+  and `/cmd_vel_safe`. Protocol tests cover both Pivot signs and the PTY PCU
+  test covers live 2WIS-to-Pivot mode switching plus signed yaw odometry.
+- The corrected nine-package subset builds locally. All 30 recorded package
+  tests pass, and the PTY state-machine test passes under Cyclone DDS,
+  including 2WIS motion, both signed Pivot directions/yaw odometry, command
+  soft-stop/recovery, and feedback/ALIVE arm-retaining Auto recovery without
+  software E-stop transmission.
 
 ## Reproduction still required
 
@@ -175,7 +181,7 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 ## Waiting for hardware validation
 
 - Repeat one direct `Nav2 Goal` run to verify live TF freshness, smooth steering,
-  position-only completion, and absence of nuisance `Hi_E-ST` after command gaps.
+  Pivot path/final-yaw alignment, and absence of nuisance `Hi_E-ST` after command gaps.
 - Place one box and then one walking person in the corridor to validate the
   0.70 m stop / 1.25 m slowdown polygons and 0.35-second cost expiry.
 - Verify RViz initial-pose recovery at several locations on the live platform.

@@ -45,16 +45,20 @@ struct Feedback
 struct ControlLimits
 {
   double wheelbase_m{0.323};
+  double control_track_m{0.390};
   double max_speed_mps{0.2};
+  double max_pivot_speed_mps{0.15};
   double max_steer_deg{22.0};
   double zero_speed_epsilon{1.0e-3};
   bool allow_reverse{false};
+  bool allow_pivot{false};
 };
 
 struct ControlOutput
 {
   bool valid{true};
   bool clamped{false};
+  SteerMode steer_mode{SteerMode::k2Wis};
   double speed_mps{0.0};
   double pcu_steer_deg{0.0};
 };

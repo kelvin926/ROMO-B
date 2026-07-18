@@ -29,6 +29,29 @@
 namespace romo_b_base
 {
 
+namespace
+{
+
+bool is_supported_auto_mode(const SteerMode mode)
+{
+  return mode == SteerMode::k2Wis || mode == SteerMode::kPivot;
+}
+
+const char * steer_mode_name(const SteerMode mode)
+{
+  switch (mode) {
+    case SteerMode::k2Wis:
+      return "2WIS";
+    case SteerMode::kPivot:
+      return "Pivot";
+    case SteerMode::k4Wis:
+      return "4WIS";
+  }
+  return "unknown";
+}
+
+}  // namespace
+
 class SerialBridge final : public rclcpp_lifecycle::LifecycleNode
 {
 public:
@@ -51,6 +74,7 @@ public:
     declare_parameter<double>("control_track_m", 0.390);
     declare_parameter<double>("wheel_radius_m", 0.103);
     declare_parameter<double>("max_navigation_speed_mps", 0.2);
+    declare_parameter<double>("max_pivot_speed_mps", 0.15);
     declare_parameter<double>("steer_filter_alpha", 0.25);
     declare_parameter<double>("max_steer_rate_degps", 30.0);
     declare_parameter<std::string>("safety_profile", "bench");
@@ -97,15 +121,20 @@ private:
 
     const auto profile = get_parameter("safety_profile").as_string();
     limits_.wheelbase_m = wheelbase_m_;
+    limits_.control_track_m = control_track_m_;
     limits_.allow_reverse = false;
     if (profile == "bench") {
       navigation_profile_ = false;
+      limits_.allow_pivot = false;
       limits_.max_speed_mps = 0.1;
       limits_.max_steer_deg = 5.0;
     } else if (profile == "navigation") {
       navigation_profile_ = true;
+      limits_.allow_pivot = true;
       limits_.max_speed_mps = std::clamp(
         get_parameter("max_navigation_speed_mps").as_double(), 0.1, 0.5);
+      limits_.max_pivot_speed_mps = std::clamp(
+        get_parameter("max_pivot_speed_mps").as_double(), 0.05, 0.20);
       limits_.max_steer_deg = 22.0;
     } else {
       RCLCPP_ERROR(get_logger(), "Unknown safety_profile '%s'", profile.c_str());
@@ -325,7 +354,7 @@ private:
     if (!mapped.valid) {
       RCLCPP_WARN_THROTTLE(
         get_logger(), *get_clock(), 2000,
-        "Rejected reverse, pure-rotation, non-finite, or otherwise invalid Twist");
+        "Rejected reverse, unsupported profile rotation, non-finite, or otherwise invalid Twist");
     }
   }
 
@@ -451,7 +480,7 @@ private:
       command.alive = hlv_alive_++;
       if (bridge_state_ == BridgeState::kArmedAuto) {
         const bool feedback_allows_auto_recovery = have_feedback_ && !feedback_timed_out_ &&
-          !latest_feedback_.estop && latest_feedback_.steer_mode == SteerMode::k2Wis;
+          !latest_feedback_.estop && is_supported_auto_mode(latest_feedback_.steer_mode);
         if (auto_recovery_manual_pending_ && feedback_allows_auto_recovery) {
           if (latest_feedback_.auto_mode) {
             // Feedback returned while the PCU remained in Auto. Resume without
@@ -472,13 +501,23 @@ private:
           command.auto_mode = true;
         }
         if (auto_confirmed_) {
-          command.speed_mps = desired_control_.speed_mps;
-          const double filtered_target = filtered_steer_deg_ +
-            steer_filter_alpha_ * (desired_control_.pcu_steer_deg - filtered_steer_deg_);
-          const double max_delta = max_steer_rate_degps_ * tx_dt;
-          filtered_steer_deg_ += std::clamp(
-            filtered_target - filtered_steer_deg_, -max_delta, max_delta);
-          command.steer_deg = filtered_steer_deg_;
+          command.steer_mode = desired_control_.steer_mode;
+          // Change the steering geometry at zero wheel speed. Motion begins
+          // only after PCU feedback confirms the requested 2WIS/Pivot mode.
+          const bool mode_confirmed = have_feedback_ &&
+            latest_feedback_.steer_mode == command.steer_mode;
+          command.speed_mps = mode_confirmed ? desired_control_.speed_mps : 0.0;
+          if (command.steer_mode == SteerMode::kPivot) {
+            filtered_steer_deg_ = 0.0;
+            command.steer_deg = 0.0;
+          } else {
+            const double filtered_target = filtered_steer_deg_ +
+              steer_filter_alpha_ * (desired_control_.pcu_steer_deg - filtered_steer_deg_);
+            const double max_delta = max_steer_rate_degps_ * tx_dt;
+            filtered_steer_deg_ += std::clamp(
+              filtered_target - filtered_steer_deg_, -max_delta, max_delta);
+            command.steer_deg = filtered_steer_deg_;
+          }
         }
       } else {
         filtered_steer_deg_ = 0.0;
@@ -546,7 +585,7 @@ private:
         feedback_timed_out_ = false;
       }
       if (bridge_state_ == BridgeState::kArmedAuto) {
-        if (feedback.estop || feedback.steer_mode != SteerMode::k2Wis ||
+        if (feedback.estop || !is_supported_auto_mode(feedback.steer_mode) ||
           (auto_confirmed_ && !feedback.auto_mode))
         {
           auto_confirmed_ = false;
@@ -563,7 +602,7 @@ private:
           auto_confirmed_ = true;
           desired_control_ = {};
           last_command_time_ = steady_now;
-          RCLCPP_INFO(get_logger(), "PCU confirmed Auto; forward commands are now enabled");
+          RCLCPP_INFO(get_logger(), "PCU confirmed Auto; 2WIS and Pivot commands are enabled");
         }
       }
 
@@ -622,6 +661,7 @@ private:
     bool manual_zero_sent = false;
     double desired_speed_mps = 0.0;
     double desired_steer_deg = 0.0;
+    SteerMode desired_steer_mode = SteerMode::k2Wis;
     double command_age_sec = 0.0;
     status.header.stamp = now();
     status.header.frame_id = base_frame_;
@@ -651,6 +691,7 @@ private:
       manual_zero_sent = manual_zero_sent_;
       desired_speed_mps = desired_control_.speed_mps;
       desired_steer_deg = desired_control_.pcu_steer_deg;
+      desired_steer_mode = desired_control_.steer_mode;
       command_age_sec = std::chrono::duration<double>(
         std::chrono::steady_clock::now() - last_command_time_).count();
     }
@@ -671,7 +712,7 @@ private:
     } else {
       serial_status.level = diagnostic_msgs::msg::DiagnosticStatus::OK;
       serial_status.message = status.state == romo_b_msgs::msg::PlatformStatus::STATE_ARMED_AUTO ?
-        "Armed 2WIS" : "Connected and disarmed";
+        std::string("Armed ") + steer_mode_name(desired_steer_mode) : "Connected and disarmed";
     }
     const auto add_value = [&serial_status](const std::string & key, const std::string & value) {
         diagnostic_msgs::msg::KeyValue item;
@@ -690,6 +731,7 @@ private:
       "commanded_speed_raw",
       std::to_string(static_cast<int>(std::lround(desired_speed_mps * 100.0))));
     add_value("commanded_steer_deg", std::to_string(desired_steer_deg));
+    add_value("commanded_steer_mode", steer_mode_name(desired_steer_mode));
     add_value("command_age_sec", std::to_string(command_age_sec));
     add_value("command_timeout_sec", std::to_string(command_timeout_.count()));
     add_value("command_timeout_action", "soft_zero");

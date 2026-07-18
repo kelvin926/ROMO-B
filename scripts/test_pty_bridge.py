@@ -25,6 +25,8 @@ class Probe(Node):
         self.status = None
         self.status_count = 0
         self.max_speed = 0.0
+        self.max_yaw_rate = 0.0
+        self.min_yaw_rate = 0.0
         self.create_subscription(
             PlatformStatus, "/romo_b/platform_status", self._on_status, 20
         )
@@ -45,6 +47,8 @@ class Probe(Node):
 
     def _on_odom(self, message):
         self.max_speed = max(self.max_speed, abs(message.twist.twist.linear.x))
+        self.max_yaw_rate = max(self.max_yaw_rate, message.twist.twist.angular.z)
+        self.min_yaw_rate = min(self.min_yaw_rate, message.twist.twist.angular.z)
 
 
 def wait_until(node, predicate, timeout, tick=None, description="condition"):
@@ -110,6 +114,12 @@ def publish_forward(probe):
     probe.command_pub.publish(message)
 
 
+def publish_pivot(probe, angular_z):
+    message = Twist()
+    message.angular.z = angular_z
+    probe.command_pub.publish(message)
+
+
 def main():
     # Isolate the test unless the operator deliberately chose a ROS domain.
     os.environ.setdefault("ROS_DOMAIN_ID", "93")
@@ -143,7 +153,8 @@ def main():
                     [
                         "ros2", "run", "romo_b_base", "romo_b_serial_bridge", "--ros-args",
                         "-p", f"device:={symlink}", "-p", "receive_only:=false",
-                        "-p", "safety_profile:=bench", "-p", "command_endian:=big",
+                        "-p", "safety_profile:=navigation", "-p", "sensor_calibrated:=true",
+                        "-p", "max_navigation_speed_mps:=0.1", "-p", "command_endian:=big",
                     ],
                     stdout=bridge_log,
                     stderr=subprocess.STDOUT,
@@ -182,6 +193,27 @@ def main():
                     2.0,
                     tick=lambda: publish_forward(probe),
                     description="non-zero odometry",
+                )
+
+                # Navigation may pivot in place when the path starts behind
+                # the robot or a final goal heading must be satisfied.
+                wait_until(
+                    probe,
+                    lambda: probe.status is not None
+                    and probe.status.steer_mode == 2
+                    and probe.max_yaw_rate > 0.25,
+                    2.0,
+                    tick=lambda: publish_pivot(probe, 0.4),
+                    description="counter-clockwise Pivot feedback and odometry",
+                )
+                wait_until(
+                    probe,
+                    lambda: probe.status is not None
+                    and probe.status.steer_mode == 2
+                    and probe.min_yaw_rate < -0.25,
+                    2.0,
+                    tick=lambda: publish_pivot(probe, -0.4),
+                    description="clockwise Pivot feedback and odometry",
                 )
 
                 # A planner/collision-monitor pause must stop motion without
@@ -290,7 +322,8 @@ def main():
                     description="automatic ALIVE recovery without re-arm",
                 )
                 print(
-                    "PTY_INTEGRATION_OK: Auto handshake, motion, command soft-stop/recovery, "
+                    "PTY_INTEGRATION_OK: Auto handshake, 2WIS motion, signed Pivot odometry, "
+                    "command soft-stop/recovery, "
                     "feedback/ALIVE arm-retaining Auto recovery, software E-stop disabled"
                 )
             except Exception:

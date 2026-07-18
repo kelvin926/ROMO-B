@@ -14,7 +14,8 @@ Use `--project-only` while developing without Livox or localization sources.
 ## Profiles
 
 - `bench`: 0.1 m/s, +/-5 degrees, Nav2 disabled.
-- `navigation`: up to 0.5 m/s, +/-22 degrees, forward-only 2WIS.
+- `navigation`: up to 0.5 m/s, +/-22 degrees in forward 2WIS, plus Pivot
+  heading alignment capped at 0.15 m/s tangential wheel speed.
 
 The bridge starts inactive and disarmed. Activating the lifecycle node does not
 arm motion. Use `/romo_b/arm` only after `doctor.sh --hardware` is green.
@@ -24,7 +25,9 @@ The navigation profile adds a second gate: `/romo_b/arm` is rejected unless
 tests remain possible without LiDAR calibration, within their lower limits.
 
 Nav2 uses a custom `NavigateThroughPoses` behavior tree containing only repeated
-planning and path following. It has no spin, reverse, or backup recovery action.
+planning and path following. Rotation Shim may Pivot for path and final-goal
+heading alignment, but there is no unconditional spin, reverse, or backup
+recovery action.
 The waypoint manager publishes the YAML `default_speed_mps` as an absolute Nav2
 speed limit before submitting each route.
 

@@ -111,7 +111,9 @@ ControlOutput map_twist(
 {
   ControlOutput output;
   if (!std::isfinite(linear_x_mps) || !std::isfinite(angular_z_radps) ||
-    limits.wheelbase_m <= 0.0 || limits.max_speed_mps <= 0.0 || limits.max_steer_deg <= 0.0)
+    limits.wheelbase_m <= 0.0 || limits.control_track_m <= 0.0 ||
+    limits.max_speed_mps <= 0.0 || limits.max_pivot_speed_mps <= 0.0 ||
+    limits.max_steer_deg <= 0.0)
   {
     output.valid = false;
     return output;
@@ -123,7 +125,19 @@ ControlOutput map_twist(
   }
   if (std::abs(linear_x_mps) <= limits.zero_speed_epsilon) {
     if (std::abs(angular_z_radps) > limits.zero_speed_epsilon) {
-      output.valid = false;
+      if (!limits.allow_pivot) {
+        output.valid = false;
+        return output;
+      }
+      output.steer_mode = SteerMode::kPivot;
+      const double wheel_radius_from_center = std::hypot(
+        limits.wheelbase_m * 0.5, limits.control_track_m * 0.5);
+      // The PCU manual defines positive Pivot SPEED as clockwise, opposite
+      // ROS positive angular.z (counter-clockwise).
+      const double requested_speed_mps = -angular_z_radps * wheel_radius_from_center;
+      output.speed_mps = std::clamp(
+        requested_speed_mps, -limits.max_pivot_speed_mps, limits.max_pivot_speed_mps);
+      output.clamped = output.speed_mps != requested_speed_mps;
     }
     return output;
   }
@@ -147,11 +161,24 @@ VehicleMotion estimate_vehicle_motion(
   const Feedback & feedback, double wheelbase_m, double control_track_m)
 {
   VehicleMotion motion;
-  motion.center_speed_mps =
-    0.5 * (feedback.wheel_speed_mps[2] + feedback.wheel_speed_mps[3]);
   if (wheelbase_m <= 0.0 || control_track_m <= 0.0) {
     return motion;
   }
+
+  if (feedback.steer_mode == SteerMode::kPivot) {
+    // Manual Pivot convention for clockwise motion is FL/RL positive and
+    // FR/RR negative. Convert it to ROS counter-clockwise-positive yaw.
+    const double clockwise_wheel_speed = 0.25 * (
+      feedback.wheel_speed_mps[0] - feedback.wheel_speed_mps[1] +
+      feedback.wheel_speed_mps[2] - feedback.wheel_speed_mps[3]);
+    const double wheel_radius_from_center = std::hypot(
+      wheelbase_m * 0.5, control_track_m * 0.5);
+    motion.yaw_rate_radps = -clockwise_wheel_speed / wheel_radius_from_center;
+    return motion;
+  }
+
+  motion.center_speed_mps =
+    0.5 * (feedback.wheel_speed_mps[2] + feedback.wheel_speed_mps[3]);
 
   // Convert PCU negative-left convention to ROS positive-left convention.
   const double fl = -feedback.wheel_steer_rad[0];
