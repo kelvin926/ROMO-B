@@ -11,6 +11,9 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - ROS 2 doctor and basic DDS communication pass.
 - GitHub CLI is authenticated as `kelvin926` with admin access to the private,
   initially empty repository.
+- Active GitHub ruleset `Protect main history` (ID `19129588`) blocks deletion
+  and non-fast-forward updates of the default branch while retaining the
+  agreed atomic direct-to-`main` workflow.
 - USB adapter detected as FTDI FT232R, serial `A5069RR4`, at `/dev/ttyUSB0`.
 - Manual protocol examples, fragmented/corrupt parsing, Ackermann conversion,
   steering sign, route YAML, yaw inference, PCD conversion, Livox IMU unit

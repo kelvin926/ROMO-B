@@ -151,3 +151,7 @@ tracked. Vendor checkouts, Autoware, build products, hardware-local settings,
 rosbags, PCDs, and generated maps live below this repository but are ignored.
 Large artifacts are recorded under `data/manifests/` with a SHA-256 and later an
 external URI.
+
+Validated atomic commits are pushed directly to `main`. Repository ruleset
+`Protect main history` blocks branch deletion and non-fast-forward/force pushes
+without requiring pull requests, so corrections are made as follow-up commits.
