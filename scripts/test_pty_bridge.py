@@ -36,7 +36,6 @@ class Probe(Node):
             ChangeState, "/romo_b_serial_bridge/change_state"
         )
         self.arm = self.create_client(SetBool, "/romo_b/arm")
-        self.estop = self.create_client(SetBool, "/romo_b/software_estop")
         self.feedback = self.create_client(SetBool, "/romo_b_sim/feedback")
         self.alive = self.create_client(SetBool, "/romo_b_sim/alive")
 
@@ -157,12 +156,16 @@ def main():
                 change_state(probe, Transition.TRANSITION_CONFIGURE, "configure")
                 for client, name in (
                     (probe.arm, "arm"),
-                    (probe.estop, "software E-stop"),
                     (probe.feedback, "simulator feedback"),
                     (probe.alive, "simulator alive"),
                 ):
                     wait_service(probe, client, name)
                 change_state(probe, Transition.TRANSITION_ACTIVATE, "activate")
+                if any(
+                    name == "/romo_b/software_estop"
+                    for name, _types in probe.get_service_names_and_types()
+                ):
+                    raise RuntimeError("software E-stop service must not exist")
                 wait_until(
                     probe,
                     lambda: probe.status is not None
@@ -219,16 +222,18 @@ def main():
                     description="clean stopped disarm state",
                 )
 
-                # Keep commands fresh while pausing feedback; only feedback timeout may trip.
+                # Feedback loss disarms with a zero Manual command. Software
+                # must never assert the PCU E-stop bit.
                 set_bool(probe, probe.arm, True, "re-arm")
                 set_bool(probe, probe.feedback, False, "pause feedback")
                 wait_until(
                     probe,
-                    lambda: probe.status.state == PlatformStatus.STATE_ESTOP
-                    and probe.status.feedback_timed_out,
+                    lambda: probe.status.state == PlatformStatus.STATE_CONNECTED_SAFE
+                    and probe.status.feedback_timed_out
+                    and not probe.status.estop,
                     2.0,
                     tick=lambda: publish_forward(probe),
-                    description="feedback-timeout E-stop",
+                    description="feedback-timeout zero disarm",
                 )
                 if probe.status.command_timed_out:
                     raise RuntimeError("command timeout tripped during feedback-timeout test")
@@ -241,13 +246,12 @@ def main():
                     2.0,
                     description="fresh stopped feedback after resume",
                 )
-                set_bool(probe, probe.estop, False, "final E-stop reset")
                 wait_until(
                     probe,
                     lambda: probe.status.state == PlatformStatus.STATE_CONNECTED_SAFE
                     and not probe.status.estop,
                     2.0,
-                    description="final safe state",
+                    description="feedback recovery without E-stop",
                 )
 
                 # Frames that keep arriving with a frozen PCU ALIVE are also stale feedback.
@@ -255,11 +259,12 @@ def main():
                 set_bool(probe, probe.alive, False, "freeze PCU ALIVE")
                 wait_until(
                     probe,
-                    lambda: probe.status.state == PlatformStatus.STATE_ESTOP
-                    and probe.status.feedback_timed_out,
+                    lambda: probe.status.state == PlatformStatus.STATE_CONNECTED_SAFE
+                    and probe.status.feedback_timed_out
+                    and not probe.status.estop,
                     2.0,
                     tick=lambda: publish_forward(probe),
-                    description="stale-ALIVE E-stop",
+                    description="stale-ALIVE zero disarm",
                 )
                 if probe.status.command_timed_out:
                     raise RuntimeError("command timeout tripped during stale-ALIVE test")
@@ -272,17 +277,16 @@ def main():
                     2.0,
                     description="fresh ALIVE after resume",
                 )
-                set_bool(probe, probe.estop, False, "post-ALIVE E-stop reset")
                 wait_until(
                     probe,
                     lambda: probe.status.state == PlatformStatus.STATE_CONNECTED_SAFE
                     and not probe.status.estop,
                     2.0,
-                    description="post-ALIVE safe state",
+                    description="ALIVE recovery without E-stop",
                 )
                 print(
                     "PTY_INTEGRATION_OK: Auto handshake, motion, command soft-stop/recovery, "
-                    "feedback/ALIVE hard-stop, latch, reset"
+                    "feedback/ALIVE zero-disarm, software E-stop disabled"
                 )
             except Exception:
                 simulator_log.flush()

@@ -22,6 +22,11 @@ command. V1 uses 2WIS only, maps `Twist` to an equivalent steering angle,
 rejects pure rotation and reverse commands, and clamps the selected safety
 profile.
 
+The serial encoder always writes zero to the HLV E-stop field. Software fault
+handling is limited to zero speed plus a Manual/disarmed handoff; only the
+operator's physical/RC control may request E-stop. The bridge continues to
+decode and publish the PCU's physical E-stop feedback.
+
 ## Frames
 
 ```text
@@ -36,6 +41,8 @@ Only the listed component owns each transform. Raw wheel odometry does not
 publish TF. The static `base_link -> livox_frame` transform is invalid until its
 measured values are placed in `config/local/hardware.yaml`. The approved
 hardware configuration is tracked for handoff to users of this same platform.
+The installed Mid-360 uses xyz `(0.270, 0.000, 0.258)` m and rpy `(0, 0, 0)`;
+the Livox logo faces forward and the cable exits rearward.
 
 The pinned Livox driver publishes Mid-360 acceleration in `g`. The hardware
 launch keeps that vendor stream private on `/sensing/imu/livox_raw` and

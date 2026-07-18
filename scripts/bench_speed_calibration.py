@@ -28,7 +28,6 @@ class Calibration(Node):
             PlatformStatus, "/romo_b/platform_status", self._on_status, 10
         )
         self.arm = self.create_client(SetBool, "/romo_b/arm")
-        self.estop = self.create_client(SetBool, "/romo_b/software_estop")
 
     def _on_status(self, message):
         self.status = message
@@ -83,7 +82,7 @@ class Calibration(Node):
                 if maximum > self.overspeed:
                     steer = [float(value) for value in self.status.wheel_steer_rad]
                     try:
-                        self.call(self.estop, True, timeout=1.0)
+                        self.call(self.arm, False, timeout=1.0)
                     finally:
                         raise RuntimeError(
                             f"overspeed feedback {maximum:.3f} m/s > "

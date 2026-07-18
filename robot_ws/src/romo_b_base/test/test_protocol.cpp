@@ -33,6 +33,13 @@ TEST(CommandEncoding, SupportsMeasuredLittleEndianPcu)
   EXPECT_EQ(rb::encode_command(command, true), expected);
 }
 
+TEST(CommandEncoding, NeverAssertsSoftwareEstop)
+{
+  const rb::Command command{true, true, rb::SteerMode::k2Wis, 0.0, 0.0, 4};
+  const auto frame = rb::encode_command(command, true);
+  EXPECT_EQ(frame[4], 0U);
+}
+
 TEST(FeedbackDecoding, DecodesLittleEndianAndScales)
 {
   const std::array<std::uint8_t, rb::kFeedbackFrameSize> frame{

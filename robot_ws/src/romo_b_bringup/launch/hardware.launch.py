@@ -65,8 +65,8 @@ def _actions(context):
                 # The complete navigation stack can briefly preempt a 20 Hz
                 # user-space publisher. A stale collision-monitor input still
                 # becomes zero immediately, while this wider transport
-                # watchdog avoids latching the PCU HLV E-stop on scheduler
-                # jitter observed during MPPI/costmap updates.
+                # watchdog avoids unnecessary zero/disarm transitions on
+                # scheduler jitter observed during planner/costmap updates.
                 "command_timeout_sec": 0.50 if safety_profile == "navigation" else 0.15,
                 "max_navigation_speed_mps": ParameterValue(
                     LaunchConfiguration("max_navigation_speed_mps"), value_type=float

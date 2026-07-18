@@ -20,8 +20,9 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   normalization, and odometry have automated coverage.
 - The tracked PTY PCU integration test passes lifecycle activation, explicit
   arm, simulated motion feedback, odometry, independent command/feedback
-  timeouts, PCU ALIVE stagnation, AorM 0-to-1 handshake, preserved E-stop
-  latch, and explicit reset. CI runs this test.
+  timeouts, PCU ALIVE stagnation, and the AorM 0-to-1 handshake. It verifies
+  that feedback/ALIVE faults use zero plus disarm and never transmit E-stop.
+  CI runs this test.
 - Ten project packages build locally, including the Autoware adapters and the
   standard `romo_b_launch` vehicle-model contract. The current project suite
   contains 25 passing tests plus the PTY PCU state-machine test. The headless
@@ -67,6 +68,10 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - The measured Mid-360 transform is xyz `(0.270, 0.000, 0.258)` m and rpy
   `(0, 0, 0)` rad. RViz confirmed a level floor, vertical structures, and the
   sensor's forward direction; the local LiDAR calibration gate is approved.
+- Real mapping-bag yaw validation paired 1,802 moving samples from the
+  Mid-360 IMU and wheel odometry. Their yaw rates have 97.61% sign agreement
+  and 0.974 correlation, so the current zero-yaw LiDAR mounting and odometry
+  yaw sign are consistent and must not be inverted.
 - The first RC-Manual mapping bag (`mapping-20260717-195653`) passed SQLite and
   topic-count checks: 381.83 seconds, 3,818 clouds, 76,359 normalized IMU
   samples, and 7,448 wheel-odometry samples.
@@ -125,10 +130,11 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   faults occurred during shutdown, while the runtime middleware failures were
   in Fast DDS/shared memory. This laptop now uses Cyclone DDS by default, with
   a UDP-only Fast DDS fallback retained for fresh hosts until setup completes.
-- Command-source timeout is now a recoverable zero-speed hold that preserves
-  the 20 Hz PCU Auto heartbeat. Only explicit E-stop, stale PCU feedback/ALIVE,
-  or a failed Auto transition latches HLV E-stop. Routine lifecycle shutdown
-  sends a zero Manual frame instead of leaving `Hi_E-ST` on the dashboard.
+- Command-source timeout is a recoverable zero-speed hold that preserves the
+  20 Hz PCU Auto heartbeat. Stale PCU feedback/ALIVE, a failed Auto transition,
+  serial failure, explicit disarm, and routine lifecycle shutdown all use a
+  zero Manual handoff. Software E-stop TX and its ROS service are removed; only
+  physical/PCU E-stop feedback is reported.
 - LiDAR localization republishes `map -> odom` at 20 Hz between 10 Hz scans,
   removing the future-extrapolation gap seen by Nav2. The corridor controller
   uses a 0.5 m/s Regulated Pure Pursuit profile, filtered/rate-limited steering,
@@ -140,7 +146,8 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   paths; rendering is PRIME-offloaded to the RTX GPU.
 - The corrected nine-package subset builds locally. All 25 package tests pass,
   and the PTY state-machine test passes under Cyclone DDS, including motion,
-  command soft-stop/recovery, feedback/ALIVE hard-stop, latch, and reset.
+  command soft-stop/recovery and feedback/ALIVE zero-disarm without software
+  E-stop transmission.
 
 ## Reproduction still required
 

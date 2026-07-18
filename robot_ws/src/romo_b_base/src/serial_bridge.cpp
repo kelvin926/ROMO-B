@@ -68,7 +68,6 @@ private:
     kDisconnected = romo_b_msgs::msg::PlatformStatus::STATE_DISCONNECTED,
     kConnectedSafe = romo_b_msgs::msg::PlatformStatus::STATE_CONNECTED_SAFE,
     kArmedAuto = romo_b_msgs::msg::PlatformStatus::STATE_ARMED_AUTO,
-    kEstop = romo_b_msgs::msg::PlatformStatus::STATE_ESTOP,
   };
 
   CallbackReturn on_configure(const rclcpp_lifecycle::State &) override
@@ -143,10 +142,6 @@ private:
     arm_service_ = create_service<std_srvs::srv::SetBool>(
       "/romo_b/arm",
       std::bind(&SerialBridge::on_arm, this, std::placeholders::_1, std::placeholders::_2));
-    estop_service_ = create_service<std_srvs::srv::SetBool>(
-      "/romo_b/software_estop",
-      std::bind(&SerialBridge::on_estop, this, std::placeholders::_1, std::placeholders::_2));
-
     tx_timer_ = create_wall_timer(
       std::chrono::duration_cast<std::chrono::nanoseconds>(
         std::chrono::duration<double>(1.0 / tx_rate)),
@@ -155,7 +150,6 @@ private:
     {
       std::scoped_lock lock(state_mutex_);
       bridge_state_ = BridgeState::kDisconnected;
-      software_estop_ = false;
       have_feedback_ = false;
       command_timed_out_ = false;
       feedback_timed_out_ = false;
@@ -199,17 +193,13 @@ private:
     diagnostics_pub_->on_activate();
     {
       std::scoped_lock lock(state_mutex_);
-      // A lifecycle deactivate/activate cycle must never clear a latched
-      // software E-stop. Only the explicit reset service may do that.
-      bridge_state_ = software_estop_ ? BridgeState::kEstop : BridgeState::kConnectedSafe;
+      bridge_state_ = BridgeState::kConnectedSafe;
       auto_confirmed_ = false;
       auto_request_sent_ = false;
       manual_zero_sent_ = false;
       last_command_time_ = std::chrono::steady_clock::now();
     }
-    RCLCPP_INFO(
-      get_logger(), "Bridge active, %s",
-      software_estop_ ? "software E-stop remains latched" : "but disarmed");
+    RCLCPP_INFO(get_logger(), "Bridge active, but disarmed; software E-stop TX is disabled");
     return CallbackReturn::SUCCESS;
   }
 
@@ -219,14 +209,14 @@ private:
     const bool should_send = !receive_only_ && serial_open_.load();
     {
       std::scoped_lock lock(state_mutex_);
-      // A routine lifecycle stop is not an emergency.  Send a zero Manual
-      // frame so Ctrl-C/restart hands control back without leaving Hi_E-ST
-      // latched on the PCU.  An already-latched software E-stop is preserved.
-      command.auto_mode = software_estop_;
-      command.estop = software_estop_;
+      // Every software-initiated shutdown is a zero Manual handoff. The HLV
+      // bridge never asserts the PCU E-stop bit; the operator owns E-stop via
+      // the physical/RC control.
+      command.auto_mode = false;
+      command.estop = false;
       command.steer_mode = SteerMode::k2Wis;
       command.alive = hlv_alive_++;
-      bridge_state_ = software_estop_ ? BridgeState::kEstop : BridgeState::kConnectedSafe;
+      bridge_state_ = BridgeState::kConnectedSafe;
       desired_control_ = {};
       filtered_steer_deg_ = 0.0;
     }
@@ -246,7 +236,6 @@ private:
     tx_timer_.reset();
     cmd_sub_.reset();
     arm_service_.reset();
-    estop_service_.reset();
     status_pub_.reset();
     odom_pub_.reset();
     joint_pub_.reset();
@@ -312,7 +301,6 @@ private:
             serial_open_.store(false);
             std::scoped_lock lock(state_mutex_);
             bridge_state_ = BridgeState::kDisconnected;
-            software_estop_ = true;
           }
           return;
         }
@@ -349,11 +337,9 @@ private:
       auto_confirmed_ = false;
       auto_request_sent_ = false;
       manual_zero_sent_ = false;
-      bridge_state_ = software_estop_ ? BridgeState::kEstop : BridgeState::kConnectedSafe;
+      bridge_state_ = BridgeState::kConnectedSafe;
       response->success = true;
-      response->message = software_estop_ ?
-        "Disarmed; software E-stop remains latched until explicit reset" :
-        "Disarmed; zero manual command will be sent";
+      response->message = "Disarmed; zero manual command will be sent";
       return;
     }
     if (get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
@@ -377,8 +363,7 @@ private:
       response->message = "Fresh PCU feedback is required";
       return;
     }
-    if (latest_feedback_.estop || software_estop_ ||
-      latest_feedback_.steer_mode != SteerMode::k2Wis)
+    if (latest_feedback_.estop || latest_feedback_.steer_mode != SteerMode::k2Wis)
     {
       response->message = "PCU must report E-stop off and 2WIS";
       return;
@@ -404,44 +389,6 @@ private:
     feedback_timed_out_ = false;
     response->success = true;
     response->message = "Auto rising edge requested; motion stays zero until PCU confirms Auto";
-  }
-
-  void on_estop(
-    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
-    std::shared_ptr<std_srvs::srv::SetBool::Response> response)
-  {
-    std::scoped_lock lock(state_mutex_);
-    if (request->data) {
-      software_estop_ = true;
-      bridge_state_ = BridgeState::kEstop;
-      auto_confirmed_ = false;
-      auto_request_sent_ = false;
-      desired_control_ = {};
-      response->success = true;
-      response->message = "Software E-stop latched";
-      return;
-    }
-    const auto steady_now = std::chrono::steady_clock::now();
-    const auto age = steady_now - last_feedback_time_;
-    const auto alive_age = steady_now - last_alive_change_time_;
-    const bool stopped = std::all_of(
-      latest_feedback_.wheel_speed_mps.begin(), latest_feedback_.wheel_speed_mps.end(),
-      [](double speed) {return std::abs(speed) < 0.02;});
-    if (!serial_open_.load() || !have_feedback_ || age > feedback_timeout_ ||
-      alive_age > feedback_timeout_ || !stopped)
-    {
-      response->message = "Cannot reset: fresh stopped feedback is required";
-      return;
-    }
-    software_estop_ = false;
-    bridge_state_ = BridgeState::kConnectedSafe;
-    auto_confirmed_ = false;
-    auto_request_sent_ = false;
-    manual_zero_sent_ = false;
-    command_timed_out_ = false;
-    feedback_timed_out_ = false;
-    response->success = true;
-    response->message = "Software E-stop reset; bridge remains disarmed";
   }
 
   void on_tx_timer()
@@ -470,7 +417,7 @@ private:
           // A planner/collision-monitor pause is an ordinary controlled stop,
           // not an emergency. Keep the 20 Hz Auto heartbeat alive with zero
           // motion so the PCU does not show Hi_E-ST or Auto Fail. A fresh Twist
-          // resumes automatically; genuine PCU/serial faults still hard-stop.
+          // resumes automatically.
           desired_control_ = {};
           RCLCPP_WARN(
             get_logger(), "Command watchdog expired after %.3f s; holding zero without HLV E-stop",
@@ -478,20 +425,21 @@ private:
         }
         if (feedback_timed_out_ || auto_transition_timed_out) {
           if (feedback_timed_out_) {
-            RCLCPP_ERROR(get_logger(), "PCU feedback watchdog expired; latching HLV E-stop");
+            RCLCPP_ERROR(
+              get_logger(),
+              "PCU feedback watchdog expired; disarming with zero (software E-stop TX disabled)");
           } else if (auto_transition_timed_out) {
-            RCLCPP_ERROR(get_logger(), "PCU did not confirm the Auto transition in time");
+            RCLCPP_ERROR(
+              get_logger(),
+              "PCU did not confirm Auto in time; disarming with zero (software E-stop TX disabled)");
           }
-          software_estop_ = true;
-          bridge_state_ = BridgeState::kEstop;
+          bridge_state_ = BridgeState::kConnectedSafe;
           auto_confirmed_ = false;
           auto_request_sent_ = false;
           desired_control_ = {};
+          filtered_steer_deg_ = 0.0;
         }
       } else if (bridge_state_ == BridgeState::kConnectedSafe) {
-        if (software_estop_) {
-          bridge_state_ = BridgeState::kEstop;
-        }
         command_timed_out_ = false;
       }
 
@@ -508,10 +456,6 @@ private:
             filtered_target - filtered_steer_deg_, -max_delta, max_delta);
           command.steer_deg = filtered_steer_deg_;
         }
-      } else if (bridge_state_ == BridgeState::kEstop) {
-        command.auto_mode = true;
-        command.estop = true;
-        filtered_steer_deg_ = 0.0;
       } else {
         filtered_steer_deg_ = 0.0;
       }
@@ -539,7 +483,12 @@ private:
     if (!serial_open_.load()) {
       return false;
     }
-    const auto frame = encode_command(command, command_little_endian_);
+    // Hard invariant: software never asserts the HLV E-stop byte. Emergency
+    // stopping belongs to the operator's physical/RC E-stop. Software faults
+    // are handled by zero speed and a Manual/disarmed handoff.
+    Command transmitted = command;
+    transmitted.estop = false;
+    const auto frame = encode_command(transmitted, command_little_endian_);
     try {
       std::scoped_lock lock(write_mutex_);
       boost::asio::write(serial_, boost::asio::buffer(frame));
@@ -549,7 +498,6 @@ private:
       serial_open_.store(false);
       std::scoped_lock state_lock(state_mutex_);
       bridge_state_ = BridgeState::kDisconnected;
-      software_estop_ = true;
       return false;
     }
   }
@@ -569,8 +517,7 @@ private:
       latest_feedback_ = feedback;
       have_feedback_ = true;
       last_feedback_time_ = steady_now;
-      if (bridge_state_ != BridgeState::kEstop &&
-        steady_now - last_alive_change_time_ <= feedback_timeout_)
+      if (steady_now - last_alive_change_time_ <= feedback_timeout_)
       {
         feedback_timed_out_ = false;
       }
@@ -578,10 +525,14 @@ private:
         if (feedback.estop || feedback.steer_mode != SteerMode::k2Wis ||
           (auto_confirmed_ && !feedback.auto_mode))
         {
-          software_estop_ = true;
           auto_confirmed_ = false;
           auto_request_sent_ = false;
-          bridge_state_ = BridgeState::kEstop;
+          desired_control_ = {};
+          filtered_steer_deg_ = 0.0;
+          bridge_state_ = BridgeState::kConnectedSafe;
+          RCLCPP_WARN(
+            get_logger(),
+            "PCU left armed 2WIS state; disarming with zero (software E-stop TX disabled)");
         } else if (!auto_confirmed_ && auto_request_sent_ && feedback.auto_mode) {
           auto_confirmed_ = true;
           desired_control_ = {};
@@ -657,7 +608,9 @@ private:
       status.state = static_cast<std::uint8_t>(bridge_state_);
       status.connected = serial_open_.load();
       status.auto_mode = have_feedback_ && latest_feedback_.auto_mode;
-      status.estop = software_estop_ || (have_feedback_ && latest_feedback_.estop);
+      // Report only physical/PCU E-stop feedback. This bridge never transmits
+      // an E-stop request.
+      status.estop = have_feedback_ && latest_feedback_.estop;
       status.steer_mode = have_feedback_ ?
         static_cast<std::uint8_t>(latest_feedback_.steer_mode) : 0U;
       for (std::size_t index = 0; index < 4; ++index) {
@@ -679,7 +632,7 @@ private:
     if (!status.connected || status.estop || status.feedback_timed_out) {
       serial_status.level = diagnostic_msgs::msg::DiagnosticStatus::ERROR;
       if (status.feedback_timed_out) {
-        serial_status.message = "PCU feedback timeout E-stop";
+        serial_status.message = "PCU feedback timeout; bridge disarmed with zero";
       } else {
         serial_status.message = status.estop ? "E-stop active" : "Serial fault";
       }
@@ -714,6 +667,8 @@ private:
     add_value("command_age_sec", std::to_string(command_age_sec));
     add_value("command_timeout_sec", std::to_string(command_timeout_.count()));
     add_value("command_timeout_action", "soft_zero");
+    add_value("feedback_timeout_action", "zero_disarm");
+    add_value("software_estop_tx", "disabled");
     add_value("pcu_alive", std::to_string(status.pcu_alive));
     add_value("pcu_estop_raw", std::to_string(latest_feedback_.estop_raw));
     add_value("hlv_alive", std::to_string(status.hlv_alive));
@@ -757,7 +712,6 @@ private:
 
   std::mutex state_mutex_;
   BridgeState bridge_state_{BridgeState::kDisconnected};
-  bool software_estop_{false};
   bool have_feedback_{false};
   bool command_timed_out_{false};
   bool feedback_timed_out_{false};
@@ -785,7 +739,6 @@ private:
   rclcpp_lifecycle::LifecyclePublisher<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr diagnostics_pub_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_sub_;
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr arm_service_;
-  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr estop_service_;
   rclcpp::TimerBase::SharedPtr tx_timer_;
 };
 

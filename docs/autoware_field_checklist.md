@@ -80,8 +80,9 @@ finally a walking person, entering the path. Accept only these responses:
 
 ```bash
 ros2 service call /romo_b/arm std_srvs/srv/SetBool '{data: false}'
-ros2 service call /romo_b/software_estop std_srvs/srv/SetBool '{data: true}'
 ```
 
 Confirm zero wheel feedback, then return the PCU to Manual before stopping the
-launch. Never leave the platform armed or in autonomous control unattended.
+launch. The software never asserts HLV E-stop; use the physical/RC E-stop when
+the operator decides an emergency stop is required. Never leave the platform
+armed or in autonomous control unattended.

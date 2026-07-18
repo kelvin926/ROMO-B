@@ -24,7 +24,7 @@ enum class SteerMode : std::uint8_t
 struct Command
 {
   bool auto_mode{false};
-  bool estop{false};
+  bool estop{false};  // Legacy field; command encoding always transmits false.
   SteerMode steer_mode{SteerMode::k2Wis};
   double speed_mps{0.0};
   double steer_deg{0.0};

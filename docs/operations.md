@@ -57,6 +57,12 @@ Disarm after the route:
 ```bash
 ros2 service call /romo_b/arm std_srvs/srv/SetBool '{data: false}'
 ```
+
+There is intentionally no `/romo_b/software_estop` service. Command loss,
+feedback loss, an Auto transition failure, and normal shutdown all produce a
+zero-speed Manual/disarm handoff without setting the HLV E-stop bit. Use the
+physical/RC E-stop for an operator-requested emergency stop.
+
 The command path is fixed as Nav2, the Autoware trajectory follower, or teleop
 → `twist_mux` → velocity smoother → Collision Monitor → `/cmd_vel_safe` →
 serial bridge. The optional Autoware procedure is kept separate in

@@ -67,7 +67,9 @@ std::array<std::uint8_t, kCommandFrameSize> encode_command(
   std::array<std::uint8_t, kCommandFrameSize> frame{};
   std::copy(kHeader.begin(), kHeader.end(), frame.begin());
   frame[3] = command.auto_mode ? 1U : 0U;
-  frame[4] = command.estop ? 1U : 0U;
+  // HLV software never asserts E-stop. The PCU/RC hardware remains the sole
+  // emergency-stop authority; every encoded command keeps this byte clear.
+  frame[4] = 0U;
   frame[5] = static_cast<std::uint8_t>(command.steer_mode);
 
   const auto speed_raw = static_cast<std::int16_t>(std::lround(

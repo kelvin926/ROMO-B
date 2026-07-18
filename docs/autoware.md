@@ -160,8 +160,9 @@ Disarm at route completion or on any unexpected behavior:
 
 ```bash
 ros2 service call /romo_b/arm std_srvs/srv/SetBool '{data: false}'
-ros2 service call /romo_b/software_estop std_srvs/srv/SetBool '{data: true}'
 ```
 
-No launch or script arms the robot automatically. The first live autonomous
-run remains a supervised hardware acceptance step.
+No launch or script arms the robot automatically, and the bridge never asserts
+the HLV E-stop byte. The operator retains emergency-stop authority through the
+physical/RC control. The first live autonomous run remains a supervised
+hardware acceptance step.

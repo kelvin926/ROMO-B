@@ -38,8 +38,9 @@ direction, steering sign, or movement.
    convention against physical wheel movement.
    On this unit, the guarded 0.05 m/s straight and +/-3 degree tests passed on
    2026-07-17 with median feedback 0.045 m/s, +3.0 degrees, and -3.0 degrees.
-6. Disconnect commands and feedback independently; both must result in a full
-   stop and latched software E-stop before ground testing.
+6. Disconnect commands and feedback independently; both must result in zero
+   speed and a disarmed Manual handoff. Verify that the HLV E-stop byte remains
+   zero; emergency stopping is owned by the physical/RC E-stop.
 
 ## LiDAR and navigation stages
 
