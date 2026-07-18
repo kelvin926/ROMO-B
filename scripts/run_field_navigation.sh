@@ -30,4 +30,5 @@ exec ros2 launch romo_b_bringup field_navigation.launch.py \
   pcd_map:="$pcd_map" \
   map:="$map_yaml" \
   waypoint_file:="$waypoint_file" \
+  max_speed_mps:="${MAX_SPEED_MPS:-1.0}" \
   use_rviz:="${USE_RVIZ:-true}"

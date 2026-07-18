@@ -45,6 +45,23 @@ def generate_launch_description():
             {"use_sim_time": use_sim_time},
         ],
     )
+    heartbeat = Node(
+        package="romo_b_navigation",
+        executable="safe_command_heartbeat",
+        name="safe_command_heartbeat",
+        output="screen",
+        parameters=[
+            {
+                "use_sim_time": use_sim_time,
+                "input_topic": "/cmd_vel_collision_checked",
+                "output_topic": "/cmd_vel_safe",
+                "input_timeout_sec": 0.12,
+                "publish_frequency": 20.0,
+                "max_forward_speed": 0.20,
+                "max_angular_speed": 0.25,
+            }
+        ],
+    )
     manager = Node(
         package="nav2_lifecycle_manager",
         executable="lifecycle_manager",
@@ -64,6 +81,7 @@ def generate_launch_description():
             mux,
             smoother,
             monitor,
+            heartbeat,
             manager,
         ]
     )

@@ -1,0 +1,11 @@
+schema_version: 1
+frame_id: map
+mode: continuous
+default_speed_mps: 0.20
+waypoints:
+- x: 46.852437
+  y: -1.488351
+  yaw: -1.546
+- x: 46.899170
+  y: -3.437191
+  yaw: -1.546

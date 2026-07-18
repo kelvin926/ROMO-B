@@ -5,6 +5,9 @@ romo_b_autoware_trajectory_follower:
     stop_distance: 0.30
     max_speed: 0.20
     max_steer: 0.3839724354
-    trajectory_timeout: 0.50
+    # Autoware's low-speed field trajectory is typically 1-2 Hz.
+    trajectory_timeout: 1.50
     odometry_timeout: 0.30
-    require_operation_mode: true
+    # ROMO-B field mode uses the platform arm state as the final drive gate.
+    # Autoware's generic diagnostic graph is not authoritative for this adapter.
+    require_operation_mode: false

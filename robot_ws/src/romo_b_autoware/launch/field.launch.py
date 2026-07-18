@@ -27,6 +27,9 @@ def _python_launch(package: str, filename: str, arguments: dict):
 def _actions(context):
     map_path = pathlib.Path(LaunchConfiguration("map_path").perform(context)).resolve()
     pcd_map = pathlib.Path(LaunchConfiguration("pcd_map").perform(context)).resolve()
+    occupancy_map = pathlib.Path(
+        LaunchConfiguration("occupancy_map").perform(context)
+    ).resolve()
     hardware_config = pathlib.Path(
         LaunchConfiguration("hardware_config").perform(context)
     ).resolve()
@@ -37,6 +40,7 @@ def _actions(context):
         hardware_config,
         livox_config,
         pcd_map,
+        occupancy_map,
         map_path / "lanelet2_map.osm",
         map_path / "pointcloud_map.pcd",
         map_path / "map_projector_info.yaml",
@@ -71,6 +75,48 @@ def _actions(context):
     perception = _python_launch("romo_b_autoware", "perception.launch.py", {})
     safety = _python_launch(
         "romo_b_navigation", "safety_pipeline.launch.py", {"use_sim_time": "false"}
+    )
+
+    # Behavior Path Planner requires a transient-local OccupancyGrid even when
+    # the vector map and pointcloud map are already loaded by Autoware.  Serve
+    # the ray-cast 2D map on Autoware's canonical occupancy-grid topic.
+    occupancy_map_server_name = "romo_b_autoware_occupancy_map"
+    occupancy_map_server = Node(
+        package="nav2_map_server",
+        executable="map_server",
+        name=occupancy_map_server_name,
+        output="screen",
+        parameters=[
+            {
+                "use_sim_time": False,
+                "yaml_filename": str(occupancy_map),
+                "frame_id": "map",
+            }
+        ],
+        remappings=[
+            ("map", "/romo_b/autoware/occupancy_map_static"),
+            ("map_updates", "/romo_b/autoware/occupancy_map_static_updates"),
+        ],
+    )
+    occupancy_map_republisher = Node(
+        package="romo_b_autoware",
+        executable="occupancy_grid_republisher",
+        name="romo_b_autoware_occupancy_grid_republisher",
+        output="screen",
+        parameters=[{"publish_rate": 2.0}],
+    )
+    occupancy_map_lifecycle = Node(
+        package="nav2_lifecycle_manager",
+        executable="lifecycle_manager",
+        name="romo_b_autoware_occupancy_map_lifecycle",
+        output="screen",
+        parameters=[
+            {
+                "use_sim_time": False,
+                "autostart": True,
+                "node_names": [occupancy_map_server_name],
+            }
+        ],
     )
 
     autoware_launch = pathlib.Path(
@@ -168,6 +214,9 @@ def _actions(context):
         localization,
         perception,
         safety,
+        occupancy_map_server,
+        occupancy_map_lifecycle,
+        occupancy_map_republisher,
         *adapters,
         TimerAction(period=3.0, actions=[autoware]),
     ]
@@ -179,6 +228,7 @@ def generate_launch_description():
             DeclareLaunchArgument("hardware_config"),
             DeclareLaunchArgument("livox_config"),
             DeclareLaunchArgument("pcd_map"),
+            DeclareLaunchArgument("occupancy_map"),
             DeclareLaunchArgument("map_path"),
             DeclareLaunchArgument("use_rviz", default_value="true"),
             # The default field launch can inspect every live topic but cannot

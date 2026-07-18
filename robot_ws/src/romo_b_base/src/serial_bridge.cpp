@@ -50,6 +50,7 @@ public:
     declare_parameter<double>("wheelbase_m", 0.323);
     declare_parameter<double>("control_track_m", 0.390);
     declare_parameter<double>("wheel_radius_m", 0.103);
+    declare_parameter<double>("max_navigation_speed_mps", 0.2);
     declare_parameter<std::string>("safety_profile", "bench");
     declare_parameter<bool>("receive_only", true);
     declare_parameter<bool>("sensor_calibrated", false);
@@ -100,7 +101,8 @@ private:
       limits_.max_steer_deg = 5.0;
     } else if (profile == "navigation") {
       navigation_profile_ = true;
-      limits_.max_speed_mps = 0.2;
+      limits_.max_speed_mps = std::clamp(
+        get_parameter("max_navigation_speed_mps").as_double(), 0.1, 1.5);
       limits_.max_steer_deg = 22.0;
     } else {
       RCLCPP_ERROR(get_logger(), "Unknown safety_profile '%s'", profile.c_str());

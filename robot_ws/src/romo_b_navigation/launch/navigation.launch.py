@@ -90,6 +90,23 @@ def generate_launch_description():
             parameters=[collision_monitor, {"use_sim_time": typed_sim_time}],
         ),
         Node(
+            package="romo_b_navigation",
+            executable="safe_command_heartbeat",
+            name="safe_command_heartbeat",
+            output="screen",
+            parameters=[
+                {
+                    "use_sim_time": typed_sim_time,
+                    "input_topic": "/cmd_vel_collision_checked",
+                    "output_topic": "/cmd_vel_safe",
+                    "input_timeout_sec": 0.12,
+                    "publish_frequency": 20.0,
+                    "max_forward_speed": 1.00,
+                    "max_angular_speed": 1.25,
+                }
+            ],
+        ),
+        Node(
             package="romo_b_waypoints",
             executable="waypoint_manager",
             output="screen",

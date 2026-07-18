@@ -2,14 +2,31 @@
 set -euo pipefail
 
 mode="${1:---discover}"
+force="false"
+if [[ "${2:-}" == "--force" ]]; then
+  force="true"
+elif [[ -n "${2:-}" ]]; then
+  printf 'ERROR: unknown argument: %s\n' "$2" >&2
+  exit 2
+fi
 if [[ "$mode" != "--discover" && "$mode" != "--generate" && \
   "$mode" != "--apply" && "$mode" != "--receive-only" ]]; then
-  printf 'Usage: %s [--discover|--generate|--apply|--receive-only]\n' "$0" >&2
+  printf 'Usage: %s [--discover|--generate [--force]|--apply|--receive-only]\n' "$0" >&2
+  exit 2
+fi
+if [[ "$force" == "true" && "$mode" != "--generate" ]]; then
+  printf 'ERROR: --force is valid only with --generate.\n' >&2
   exit 2
 fi
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 hardware_yaml="$repo_root/config/local/hardware.yaml"
+if [[ "$mode" == "--generate" && -e "$hardware_yaml" && "$force" != "true" ]]; then
+  printf 'ERROR: %s already exists; refusing to replace measured hardware settings.\n' \
+    "$hardware_yaml" >&2
+  printf 'Use --generate --force only when intentionally onboarding different hardware.\n' >&2
+  exit 1
+fi
 serial_link="$(find /dev/serial/by-id -mindepth 1 -maxdepth 1 -type l -print 2>/dev/null | head -n 1 || true)"
 wired_if="$(find /sys/class/net -mindepth 1 -maxdepth 1 -printf '%f\n' 2>/dev/null | grep -Ev '^(lo|wl)' | head -n 1 || true)"
 
@@ -37,29 +54,15 @@ if [[ "$mode" == "--generate" ]]; then
   if [[ -n "$serial_link" ]]; then
     adapter_serial="$(udevadm info --query=property --name="$(readlink -f "$serial_link")" | sed -n 's/^ID_SERIAL=//p')"
   fi
-  python3 - "$hardware_yaml" "$adapter_serial" "${wired_if:-pending}" <<'PY'
-import pathlib
-import sys
-import yaml
-
-path, serial, interface = sys.argv[1:]
-data = {
-    "schema_version": 1,
-    "serial": {
-        "device": "/dev/romo_b_pcu", "baud": 115200, "data_bits": 8,
-        "parity": "none", "stop_bits": 1, "command_endian": "little",
-        "adapter_serial": serial,
-        "wiring": "pending",
-    },
-    "lidar": {
-        "host_ip": "192.168.1.5", "lidar_ip": "pending",
-        "interface": interface, "frame_id": "livox_frame", "calibrated": False,
-        "transform": {k: 0.0 for k in ("x", "y", "z", "roll", "pitch", "yaw")},
-    },
-}
-pathlib.Path(path).write_text(yaml.safe_dump(data, sort_keys=False))
-print(f"Generated {path}; complete pending fields before --apply.")
-PY
+  generate_args=(
+    --output "$hardware_yaml"
+    --adapter-serial "$adapter_serial"
+    --interface "${wired_if:-pending}"
+  )
+  if [[ "$force" == "true" ]]; then
+    generate_args+=(--force)
+  fi
+  python3 "$repo_root/scripts/generate_hardware_config.py" "${generate_args[@]}"
   exit 0
 fi
 

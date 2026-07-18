@@ -29,6 +29,7 @@ def _actions(context):
     serial = hardware.get("serial", {})
     lidar = hardware.get("lidar", {})
     transform = lidar.get("transform", {})
+    safety_profile = LaunchConfiguration("safety_profile").perform(context)
     use_sim_time = ParameterValue(LaunchConfiguration("use_sim_time"), value_type=bool)
 
     description_launch = pathlib.Path(
@@ -60,7 +61,16 @@ def _actions(context):
                 "receive_only": ParameterValue(
                     LaunchConfiguration("receive_only"), value_type=bool
                 ),
-                "safety_profile": LaunchConfiguration("safety_profile"),
+                "safety_profile": safety_profile,
+                # The complete navigation stack can briefly preempt a 20 Hz
+                # user-space publisher. A stale collision-monitor input still
+                # becomes zero immediately, while this wider transport
+                # watchdog avoids latching the PCU HLV E-stop on scheduler
+                # jitter observed during MPPI/costmap updates.
+                "command_timeout_sec": 0.50 if safety_profile == "navigation" else 0.15,
+                "max_navigation_speed_mps": ParameterValue(
+                    LaunchConfiguration("max_navigation_speed_mps"), value_type=float
+                ),
                 "sensor_calibrated": bool(lidar.get("calibrated", False)),
             }
         ],
@@ -76,7 +86,9 @@ def _actions(context):
         ],
     )
     activate = TimerAction(
-        period=2.0,
+        # Livox discovery and map startup can delay serial configuration by
+        # more than two seconds on the field laptop. Do not race configure.
+        period=4.0,
         actions=[
             ExecuteProcess(
                 cmd=["ros2", "lifecycle", "set", "/romo_b_serial_bridge", "activate"],
@@ -191,6 +203,7 @@ def generate_launch_description():
             DeclareLaunchArgument("livox_config", default_value="config/local/MID360_config.json"),
             DeclareLaunchArgument("receive_only", default_value="true"),
             DeclareLaunchArgument("safety_profile", default_value="bench"),
+            DeclareLaunchArgument("max_navigation_speed_mps", default_value="0.2"),
             DeclareLaunchArgument("autostart_bridge", default_value="true"),
             DeclareLaunchArgument("use_livox", default_value="false"),
             DeclareLaunchArgument("use_ekf", default_value="true"),

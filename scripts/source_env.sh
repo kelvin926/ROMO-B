@@ -58,6 +58,11 @@ if [[ -f "$repo_root/robot_ws/install/local_setup.bash" ]]; then
 fi
 export ROMO_B_ROOT="$repo_root"
 
+# Fast DDS shared-memory lock files accumulated during repeated field-stack
+# restarts and caused participant port failures and dropped intra-host topics.
+# The ROMO-B graph is entirely local, so use the deterministic UDPv4 transport.
+export FASTRTPS_DEFAULT_PROFILES_FILE="$repo_root/config/dds/fastdds_udp.xml"
+
 if [[ "$romo_b_nounset_was_enabled" == true ]]; then
   set -u
 fi

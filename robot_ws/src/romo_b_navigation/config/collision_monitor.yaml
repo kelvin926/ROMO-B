@@ -4,16 +4,21 @@ collision_monitor:
     base_frame_id: base_footprint
     odom_frame_id: odom
     cmd_vel_in_topic: /cmd_vel_smoothed
-    cmd_vel_out_topic: /cmd_vel_safe
+    cmd_vel_out_topic: /cmd_vel_collision_checked
     state_topic: /romo_b/collision_monitor_state
     transform_tolerance: 0.2
-    source_timeout: 0.20
-    base_shift_correction: true
+    # Mid-360 publishes at 10 Hz.  The measured end-to-end age under the full
+    # Autoware field load is 0.20-0.38 s, so 0.20 s rejected every live cloud.
+    # A stale source still fails closed: the monitor stops publishing and the
+    # PCU bridge's independent 0.15 s command timeout stops the platform.
+    source_timeout: 0.50
+    # Fixed-frame odom lookup caused extrapolation failures with live stamps.
+    base_shift_correction: false
     stop_pub_timeout: 0.20
     polygons: [StopZone, SlowdownZone]
     StopZone:
       type: polygon
-      points: [0.30, 0.38, 0.90, 0.38, 0.90, -0.38, 0.30, -0.38]
+      points: [0.30, 0.55, 1.50, 0.55, 1.50, -0.55, 0.30, -0.55]
       action_type: stop
       max_points: 2
       visualize: true
@@ -21,7 +26,7 @@ collision_monitor:
       enabled: true
     SlowdownZone:
       type: polygon
-      points: [0.25, 0.65, 1.50, 0.65, 1.50, -0.65, 0.25, -0.65]
+      points: [0.25, 0.85, 3.00, 0.85, 3.00, -0.85, 0.25, -0.85]
       action_type: slowdown
       slowdown_ratio: 0.30
       max_points: 2

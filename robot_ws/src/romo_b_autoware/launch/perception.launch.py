@@ -25,14 +25,30 @@ def generate_launch_description():
         output="screen",
         parameters=[PathJoinSubstitution([share, "config", "object_tracker.yaml"])],
     )
+    # Autoware's AEB requires base_link and logs every non-base_link input as
+    # an error.  Re-transform the already cropped cloud instead of relaying its
+    # base_footprint header unchanged.  The primary Collision Monitor continues
+    # to consume the original base_footprint cloud directly.
     pointcloud_relay = Node(
-        package="topic_tools",
-        executable="relay",
-        name="autoware_obstacle_pointcloud_relay",
+        package="romo_b_perception",
+        executable="pointcloud_filter",
+        name="autoware_obstacle_pointcloud_transformer",
         output="screen",
-        arguments=[
-            "/sensing/lidar/top/pointcloud_filtered",
-            "/perception/obstacle_segmentation/pointcloud",
+        parameters=[
+            {
+                "input_topic": "/sensing/lidar/top/pointcloud_filtered",
+                "output_topic": "/perception/obstacle_segmentation/pointcloud",
+                "target_frame": "base_link",
+                "voxel_size": 0.05,
+                "enable_height_filter": False,
+                "min_z": -5.0,
+                "max_z": 10.0,
+                "self_half_x": 0.42,
+                "self_half_y": 0.34,
+                "self_min_z": -0.25,
+                "self_max_z": 1.80,
+                "transform_timeout_sec": 0.10,
+            }
         ],
     )
     return LaunchDescription([cluster, tracker, pointcloud_relay])

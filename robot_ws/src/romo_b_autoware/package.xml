@@ -23,12 +23,14 @@
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
   <exec_depend>rclpy</exec_depend>
   <exec_depend>romo_b_msgs</exec_depend>
+  <exec_depend>romo_b_perception</exec_depend>
   <exec_depend>romo_b_launch</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
-  <exec_depend>topic_tools</exec_depend>
   <exec_depend>unique_identifier_msgs</exec_depend>
 
   <test_depend>python3-pytest</test_depend>
