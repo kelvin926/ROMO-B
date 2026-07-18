@@ -28,6 +28,21 @@ jobs:
           rosdep update
           rosdep install --from-paths robot_ws/src --ignore-src -r -y \
             --skip-keys "ament_python navigation2 nav2_bringup nav2_mppi_controller robot_localization twist_mux lidar_localization_ros2 lidarslam livox_ros_driver2 autoware_adapi_v1_msgs autoware_control_msgs autoware_perception_msgs autoware_internal_planning_msgs autoware_map_msgs autoware_planning_msgs autoware_vehicle_msgs autoware_euclidean_cluster_object_detector autoware_localization_msgs unique_identifier_msgs"
+      - name: Validate tracked scripts and YAML
+        shell: bash
+        run: |
+          bash -n scripts/*.sh
+          python3 -m compileall -q scripts robot_ws/src
+          python3 - <<'PY'
+          import pathlib
+          import yaml
+
+          roots = (pathlib.Path("config"), pathlib.Path("data/manifests"), pathlib.Path("robot_ws/src"))
+          paths = [path for root in roots for path in root.rglob("*.yaml")]
+          for path in paths:
+              yaml.safe_load(path.read_text(encoding="utf-8"))
+          print(f"Validated {len(paths)} tracked YAML files")
+          PY
       - name: Build and test project packages
         shell: bash
         run: |
