@@ -3,19 +3,24 @@
 ## Runtime command path
 
 ```text
-Nav2 /cmd_vel_nav ----\
-                       twist_mux -> velocity_smoother -> collision_monitor
-Teleop /cmd_vel_teleop/                                      |
-                                                     /cmd_vel_safe
-                                                            |
-                                                romo_b_serial_bridge
-                                                            |
-                                               USB-RS232, 20 Hz PCU
+Autoware /planning/trajectory -> ROMO-B trajectory follower --\
+Nav2 /cmd_vel_nav --------------------------------------------+-> twist_mux
+Teleop /cmd_vel_teleop --------------------------------------/       |
+                                                     velocity_smoother
+                                                              |
+                                                     collision_monitor
+                                                              |
+                                                       /cmd_vel_safe
+                                                              |
+                                                  romo_b_serial_bridge
+                                                              |
+                                                 USB-RS232, 20 Hz PCU
 ```
 
-The serial bridge never consumes an unfiltered Nav2 command. V1 uses 2WIS only,
-maps `Twist` to an equivalent steering angle, rejects pure rotation and reverse
-commands, and clamps the selected safety profile.
+The serial bridge never consumes an unfiltered Nav2, Autoware, or teleop
+command. V1 uses 2WIS only, maps `Twist` to an equivalent steering angle,
+rejects pure rotation and reverse commands, and clamps the selected safety
+profile.
 
 ## Frames
 
@@ -47,7 +52,11 @@ launch keeps that vendor stream private on `/sensing/imu/livox_raw` and
 - Smac Hybrid-A* plans forward-only Dubins paths with a 0.80 m minimum radius.
 - MPPI uses the Ackermann motion model; Collision Monitor provides an
   independent slowdown/stop layer from PointCloud2.
+- The optional Autoware corridor runtime uses the generated Lanelet2 map,
+  clusters live Mid-360 returns as UNKNOWN objects, and publishes a
+  forward-only low-speed trajectory through the same Collision Monitor path.
 
-Autoware Universe 1.8.0 is prepared as a separate, ignored research workspace.
-It is not part of the V1 runtime and no Lanelet2 map is required. Its complete
-environment/build remains independent from the ROMO-B overlays.
+Nav2 remains the V1 baseline runtime and does not require Lanelet2. Autoware
+Universe 1.8.0 is also integrated as an optional corridor research runtime in a
+separate ignored source workspace; it requires the generated Lanelet2/PCD map
+bundle but shares ROMO-B's tracked adapters and final safety pipeline.

@@ -50,8 +50,10 @@ Disarm after the route:
 ```bash
 ros2 service call /romo_b/arm std_srvs/srv/SetBool '{data: false}'
 ```
-The command path is fixed as Nav2/teleop → twist_mux → velocity smoother →
-Collision Monitor → serial bridge.
+The command path is fixed as Nav2, the Autoware trajectory follower, or teleop
+→ `twist_mux` → velocity smoother → Collision Monitor → `/cmd_vel_safe` →
+serial bridge. The optional Autoware procedure is kept separate in
+[`autoware.md`](autoware.md) and uses the same final safety chain.
 
 ## Data
 
