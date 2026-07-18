@@ -29,6 +29,7 @@ source scripts/source_env.sh
 colcon test --base-paths robot_ws/src --event-handlers console_direct+
 colcon test-result --test-result-base robot_ws/build --verbose
 python3 scripts/test_pty_bridge.py
+./scripts/run_simulation_smoke.sh
 ros2 launch romo_b_sim simulation.launch.py
 ```
 

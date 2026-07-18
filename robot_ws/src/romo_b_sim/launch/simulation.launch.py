@@ -1,14 +1,16 @@
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, TimerAction
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, TimerAction
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
 
 def generate_launch_description():
+    device = LaunchConfiguration("device")
     simulator = Node(
         package="romo_b_sim",
         executable="pcu_simulator",
         output="screen",
-        parameters=[{"symlink_path": "/tmp/romo_b_pcu", "auto_switch": True}],
+        parameters=[{"symlink_path": device, "auto_switch": True}],
     )
     bridge = Node(
         package="romo_b_base",
@@ -17,7 +19,7 @@ def generate_launch_description():
         output="screen",
         parameters=[
             {
-                "device": "/tmp/romo_b_pcu",
+                "device": device,
                 "receive_only": False,
                 "command_endian": "big",
                 "safety_profile": "bench",
@@ -34,6 +36,7 @@ def generate_launch_description():
     )
     return LaunchDescription(
         [
+            DeclareLaunchArgument("device", default_value="/tmp/romo_b_pcu"),
             simulator,
             TimerAction(period=0.5, actions=[bridge]),
             TimerAction(period=1.2, actions=[configure]),

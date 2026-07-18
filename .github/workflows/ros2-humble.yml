@@ -60,3 +60,9 @@ jobs:
           source /opt/ros/humble/setup.bash
           source robot_ws/install/setup.bash
           python3 scripts/test_pty_bridge.py
+      - name: Launch headless simulation smoke test
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          source robot_ws/install/setup.bash
+          ./scripts/run_simulation_smoke.sh
