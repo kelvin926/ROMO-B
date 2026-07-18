@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "controller": "Ackermann MPPI",
+  "speed_limit_mps": 0.5,
+  "samples": 33,
+  "moving_detour_samples": 13,
+  "max_forward_mps": 0.25840964913368225,
+  "max_abs_yaw_rate_radps": 0.110587477684021
+}

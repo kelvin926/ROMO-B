@@ -141,16 +141,24 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   removing the future-extrapolation gap seen by Nav2. The timer now preserves
   the last scan-validated correction instead of recomputing it against current
   odometry, which previously counter-rotated RViz and disturbed localization
-  during physical turns. The corridor controller
-  uses a 0.5 m/s Regulated Pure Pursuit profile, filtered/rate-limited steering,
-  position-only goal completion, and a 120-second progress allowance.
+  during physical turns. The corridor controller now uses a 0.5 m/s Ackermann
+  MPPI profile with a 4-second prediction horizon and full-footprint cost
+  scoring. Its reduced path-alignment weight permits local lateral detours
+  around people while retaining filtered/rate-limited steering, position-only
+  goal completion, and a 120-second progress allowance.
 - The obstacle pipeline now rejects floor/near/far noise and small isolated
-  groups. A transient costmap plugin rebuilds dynamic obstacles at 2-5 Hz from
-  only the latest 0.35 seconds of Mid-360 data, so departed people do not leave
-  persistent lethal costs. Close-stop/slowdown zones require 20/10 points and
-  never disarm. RViz shows both costmaps,
+  groups. A transient local-costmap plugin rebuilds dynamic obstacles at 5 Hz
+  from only the latest 0.35 seconds of Mid-360 data, so departed people do not
+  leave persistent lethal costs. The global costmap remains static-map-only so
+  a pedestrian cannot cancel the route before MPPI makes a local detour.
+  Close-stop/slowdown zones require 20/10 points and never disarm. RViz shows
+  both costmaps,
   collision zones, footprint, lookahead point, tracked boxes, and predicted
   paths; rendering is PRIME-offloaded to the RTX GPU.
+- An isolated synthetic FollowPath test placed a 0.45 m obstacle 1.10 m ahead
+  of a straight path. Ackermann MPPI produced 13 moving detour commands in 33
+  settled samples (0.258 m/s maximum forward command and 0.111 rad/s maximum
+  absolute yaw rate) without launching the serial bridge.
 - The corrected nine-package subset builds locally. All 25 package tests pass,
   and the PTY state-machine test passes under Cyclone DDS, including motion,
   command soft-stop/recovery and feedback/ALIVE arm-retaining Auto recovery

@@ -1,0 +1,5 @@
+[WARN] [1784373652.120839485] []: Old-style arguments are deprecated; see --help for new-style arguments
+[INFO] [1784373652.130359604] [static_transform_publisher_z3pt9LopJx64T6Vq]: Spinning until stopped - publishing transform
+translation: ('0.000000', '0.000000', '0.000000')
+rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+from 'odom' to 'base_link'

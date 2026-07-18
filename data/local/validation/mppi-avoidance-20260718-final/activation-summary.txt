@@ -1,0 +1,2 @@
+102:[controller_server-3] [INFO] [1784373740.084919618] [controller_server]: Created controller : FollowPath of type nav2_mppi_controller::MPPIController
+177:[lifecycle_manager-11] [INFO] [1784373741.190875165] [lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m

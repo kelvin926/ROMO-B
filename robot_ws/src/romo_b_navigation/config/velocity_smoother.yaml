@@ -6,7 +6,7 @@ velocity_smoother:
     feedback: OPEN_LOOP
     max_velocity: [0.50, 0.0, 0.80]
     min_velocity: [0.0, 0.0, -1.25]
-    max_accel: [0.25, 0.0, 0.80]
+    max_accel: [0.40, 0.0, 0.80]
     max_decel: [-1.00, 0.0, -1.50]
     odom_topic: /odometry/filtered
     odom_duration: 0.1

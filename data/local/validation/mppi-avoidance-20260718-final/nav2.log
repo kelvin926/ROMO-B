@@ -1,0 +1,231 @@
+[INFO] [launch]: All log files can be found below /home/hyunseo/.ros/log/2026-07-18-20-22-18-429189-hyunseo-2204-74225
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [map_server-1]: process started with pid [74252]
+[INFO] [planner_server-2]: process started with pid [74254]
+[INFO] [controller_server-3]: process started with pid [74257]
+[INFO] [bt_navigator-4]: process started with pid [74259]
+[INFO] [behavior_server-5]: process started with pid [74261]
+[INFO] [twist_mux-6]: process started with pid [74263]
+[INFO] [velocity_smoother-7]: process started with pid [74265]
+[INFO] [collision_monitor-8]: process started with pid [74267]
+[INFO] [safe_command_heartbeat-9]: process started with pid [74269]
+[INFO] [waypoint_manager-10]: process started with pid [74271]
+[INFO] [lifecycle_manager-11]: process started with pid [74273]
+[velocity_smoother-7] [INFO] [1784373738.488016290] [velocity_smoother]: 
+[velocity_smoother-7] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-7] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-7] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[behavior_server-5] [INFO] [1784373738.495962311] [behavior_server]: 
+[behavior_server-5] 	behavior_server lifecycle node launched. 
+[behavior_server-5] 	Waiting on external lifecycle transitions to activate
+[behavior_server-5] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[twist_mux-6] [INFO] [1784373738.498103860] [twist_mux]: Topic handler 'topics.navigation' subscribed to topic '/cmd_vel_nav': timeout = 0.300000s , priority = 10.
+[twist_mux-6] [INFO] [1784373738.500047594] [twist_mux]: Topic handler 'topics.teleop' subscribed to topic '/cmd_vel_teleop': timeout = 0.300000s , priority = 100.
+[collision_monitor-8] [INFO] [1784373738.500424359] [collision_monitor]: 
+[collision_monitor-8] 	collision_monitor lifecycle node launched. 
+[collision_monitor-8] 	Waiting on external lifecycle transitions to activate
+[collision_monitor-8] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[lifecycle_manager-11] [INFO] [1784373738.501423858] [lifecycle_manager_navigation]: Creating
+[controller_server-3] [INFO] [1784373738.502126681] [controller_server]: 
+[controller_server-3] 	controller_server lifecycle node launched. 
+[controller_server-3] 	Waiting on external lifecycle transitions to activate
+[controller_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-3] [INFO] [1784373738.505097915] [controller_server]: Creating controller server
+[lifecycle_manager-11] [INFO] [1784373738.505374431] [lifecycle_manager_navigation]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[map_server-1] [INFO] [1784373738.514605399] [map_server]: 
+[map_server-1] 	map_server lifecycle node launched. 
+[map_server-1] 	Waiting on external lifecycle transitions to activate
+[map_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[map_server-1] [INFO] [1784373738.514749427] [map_server]: Creating
+[controller_server-3] [INFO] [1784373738.515856019] [local_costmap.local_costmap]: 
+[controller_server-3] 	local_costmap lifecycle node launched. 
+[controller_server-3] 	Waiting on external lifecycle transitions to activate
+[controller_server-3] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-3] [INFO] [1784373738.516282078] [local_costmap.local_costmap]: Creating Costmap
+[bt_navigator-4] [INFO] [1784373738.522126118] [bt_navigator]: 
+[bt_navigator-4] 	bt_navigator lifecycle node launched. 
+[bt_navigator-4] 	Waiting on external lifecycle transitions to activate
+[bt_navigator-4] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[bt_navigator-4] [INFO] [1784373738.522231115] [bt_navigator]: Creating
+[planner_server-2] [INFO] [1784373738.528112630] [planner_server]: 
+[planner_server-2] 	planner_server lifecycle node launched. 
+[planner_server-2] 	Waiting on external lifecycle transitions to activate
+[planner_server-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-2] [INFO] [1784373738.529209016] [planner_server]: Creating
+[planner_server-2] [INFO] [1784373738.533514928] [global_costmap.global_costmap]: 
+[planner_server-2] 	global_costmap lifecycle node launched. 
+[planner_server-2] 	Waiting on external lifecycle transitions to activate
+[planner_server-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[planner_server-2] [INFO] [1784373738.533923977] [global_costmap.global_costmap]: Creating Costmap
+[lifecycle_manager-11] [INFO] [1784373738.827411828] [lifecycle_manager_navigation]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-11] [INFO] [1784373738.827461308] [lifecycle_manager_navigation]: [34m[1mConfiguring map_server[0m[0m
+[map_server-1] [INFO] [1784373738.827722319] [map_server]: Configuring
+[map_server-1] [INFO] [1784373738.827786969] [map_io]: Loading yaml file: /home/hyunseo/ROMO-B/robot_ws/install/romo_b_navigation/share/romo_b_navigation/config/maps/empty.yaml
+[map_server-1] [INFO] [1784373738.828056725] [map_io]: resolution: 0.5
+[map_server-1] [INFO] [1784373738.828068131] [map_io]: origin[0]: -5
+[map_server-1] [INFO] [1784373738.828074387] [map_io]: origin[1]: -5
+[map_server-1] [INFO] [1784373738.828080124] [map_io]: origin[2]: 0
+[map_server-1] [INFO] [1784373738.828086571] [map_io]: free_thresh: 0.25
+[map_server-1] [INFO] [1784373738.828092741] [map_io]: occupied_thresh: 0.65
+[map_server-1] [INFO] [1784373738.828098919] [map_io]: mode: trinary
+[map_server-1] [INFO] [1784373738.828105501] [map_io]: negate: 0
+[map_server-1] [INFO] [1784373738.828284323] [map_io]: Loading image_file: /home/hyunseo/ROMO-B/robot_ws/install/romo_b_navigation/share/romo_b_navigation/config/maps/empty.pgm
+[map_server-1] [INFO] [1784373738.828521844] [map_io]: Read map /home/hyunseo/ROMO-B/robot_ws/install/romo_b_navigation/share/romo_b_navigation/config/maps/empty.pgm: 20 X 20 map @ 0.5 m/cell
+[lifecycle_manager-11] [INFO] [1784373738.831321162] [lifecycle_manager_navigation]: [34m[1mConfiguring planner_server[0m[0m
+[planner_server-2] [INFO] [1784373738.831474693] [planner_server]: Configuring
+[planner_server-2] [INFO] [1784373738.831509917] [global_costmap.global_costmap]: Configuring
+[planner_server-2] [INFO] [1784373738.834653608] [global_costmap.global_costmap]: Using plugin "static_layer"
+[planner_server-2] [INFO] [1784373738.836878031] [global_costmap.global_costmap]: Subscribing to the map topic (/map) with transient local durability
+[planner_server-2] [INFO] [1784373738.837963655] [global_costmap.global_costmap]: Initialized plugin "static_layer"
+[planner_server-2] [INFO] [1784373738.837987687] [global_costmap.global_costmap]: Using plugin "inflation_layer"
+[planner_server-2] [INFO] [1784373738.838604279] [global_costmap.global_costmap]: Initialized plugin "inflation_layer"
+[planner_server-2] [INFO] [1784373738.849206610] [planner_server]: Created global planner plugin GridBased of type nav2_smac_planner/SmacPlannerHybrid
+[planner_server-2] [INFO] [1784373738.849252148] [planner_server]: Configuring GridBased of type SmacPlannerHybrid
+[planner_server-2] [INFO] [1784373738.850405457] [planner_server]: Even sized heuristic lookup table size set 400.000000, increasing size by 1 to make odd
+[planner_server-2] [INFO] [1784373740.067170560] [planner_server]: Configured plugin GridBased of type SmacPlannerHybrid with maximum iterations 100000, max on approach iterations 1000, and not allowing unknown traversal. Tolerance 0.25.Using motion model: Dubin.
+[planner_server-2] [INFO] [1784373740.067240415] [planner_server]: Planner Server has GridBased  planners available.
+[lifecycle_manager-11] [INFO] [1784373740.071006446] [lifecycle_manager_navigation]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-3] [INFO] [1784373740.071174778] [controller_server]: Configuring controller interface
+[controller_server-3] [INFO] [1784373740.071302280] [controller_server]: getting goal checker plugins..
+[controller_server-3] [INFO] [1784373740.071434838] [controller_server]: Controller frequency set to 10.0000Hz
+[controller_server-3] [INFO] [1784373740.071468916] [local_costmap.local_costmap]: Configuring
+[controller_server-3] [INFO] [1784373740.075389487] [local_costmap.local_costmap]: Using plugin "transient_obstacle_layer"
+[controller_server-3] [INFO] [1784373740.077262240] [local_costmap.local_costmap]: Subscribed to Topics: pointcloud
+[controller_server-3] [INFO] [1784373740.079299341] [local_costmap.local_costmap]: Initialized plugin "transient_obstacle_layer"
+[controller_server-3] [INFO] [1784373740.079317511] [local_costmap.local_costmap]: Using plugin "denoise_layer"
+[controller_server-3] [INFO] [1784373740.079459962] [local_costmap.local_costmap]: Initialized plugin "denoise_layer"
+[controller_server-3] [INFO] [1784373740.079469473] [local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-3] [INFO] [1784373740.079747966] [local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-3] [INFO] [1784373740.083938544] [controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[controller_server-3] [INFO] [1784373740.084306522] [controller_server]: Created goal checker : goal_checker of type nav2_controller::PositionGoalChecker
+[controller_server-3] [INFO] [1784373740.084419575] [controller_server]: Controller Server has goal_checker  goal checkers available.
+[controller_server-3] [INFO] [1784373740.084919618] [controller_server]: Created controller : FollowPath of type nav2_mppi_controller::MPPIController
+[controller_server-3] [INFO] [1784373740.085586685] [controller_server]: Controller period is equal to model dt. Control sequence shifting is ON
+[controller_server-3] [INFO] [1784373740.086408616] [controller_server]: ConstraintCritic instantiated with 1 power and 6.000000 weight.
+[controller_server-3] [INFO] [1784373740.086433606] [controller_server]: Critic loaded : mppi::critics::ConstraintCritic
+[controller_server-3] [INFO] [1784373740.086737518] [controller_server]: InflationCostCritic instantiated with 1 power and 250.000000 / 0.019685 weights. Critic will collision check based on footprint cost.
+[controller_server-3] [INFO] [1784373740.086753120] [controller_server]: Critic loaded : mppi::critics::CostCritic
+[controller_server-3] [INFO] [1784373740.086895416] [controller_server]: GoalCritic instantiated with 1 power and 4.000000 weight.
+[controller_server-3] [INFO] [1784373740.086904724] [controller_server]: Critic loaded : mppi::critics::GoalCritic
+[controller_server-3] [INFO] [1784373740.087243369] [controller_server]: ReferenceTrajectoryCritic instantiated with 1 power and 4.000000 weight
+[controller_server-3] [INFO] [1784373740.087260313] [controller_server]: Critic loaded : mppi::critics::PathAlignCritic
+[controller_server-3] [INFO] [1784373740.087453712] [controller_server]: Critic loaded : mppi::critics::PathFollowCritic
+[controller_server-3] [INFO] [1784373740.087699757] [controller_server]: PathAngleCritic instantiated with 1 power and 2.000000 weight. Reversing not allowed.
+[controller_server-3] [INFO] [1784373740.087710461] [controller_server]: Critic loaded : mppi::critics::PathAngleCritic
+[controller_server-3] [INFO] [1784373740.087843244] [controller_server]: PreferForwardCritic instantiated with 1 power and 8.000000 weight.
+[controller_server-3] [INFO] [1784373740.087872722] [controller_server]: Critic loaded : mppi::critics::PreferForwardCritic
+[controller_server-3] [INFO] [1784373740.090350724] [controller_server]: Optimizer reset
+[controller_server-3] [INFO] [1784373740.091821129] [MPPIController]: Configured MPPI Controller: FollowPath
+[controller_server-3] [INFO] [1784373740.091838029] [controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-11] [INFO] [1784373740.095112163] [lifecycle_manager_navigation]: [34m[1mConfiguring behavior_server[0m[0m
+[behavior_server-5] [INFO] [1784373740.095375325] [behavior_server]: Configuring
+[behavior_server-5] [INFO] [1784373740.099374059] [behavior_server]: Creating behavior plugin wait of type nav2_behaviors/Wait
+[behavior_server-5] [INFO] [1784373740.099794280] [behavior_server]: Configuring wait
+[lifecycle_manager-11] [INFO] [1784373740.102122584] [lifecycle_manager_navigation]: [34m[1mConfiguring bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1784373740.102238708] [bt_navigator]: Configuring
+[lifecycle_manager-11] [INFO] [1784373740.141305762] [lifecycle_manager_navigation]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-7] [INFO] [1784373740.141503200] [velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-11] [INFO] [1784373740.143152490] [lifecycle_manager_navigation]: [34m[1mConfiguring collision_monitor[0m[0m
+[collision_monitor-8] [INFO] [1784373740.143316305] [collision_monitor]: Configuring
+[collision_monitor-8] [INFO] [1784373740.147608912] [collision_monitor]: [StopZone]: Creating Polygon
+[collision_monitor-8] [INFO] [1784373740.148270237] [collision_monitor]: [SlowdownZone]: Creating Polygon
+[collision_monitor-8] [INFO] [1784373740.149070538] [collision_monitor]: [pointcloud]: Creating PointCloud
+[lifecycle_manager-11] [INFO] [1784373740.152174833] [lifecycle_manager_navigation]: [34m[1mActivating map_server[0m[0m
+[map_server-1] [INFO] [1784373740.152281618] [map_server]: Activating
+[map_server-1] [INFO] [1784373740.152418001] [map_server]: Creating bond (map_server) to lifecycle manager.
+[planner_server-2] [INFO] [1784373740.152536113] [global_costmap.global_costmap]: StaticLayer: Resizing costmap to 20 X 20 at 0.500000 m/pix
+[lifecycle_manager-11] [INFO] [1784373740.255011436] [lifecycle_manager_navigation]: Server map_server connected with bond.
+[lifecycle_manager-11] [INFO] [1784373740.255051475] [lifecycle_manager_navigation]: [34m[1mActivating planner_server[0m[0m
+[planner_server-2] [INFO] [1784373740.255326255] [planner_server]: Activating
+[planner_server-2] [INFO] [1784373740.255376220] [global_costmap.global_costmap]: Activating
+[planner_server-2] [INFO] [1784373740.255392432] [global_costmap.global_costmap]: Checking transform
+[planner_server-2] [INFO] [1784373740.255494880] [global_costmap.global_costmap]: start
+[planner_server-2] [INFO] [1784373740.305587448] [planner_server]: Activating plugin GridBased of type SmacPlannerHybrid
+[planner_server-2] [INFO] [1784373740.306584852] [planner_server]: Creating bond (planner_server) to lifecycle manager.
+[lifecycle_manager-11] [INFO] [1784373740.409256684] [lifecycle_manager_navigation]: Server planner_server connected with bond.
+[lifecycle_manager-11] [INFO] [1784373740.409296305] [lifecycle_manager_navigation]: [34m[1mActivating controller_server[0m[0m
+[controller_server-3] [INFO] [1784373740.409664554] [controller_server]: Activating
+[controller_server-3] [INFO] [1784373740.409715596] [local_costmap.local_costmap]: Activating
+[controller_server-3] [INFO] [1784373740.409760100] [local_costmap.local_costmap]: Checking transform
+[controller_server-3] [INFO] [1784373740.409869404] [local_costmap.local_costmap]: start
+[controller_server-3] [WARN] [1784373740.660722663] [controller_server]: Parameter controller_server.verbose not found
+[controller_server-3] [INFO] [1784373740.662740612] [controller_server]: Optimizer reset
+[controller_server-3] [INFO] [1784373740.662868189] [MPPIController]: Activated MPPI Controller: FollowPath
+[controller_server-3] [INFO] [1784373740.662879179] [controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-11] [INFO] [1784373740.765114346] [lifecycle_manager_navigation]: Server controller_server connected with bond.
+[lifecycle_manager-11] [INFO] [1784373740.765204421] [lifecycle_manager_navigation]: [34m[1mActivating behavior_server[0m[0m
+[behavior_server-5] [INFO] [1784373740.765596339] [behavior_server]: Activating
+[behavior_server-5] [INFO] [1784373740.765628993] [behavior_server]: Activating wait
+[behavior_server-5] [INFO] [1784373740.765646166] [behavior_server]: Creating bond (behavior_server) to lifecycle manager.
+[controller_server-3] [WARN] [1784373740.810158588] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 0.40 seconds, and it should be updated every 0.20 seconds.
+[lifecycle_manager-11] [INFO] [1784373740.869598116] [lifecycle_manager_navigation]: Server behavior_server connected with bond.
+[lifecycle_manager-11] [INFO] [1784373740.869639549] [lifecycle_manager_navigation]: [34m[1mActivating bt_navigator[0m[0m
+[bt_navigator-4] [INFO] [1784373740.869953774] [bt_navigator]: Activating
+[bt_navigator-4] [WARN] [1784373740.876488643] [bt_navigator_navigate_through_poses_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
+[bt_navigator-4] [WARN] [1784373740.881011067] [bt_navigator_navigate_to_pose_rclcpp_node]: Wait duration is negative or zero (0). Setting to positive.
+[bt_navigator-4] [INFO] [1784373740.881329932] [bt_navigator]: Creating bond (bt_navigator) to lifecycle manager.
+[lifecycle_manager-11] [INFO] [1784373740.983776858] [lifecycle_manager_navigation]: Server bt_navigator connected with bond.
+[lifecycle_manager-11] [INFO] [1784373740.983812572] [lifecycle_manager_navigation]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-7] [INFO] [1784373740.984004402] [velocity_smoother]: Activating
+[velocity_smoother-7] [INFO] [1784373740.984048467] [velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[controller_server-3] [WARN] [1784373741.010129825] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 0.60 seconds, and it should be updated every 0.20 seconds.
+[lifecycle_manager-11] [INFO] [1784373741.086698212] [lifecycle_manager_navigation]: Server velocity_smoother connected with bond.
+[lifecycle_manager-11] [INFO] [1784373741.086753662] [lifecycle_manager_navigation]: [34m[1mActivating collision_monitor[0m[0m
+[collision_monitor-8] [INFO] [1784373741.087298280] [collision_monitor]: Activating
+[collision_monitor-8] [INFO] [1784373741.087391968] [collision_monitor]: Creating bond (collision_monitor) to lifecycle manager.
+[lifecycle_manager-11] [INFO] [1784373741.190828815] [lifecycle_manager_navigation]: Server collision_monitor connected with bond.
+[lifecycle_manager-11] [INFO] [1784373741.190875165] [lifecycle_manager_navigation]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-11] [INFO] [1784373741.190889340] [lifecycle_manager_navigation]: [34m[1mCreating bond timer...[0m[0m
+[controller_server-3] [WARN] [1784373741.210165665] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 0.80 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373741.410134114] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 1.00 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [INFO] [1784373742.203852801] [controller_server]: Received a goal, begin computing control effort.
+[controller_server-3] [INFO] [1784373742.206269793] [controller_server]: Optimizer reset
+[collision_monitor-8] [ERROR] [1784373742.435877463] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373742.637581046] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373742.839313405] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373743.041098440] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373743.243638991] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373743.446410740] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373743.648682597] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373743.850172068] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373744.052847594] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373744.256073819] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373744.458190668] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373744.660698557] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373744.863253363] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373745.065825055] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373745.268272684] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373745.471409160] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373745.673405864] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373745.875560828] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373746.078092442] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[collision_monitor-8] [ERROR] [1784373746.279702166] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[controller_server-3] [INFO] [1784373746.304033727] [controller_server]: Goal was canceled. Stopping the robot.
+[controller_server-3] [INFO] [1784373746.304084867] [controller_server]: [follow_path] [ActionServer] Client requested to cancel the goal. Cancelling.
+[controller_server-3] [WARN] [1784373746.410101030] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 0.25 seconds, and it should be updated every 0.20 seconds.
+[collision_monitor-8] [ERROR] [1784373746.481699595] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[controller_server-3] [WARN] [1784373746.610135846] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 0.45 seconds, and it should be updated every 0.20 seconds.
+[collision_monitor-8] [ERROR] [1784373746.684015265] [getTransform]: Failed to get "base_link"->"base_footprint" frame transform: "base_footprint" passed to lookupTransform argument target_frame does not exist. 
+[controller_server-3] [WARN] [1784373746.810141719] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 0.65 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373747.010099917] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 0.85 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373747.210143042] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 1.05 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373747.410271707] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 1.25 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373747.610135281] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 1.45 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373747.810153969] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 1.65 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373748.010101433] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 1.85 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373748.210165110] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 2.05 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373748.410152657] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 2.25 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373748.610106439] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 2.45 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373748.810135711] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 2.65 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373749.010101073] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 2.85 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373749.210128735] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 3.05 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373749.410127044] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 3.25 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373749.610149044] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 3.45 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373749.810186174] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 3.65 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373750.010132100] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 3.85 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373750.210135779] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 4.05 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373750.410119608] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 4.25 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373750.610134207] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 4.45 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373750.810106033] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 4.65 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373751.010062779] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 4.85 seconds, and it should be updated every 0.20 seconds.
+[controller_server-3] [WARN] [1784373751.210204802] [local_costmap.local_costmap]: The /sensing/lidar/top/pointcloud_filtered observation buffer has not been updated for 5.05 seconds, and it should be updated every 0.20 seconds.
