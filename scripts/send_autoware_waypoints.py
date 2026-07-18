@@ -16,6 +16,7 @@ from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from romo_b_msgs.msg import PlatformStatus
 from romo_b_waypoints.model import infer_yaws, load_route
+from std_msgs.msg import Bool
 
 
 def pose_from_waypoint(waypoint) -> Pose:
@@ -38,6 +39,8 @@ class RouteSender(Node):
         self.route_state = None
         self.operation_mode = None
         self.platform = None
+        self.vector_map_ready = False
+        self.selected_velocity_limit = None
         self.create_subscription(
             RouteState,
             "/api/routing/state",
@@ -56,6 +59,12 @@ class RouteSender(Node):
             lambda message: setattr(self, "platform", message),
             10,
         )
+        self.create_subscription(
+            Bool,
+            "/romo_b/autoware/vector_map_ready",
+            lambda message: setattr(self, "vector_map_ready", message.data),
+            transient,
+        )
         self.set_client = self.create_client(
             SetRoutePoints, "/api/routing/set_route_points"
         )
@@ -66,6 +75,14 @@ class RouteSender(Node):
             VelocityLimit,
             "/planning/scenario_planning/max_velocity_candidates",
             transient,
+        )
+        self.create_subscription(
+            VelocityLimit,
+            "/planning/scenario_planning/max_velocity",
+            lambda message: setattr(
+                self, "selected_velocity_limit", float(message.max_velocity)
+            ),
+            10,
         )
 
     def spin_until(self, predicate, timeout: float) -> bool:
@@ -80,9 +97,13 @@ class RouteSender(Node):
         self, poses: list[Pose], speed_mps: float, replace: bool, timeout: float
     ):
         if not self.spin_until(
-            lambda: self.route_state in (RouteState.UNSET, RouteState.SET), timeout
+            lambda: self.vector_map_ready
+            and self.route_state in (RouteState.UNSET, RouteState.SET),
+            timeout,
         ):
-            raise RuntimeError("Autoware routing state is unavailable or busy")
+            raise RuntimeError(
+                "Autoware vector-map startup or routing state is not ready"
+            )
         # Route changes can immediately affect an already engaged controller.
         # Require the operator to set/replace YAML routes before arming.
         self.spin_until(lambda: False, min(0.30, timeout))
@@ -117,6 +138,26 @@ class RouteSender(Node):
                 "Autoware maximum-velocity selector is unavailable; route was not changed"
             )
 
+        # Select the YAML speed before setting the route.  Otherwise Autoware
+        # can produce its first trajectory at the map limit and have no path
+        # update that would trigger re-smoothing after this short-lived CLI
+        # publisher exits.
+        limit = VelocityLimit()
+        limit.stamp = self.get_clock().now().to_msg()
+        limit.max_velocity = speed_mps
+        limit.sender = "romo_b_waypoints"
+        for _ in range(10):
+            self.velocity_publisher.publish(limit)
+            rclpy.spin_once(self, timeout_sec=0.10)
+        if not self.spin_until(
+            lambda: self.selected_velocity_limit is not None
+            and self.selected_velocity_limit <= speed_mps + 1.0e-6,
+            min(timeout, 5.0),
+        ):
+            raise RuntimeError(
+                "Autoware did not select the YAML speed limit; route was not changed"
+            )
+
         request = SetRoutePoints.Request()
         request.header.stamp = self.get_clock().now().to_msg()
         request.header.frame_id = "map"
@@ -131,17 +172,11 @@ class RouteSender(Node):
             detail = response.status.message if response else "empty response"
             raise RuntimeError(f"Autoware rejected route: {detail}")
 
-        # This is the same transient-local candidate topic used by Autoware's
-        # RViz state panel. The downstream selector chooses the most
-        # restrictive active limit; the physical pipeline still caps at 0.2.
-        limit = VelocityLimit()
-        limit.stamp = self.get_clock().now().to_msg()
-        limit.max_velocity = speed_mps
-        limit.sender = "romo_b_waypoints"
-        # Waited discovery plus a one-second burst makes a short-lived CLI
-        # publisher reliable even when the selector and RViz are still
-        # completing DDS endpoint matching.
-        for _ in range(10):
+        # Refresh the transient candidate after route acceptance as well.  The
+        # downstream selector keeps the most restrictive active limit and the
+        # physical follower independently enforces the selected value.
+        for _ in range(5):
+            limit.stamp = self.get_clock().now().to_msg()
             self.velocity_publisher.publish(limit)
             rclpy.spin_once(self, timeout_sec=0.10)
         return endpoint

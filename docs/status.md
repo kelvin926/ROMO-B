@@ -96,15 +96,18 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   follower, a persistent 0.14 m/s planning guard, YAML intermediate route
   points, and the independent Nav2 Collision Monitor. It defaults to serial
   receive-only and never arms automatically.
-- The field and simulation launches retain one unchanged delayed Lanelet2 map
-  sample, preventing a verified DDS startup-discovery race from leaving a late
-  planning component without `/map/vector_map`.
+- The field and simulation launches relay the unchanged Lanelet2 map during a
+  bounded 30-second startup window after an initial delay, preventing a
+  verified DDS discovery race from leaving late volatile planning components
+  without `/map/vector_map`. Route submission waits for its readiness latch.
 - Isolated Autoware acceptance passes nine localization-interface checks,
   seven fail-closed motion-gate checks, six point-cloud/perception checks,
-  seven YAML route/speed-limit checks, and both route-planning outcomes. A
+  eight YAML route/speed-limit checks, and both route-planning outcomes. A
   feasible offset obstacle produced 0.835 m lateral clearance while remaining
   forward-moving; a centered blocking obstacle produced a 0.0 m/s planned
-  stop. Baseline planning stayed forward-only and at or below 0.200021 m/s.
+  stop. Baseline planning stayed forward-only with a measured maximum of
+  0.200000003 m/s. The velocity smoother, persistent planning candidate, and
+  physical follower independently enforce the low-speed limits.
 - The Autoware RViz configuration loads the Lanelet2/PCD map, live Mid-360
   cloud, UNKNOWN objects, route and trajectory, localization tools,
   `RouteTool`, dummy-object tools for simulation, and the Autoware state panel.

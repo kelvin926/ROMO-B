@@ -1,8 +1,12 @@
 /**:
   ros__parameters:
-    # Upstream's 0.25 m/s engage pulse exceeds ROMO-B's 0.20 m/s physical
-    # limit.  Start below the limit and let the route's 0.20 m/s speed cap
-    # govern steady motion.
+    # Keep the smoother's own initial maximum at ROMO-B's physical limit.
+    # Autoware 1.8.0 can calculate its first profile before an external
+    # velocity-limit update is folded into max_velocity_with_deceleration_.
+    # The map limit alone can then overshoot to about 0.224 m/s while meeting
+    # jerk constraints.  This independent hard planning cap prevents that
+    # startup transient; the physical follower still enforces its own cap.
+    max_vel: 0.20
     min_curve_velocity: 0.05
     replan_vel_deviation: 0.10
     engage_velocity: 0.10

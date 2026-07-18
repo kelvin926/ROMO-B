@@ -105,13 +105,28 @@ def _actions(context):
     share = pathlib.Path(get_package_share_directory("romo_b_autoware"))
     adapters = [
         Node(
+            package="autoware_map_loader",
+            executable="autoware_lanelet2_map_loader",
+            namespace="map",
+            name="romo_b_lanelet2_map_preloader",
+            output="screen",
+            parameters=[
+                {
+                    "allow_unsupported_version": True,
+                    "center_line_resolution": 5.0,
+                    "use_waypoints": True,
+                    "lanelet2_map_path": str(map_path / "lanelet2_map.osm"),
+                }
+            ],
+            remappings=[("output/lanelet2_map", "/map/vector_map")],
+        ),
+        Node(
             package="romo_b_autoware",
             executable="vector_map_startup_guard",
             name="romo_b_vector_map_startup_guard",
             output="screen",
-            # Autoware starts three seconds later below. Retaining one
-            # identical delayed sample removes a DDS discovery race without
-            # changing the map or publishing continuously.
+            # Autoware starts three seconds later below. Relay the unchanged
+            # map only during the bounded composable-node startup window.
             parameters=[{"republish_delay_sec": 12.0}],
         ),
         Node(

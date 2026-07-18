@@ -141,7 +141,8 @@ import sys, yaml
 velocity = yaml.safe_load(open(sys.argv[1]))["/**"]["ros__parameters"]
 guard = yaml.safe_load(open(sys.argv[2]))["romo_b_autoware_speed_limit_guard"]["ros__parameters"]
 valid = (
-    velocity["min_curve_velocity"] <= 0.05
+    velocity["max_vel"] <= 0.20
+    and velocity["min_curve_velocity"] <= 0.05
     and velocity["replan_vel_deviation"] <= 0.10
     and velocity["engage_velocity"] <= 0.10
     and velocity["stopping_velocity"] <= 0.10

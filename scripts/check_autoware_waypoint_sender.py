@@ -175,9 +175,19 @@ def main() -> int:
         response_deadline = time.monotonic() + 45.0
         while time.monotonic() < response_deadline:
             rclpy.spin_once(node, timeout_sec=0.2)
+            current_velocities = (
+                [
+                    point.longitudinal_velocity_mps
+                    for point in node.trajectory.points
+                ]
+                if node.trajectory
+                else []
+            )
             if (
                 node.route_state == RouteState.SET
-                and node.trajectory is not None
+                and len(current_velocities) >= 5
+                and min(current_velocities) >= -1.0e-4
+                and max(current_velocities) <= 0.2005
                 and any(limit <= 0.100001 for limit in node.selected_velocity_limits)
             ):
                 break
@@ -191,6 +201,8 @@ def main() -> int:
             "route_state_set": node.route_state == RouteState.SET,
             "trajectory_generated": len(trajectory_points) >= 5,
             "trajectory_forward_only": bool(velocities) and min(velocities) >= -1.0e-4,
+            "planned_speed_at_or_below_0_2_mps": bool(velocities)
+            and max(velocities) <= 0.2005,
             "yaml_speed_limit_selected": any(
                 limit <= 0.100001 for limit in node.selected_velocity_limits
             ),

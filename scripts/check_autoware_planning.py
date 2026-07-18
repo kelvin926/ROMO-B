@@ -16,6 +16,7 @@ from autoware_planning_msgs.msg import Trajectory
 from geometry_msgs.msg import PoseWithCovarianceStamped, Quaternion
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
+from std_msgs.msg import Bool
 from tier4_simulation_msgs.msg import DummyObject
 
 
@@ -94,6 +95,7 @@ class PlanningProbe(Node):
             durability=DurabilityPolicy.TRANSIENT_LOCAL,
         )
         self.route_state = None
+        self.vector_map_ready = False
         self.create_subscription(
             RouteState,
             "/api/routing/state",
@@ -102,6 +104,12 @@ class PlanningProbe(Node):
         )
         self.route_client = self.create_client(
             SetRoutePoints, "/api/routing/set_route_points"
+        )
+        self.create_subscription(
+            Bool,
+            "/romo_b/autoware/vector_map_ready",
+            lambda message: setattr(self, "vector_map_ready", message.data),
+            transient,
         )
         self.object_publisher = self.create_publisher(
             DummyObject, "/simulation/dummy_perception_publisher/object_info", 10
@@ -188,6 +196,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--map-path", required=True, type=pathlib.Path)
     parser.add_argument("--startup-timeout", type=float, default=90.0)
+    parser.add_argument("--trajectory-timeout", type=float, default=120.0)
     parser.add_argument("--response-timeout", type=float, default=30.0)
     parser.add_argument("--obstacle-offset", type=float, default=0.0)
     parser.add_argument("--object-diameter", type=float, default=0.60)
@@ -218,6 +227,7 @@ def main() -> int:
             if (
                 node.initial_publisher.get_subscription_count()
                 and node.route_client.service_is_ready()
+                and node.vector_map_ready
                 and not missing_planning_nodes
             ):
                 break
@@ -239,12 +249,14 @@ def main() -> int:
         # Initial localization may take several API/state cycles. Repeat the
         # identical pose only until the route request is issued; publishing it
         # after routing can intentionally reset the mission in Autoware.
-        baseline_deadline = time.monotonic() + args.startup_timeout
+        route_deadline = time.monotonic() + args.startup_timeout
         last_initial = 0.0
+        last_route_attempt = 0.0
         first_initial = None
         route_future = None
         route_accepted = False
-        while time.monotonic() < baseline_deadline and not node.trajectories:
+        last_route_error = "route request was not sent"
+        while time.monotonic() < route_deadline and not route_accepted:
             now = time.monotonic()
             if route_future is None and now - last_initial >= 2.0:
                 node.publish_initial(
@@ -254,28 +266,43 @@ def main() -> int:
                 first_initial = first_initial or now
             if (
                 route_future is None
-                and node.route_state == RouteState.UNSET
                 and first_initial is not None
                 and now - first_initial >= 2.0
+                and now - last_route_attempt >= 2.0
             ):
                 route_future = node.request_route(
                     centerline[goal_index], centerline[goal_index - 1]
                 )
+                last_route_attempt = now
             rclpy.spin_once(node, timeout_sec=0.2)
             if route_future is not None and route_future.done():
                 response = route_future.result()
-                if response is None or not response.status.success:
-                    detail = response.status.message if response else "empty response"
-                    raise RuntimeError(f"Autoware rejected test route: {detail}")
-                route_accepted = True
-        # A fresh trajectory in this isolated stack is itself conclusive that
-        # the set_route_points request reached the mission planner.  The API
-        # response and transient state can arrive a few callbacks later.
-        route_accepted = route_accepted or node.route_state == RouteState.SET or (
-            route_future is not None and bool(node.trajectories)
-        )
+                if response is not None and response.status.success:
+                    route_accepted = True
+                else:
+                    last_route_error = (
+                        response.status.message if response else "empty response"
+                    )
+                    route_future = None
+            route_accepted = route_accepted or node.route_state == RouteState.SET
+        if not route_accepted:
+            raise RuntimeError(
+                "Autoware did not accept the test route before timeout: "
+                f"{last_route_error}"
+            )
+
+        # Route acceptance and trajectory generation are separate readiness
+        # stages.  A cold Autoware launch can need roughly a minute after the
+        # mission planner accepts a route before operation-mode inputs and all
+        # behavior modules are ready.
+        trajectory_deadline = time.monotonic() + args.trajectory_timeout
+        while time.monotonic() < trajectory_deadline and not node.trajectories:
+            rclpy.spin_once(node, timeout_sec=0.2)
         if not node.trajectories:
-            raise RuntimeError("Autoware did not produce a baseline trajectory")
+            raise RuntimeError(
+                "Autoware accepted the route but did not produce a baseline "
+                "trajectory before timeout"
+            )
 
         baseline = node.trajectories[-1]
         baseline_points = trajectory_points(baseline)

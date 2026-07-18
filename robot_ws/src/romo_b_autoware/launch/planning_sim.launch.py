@@ -24,6 +24,27 @@ def _actions(context):
     )
     share = pathlib.Path(get_package_share_directory("romo_b_autoware"))
     return [
+        # Autoware normally loads this component into a shared container.  On
+        # a busy laptop the one-second component-service response can time out
+        # before the Lanelet loader is queued, leaving the whole stack without
+        # a vector map.  A standalone identical loader removes that startup
+        # race; duplicate successful publishers contain the same map bytes.
+        Node(
+            package="autoware_map_loader",
+            executable="autoware_lanelet2_map_loader",
+            namespace="map",
+            name="romo_b_lanelet2_map_preloader",
+            output="screen",
+            parameters=[
+                {
+                    "allow_unsupported_version": True,
+                    "center_line_resolution": 5.0,
+                    "use_waypoints": True,
+                    "lanelet2_map_path": str(map_path / "lanelet2_map.osm"),
+                }
+            ],
+            remappings=[("output/lanelet2_map", "/map/vector_map")],
+        ),
         Node(
             package="romo_b_autoware",
             executable="vector_map_startup_guard",

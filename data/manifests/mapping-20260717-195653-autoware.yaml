@@ -32,10 +32,12 @@ validation:
   pointcloud_link_resolves: true
   autoware_version: 1.8.0
   runtime_map_load: true
-  delayed_vector_map_latch: true
+  standalone_vector_map_preloader: true
+  bounded_vector_map_startup_relay: true
+  route_waits_for_vector_map_readiness: true
   adapi_route_planning: true
   forward_only: true
-  maximum_baseline_speed_mps: 0.2000205
+  maximum_baseline_speed_mps: 0.200000003
   avoidance:
     object_diameter_m: 0.4
     baseline_offset_m: 0.3
@@ -49,6 +51,7 @@ validation:
     intermediate_waypoint_count: 1
     selected_speed_limit_mps: 0.1
     trajectory_forward_only: true
+    maximum_planned_speed_mps: 0.200000003
   blocker: >-
     Live NDT localization, Mid-360 perception, Collision Monitor, and supervised
     ground motion acceptance remain required.

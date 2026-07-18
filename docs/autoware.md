@@ -28,11 +28,14 @@ classification waiting period, caps lateral shift to 0.65 m, and uses reliable
 stop/deceleration behavior when the requested clearance does not fit.
 An always-on 0.14 m/s planning candidate leaves smoothing margin below the
 physical 0.20 m/s limit. The ROMO-B follower independently clamps to 0.20 m/s
-and also applies the currently selected YAML/Autoware speed limit.
-The launch also republishes the identical transient Lanelet2 map once after
-startup settles. This keeps late planner components from missing the one-shot
-map during a DDS discovery race; it does not alter or continuously replay the
-map.
+and also applies the currently selected YAML/Autoware speed limit. The velocity
+smoother's own `max_vel` is fixed at 0.20 m/s as a third guard against a cold
+startup profile being calculated before an external limit update is consumed.
+The launch relays the identical Lanelet2 sample every two seconds for a bounded
+30-second startup window after an initial settling delay. This lets late
+volatile planner subscriptions receive the map during composable-node loading;
+it never alters the map, stops automatically, and route submission waits for
+the relay-complete readiness latch.
 
 ## Reproduce the installation
 
