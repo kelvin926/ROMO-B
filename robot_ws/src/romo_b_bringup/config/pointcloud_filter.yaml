@@ -3,10 +3,12 @@ romo_b_pointcloud_filter:
     input_topic: /sensing/lidar/top/pointcloud_raw
     output_topic: /sensing/lidar/top/pointcloud_filtered
     target_frame: base_footprint
-    voxel_size: 0.05
+    voxel_size: 0.10
     enable_height_filter: true
-    min_z: 0.10
+    min_z: 0.15
     max_z: 1.80
+    min_range: 0.25
+    max_range: 8.0
     # Remove the complete robot/mount prism. Mid-360 returns from the mount
     # were measured at z=0.47-0.57 m and made the robot's own start cell lethal.
     self_half_x: 0.42

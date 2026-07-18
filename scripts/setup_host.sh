@@ -32,6 +32,7 @@ ros_packages=(
   ros-humble-pcl-ros
   ros-humble-pointcloud-to-laserscan
   ros-humble-robot-localization
+  ros-humble-rmw-cyclonedds-cpp
   ros-humble-ros-testing
   ros-humble-sophus
   ros-humble-teleop-twist-keyboard

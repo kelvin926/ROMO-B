@@ -33,8 +33,8 @@ def validate_route(route):
         raise ValueError("frame_id must be 'map'")
     if route.mode != "continuous":
         raise ValueError("only continuous waypoint mode is supported")
-    if not 0.0 < route.default_speed_mps <= 0.2:
-        raise ValueError("default_speed_mps must be in (0.0, 0.2]")
+    if not 0.0 < route.default_speed_mps <= 0.5:
+        raise ValueError("default_speed_mps must be in (0.0, 0.5]")
     for index, waypoint in enumerate(route.waypoints):
         _finite(waypoint.x, f"waypoints[{index}].x")
         _finite(waypoint.y, f"waypoints[{index}].y")

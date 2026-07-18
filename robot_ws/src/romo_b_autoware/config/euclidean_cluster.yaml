@@ -1,6 +1,8 @@
 euclidean_cluster_node:
   ros__parameters:
-    use_height: false
-    min_cluster_size: 4
-    max_cluster_size: 5000
+    # Suppress isolated Mid-360 returns and large wall/floor clusters. People
+    # and furniture remain comfortably inside this voxel-count window.
+    use_height: true
+    min_cluster_size: 12
+    max_cluster_size: 1200
     tolerance: 0.25

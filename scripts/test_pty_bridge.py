@@ -181,14 +181,15 @@ def main():
                     description="non-zero odometry",
                 )
 
-                # Stopping commands must latch E-stop after 0.15 seconds.
+                # A planner/collision-monitor pause must stop motion without
+                # latching the PCU's Hi_E-ST; a fresh command resumes in-place.
                 wait_until(
                     probe,
                     lambda: probe.status is not None
-                    and probe.status.state == PlatformStatus.STATE_ESTOP
+                    and probe.status.state == PlatformStatus.STATE_ARMED_AUTO
                     and probe.status.command_timed_out,
                     2.0,
-                    description="command-timeout E-stop",
+                    description="command-timeout soft stop",
                 )
                 wait_until(
                     probe,
@@ -197,24 +198,25 @@ def main():
                     2.0,
                     description="stopped feedback",
                 )
-
-                # Disarm is not an E-stop reset and must preserve the latch.
-                before = probe.status_count
-                set_bool(probe, probe.arm, False, "disarm while E-stop latched")
                 wait_until(
                     probe,
-                    lambda: probe.status_count > before
-                    and probe.status.state == PlatformStatus.STATE_ESTOP,
-                    1.0,
-                    description="preserved E-stop latch",
+                    lambda: probe.status is not None
+                    and not probe.status.command_timed_out
+                    and probe.status.state == PlatformStatus.STATE_ARMED_AUTO
+                    and max(abs(value) for value in probe.status.wheel_speed_mps) > 0.04,
+                    2.0,
+                    tick=lambda: publish_forward(probe),
+                    description="automatic recovery from soft stop",
                 )
-                set_bool(probe, probe.estop, False, "explicit E-stop reset")
+
+                set_bool(probe, probe.arm, False, "disarm after soft stop test")
                 wait_until(
                     probe,
                     lambda: probe.status.state == PlatformStatus.STATE_CONNECTED_SAFE
-                    and not probe.status.estop,
+                    and not probe.status.estop
+                    and max(abs(value) for value in probe.status.wheel_speed_mps) < 0.02,
                     2.0,
-                    description="safe reset state",
+                    description="clean stopped disarm state",
                 )
 
                 # Keep commands fresh while pausing feedback; only feedback timeout may trip.
@@ -279,8 +281,8 @@ def main():
                     description="post-ALIVE safe state",
                 )
                 print(
-                    "PTY_INTEGRATION_OK: Auto handshake, motion, command/feedback/ALIVE "
-                    "timeouts, latch, reset"
+                    "PTY_INTEGRATION_OK: Auto handshake, motion, command soft-stop/recovery, "
+                    "feedback/ALIVE hard-stop, latch, reset"
                 )
             except Exception:
                 simulator_log.flush()

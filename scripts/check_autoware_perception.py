@@ -19,6 +19,7 @@ from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import PointCloud2, PointField
 from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
+from visualization_msgs.msg import MarkerArray
 
 
 class PerceptionProbe(Node):
@@ -31,6 +32,7 @@ class PerceptionProbe(Node):
         )
         self.detected = None
         self.predicted = None
+        self.markers = None
         self.create_subscription(
             DetectedObjects,
             "/perception/object_recognition/detection/objects",
@@ -41,6 +43,12 @@ class PerceptionProbe(Node):
             PredictedObjects,
             "/perception/object_recognition/objects",
             self._on_predicted,
+            10,
+        )
+        self.create_subscription(
+            MarkerArray,
+            "/romo_b/perception/object_markers",
+            self._on_markers,
             10,
         )
         broadcaster = StaticTransformBroadcaster(self)
@@ -59,6 +67,10 @@ class PerceptionProbe(Node):
     def _on_predicted(self, message: PredictedObjects) -> None:
         if message.objects:
             self.predicted = message
+
+    def _on_markers(self, message: MarkerArray) -> None:
+        if len(message.markers) > 1:
+            self.markers = message
 
     def publish_cluster(self, elapsed: float) -> None:
         # Move slowly enough to stay associated while exercising velocity and
@@ -101,7 +113,7 @@ def main() -> int:
             elapsed = time.monotonic() - started
             node.publish_cluster(elapsed)
             rclpy.spin_once(node, timeout_sec=0.08)
-            if elapsed > 1.0 and node.detected and node.predicted:
+            if elapsed > 1.0 and node.detected and node.predicted and node.markers:
                 break
 
         detected = node.detected.objects[0] if node.detected else None
@@ -139,6 +151,7 @@ def main() -> int:
             "predicted_as_unknown": predicted_unknown,
             "map_transform_applied": finite_map_pose,
             "future_path_generated": prediction_points >= 2,
+            "rviz_markers_published": node.markers is not None,
         }
         report = {
             "result": "PASS" if all(checks.values()) else "FAIL",

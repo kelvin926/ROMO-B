@@ -1,0 +1,34 @@
+{
+  "checks": {
+    "clear_output_present": true,
+    "obstacle_output_present": true,
+    "obstacle_stop": true,
+    "velocity_clamped": true
+  },
+  "clear_sample_count": 40,
+  "maximum_clear_speed_mps": 0.48750000000000027,
+  "recent_stop_samples": [
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "result": "PASS",
+  "stop_sample_count": 21
+}

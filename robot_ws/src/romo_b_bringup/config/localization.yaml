@@ -25,5 +25,8 @@
     global_frame_id: map
     odom_frame_id: odom
     base_frame_id: base_link
-    enable_timer_publishing: false
-    pose_publish_frequency: 30.0
+    # Re-stamp and republish map->odom between 10 Hz LiDAR updates.  Without
+    # this, Nav2 frequently asked for a transform a few milliseconds newer than
+    # the most recent localization result and stopped with extrapolation errors.
+    enable_timer_publishing: true
+    pose_publish_frequency: 20.0

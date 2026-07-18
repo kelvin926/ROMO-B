@@ -1,7 +1,7 @@
 <root main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
     <PipelineSequence name="ForwardOnlyNavigateThroughPoses">
-      <RateController hz="1.0">
+      <RateController hz="0.5">
         <ComputePathThroughPoses goals="{goals}" path="{path}"
           planner_id="GridBased"/>
       </RateController>

@@ -26,6 +26,7 @@ setup(
             "kinematic_bridge = romo_b_autoware.kinematic_bridge:main",
             "localization_interface = romo_b_autoware.localization_interface:main",
             "object_tracker = romo_b_autoware.object_tracker:main",
+            "object_markers = romo_b_autoware.object_markers:main",
             "occupancy_grid_republisher = romo_b_autoware.occupancy_grid_republisher:main",
             "speed_limit_guard = romo_b_autoware.speed_limit_guard:main",
             "trajectory_follower = romo_b_autoware.trajectory_follower:main",

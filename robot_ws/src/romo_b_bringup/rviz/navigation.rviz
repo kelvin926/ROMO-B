@@ -25,6 +25,34 @@ Visualization Manager:
         Value: /map
       Use Timestamp: false
       Value: true
+    - Alpha: 0.45
+      Class: rviz_default_plugins/Map
+      Color Scheme: costmap
+      Draw Behind: false
+      Name: Global costmap
+      Enabled: true
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /global_costmap/costmap
+      Use Timestamp: false
+      Value: true
+    - Alpha: 0.65
+      Class: rviz_default_plugins/Map
+      Color Scheme: costmap
+      Draw Behind: false
+      Name: Local obstacle costmap
+      Enabled: true
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /local_costmap/costmap
+      Use Timestamp: false
+      Value: true
     - Class: rviz_default_plugins/RobotModel
       Name: ROMO-B
       Enabled: true
@@ -68,6 +96,34 @@ Visualization Manager:
       Name: Waypoint markers
       Enabled: true
       Topic: /romo_b/waypoints/markers
+    - Class: rviz_default_plugins/MarkerArray
+      Name: Tracked obstacles and predictions
+      Enabled: true
+      Topic: /romo_b/perception/object_markers
+    - Class: rviz_default_plugins/Polygon
+      Name: Collision stop zone
+      Enabled: true
+      Topic: /romo_b/stop_zone
+      Color: 255; 60; 60
+      Alpha: 0.35
+    - Class: rviz_default_plugins/Polygon
+      Name: Collision slowdown zone
+      Enabled: true
+      Topic: /romo_b/slowdown_zone
+      Color: 255; 190; 0
+      Alpha: 0.25
+    - Class: rviz_default_plugins/Polygon
+      Name: Robot footprint
+      Enabled: true
+      Topic: /local_costmap/published_footprint
+      Color: 0; 220; 255
+      Alpha: 0.8
+    - Class: rviz_default_plugins/PointStamped
+      Name: Pure pursuit lookahead
+      Enabled: true
+      Topic: /lookahead_point
+      Color: 255; 0; 255
+      Radius: 0.12
     - Class: rviz_default_plugins/PoseWithCovariance
       Name: Localization pose
       Enabled: true
@@ -95,7 +151,7 @@ Visualization Manager:
     Current:
       Class: rviz_default_plugins/TopDownOrtho
       Name: Top Down
-      Scale: 50
+      Scale: 25
       Target Frame: <Fixed Frame>
 Window Geometry:
   Height: 900

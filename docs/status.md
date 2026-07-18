@@ -120,6 +120,27 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   camera-only docks and polar rings are removed while localization/route tools,
   dummy-object simulation tools, and the Autoware state panel remain. A fresh
   visual simulation repeated the 0.835 m UNKNOWN-object avoidance pass.
+- The 2026-07-18 live logs were audited after the first goal-driving runs. No
+  kernel OOM kill or NVIDIA Xid explains the Autoware exits; most component
+  faults occurred during shutdown, while the runtime middleware failures were
+  in Fast DDS/shared memory. This laptop now uses Cyclone DDS by default, with
+  a UDP-only Fast DDS fallback retained for fresh hosts until setup completes.
+- Command-source timeout is now a recoverable zero-speed hold that preserves
+  the 20 Hz PCU Auto heartbeat. Only explicit E-stop, stale PCU feedback/ALIVE,
+  or a failed Auto transition latches HLV E-stop. Routine lifecycle shutdown
+  sends a zero Manual frame instead of leaving `Hi_E-ST` on the dashboard.
+- LiDAR localization republishes `map -> odom` at 20 Hz between 10 Hz scans,
+  removing the future-extrapolation gap seen by Nav2. The corridor controller
+  uses a 0.5 m/s Regulated Pure Pursuit profile, filtered/rate-limited steering,
+  position-only goal completion, and a 45-second pedestrian-wait allowance.
+- The obstacle pipeline now rejects floor/near/far noise, uses a 0.10 m voxel,
+  requires multi-point evidence before slowdown/stop, and excludes huge static
+  clusters from tracked-object visualization. RViz shows both costmaps,
+  collision zones, footprint, lookahead point, tracked boxes, and predicted
+  paths; rendering is PRIME-offloaded to the RTX GPU.
+- The corrected nine-package subset builds locally. All 25 package tests pass,
+  and the PTY state-machine test passes under Cyclone DDS, including motion,
+  command soft-stop/recovery, feedback/ALIVE hard-stop, latch, and reset.
 
 ## Reproduction still required
 
@@ -131,6 +152,10 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 
 ## Waiting for hardware validation
 
+- Repeat one direct `Nav2 Goal` run to verify live TF freshness, smooth steering,
+  position-only completion, and absence of nuisance `Hi_E-ST` after command gaps.
+- Place one box and then one walking person in the corridor to tune only the
+  1.0 m stop / 2.0 m slowdown polygons if the measured braking envelope demands it.
 - Verify RViz initial-pose recovery at several locations on the live platform.
 - Run the receive-only Autoware field checklist, then repeat planning,
   Collision Monitor, and UNKNOWN-object checks with live localization and the

@@ -51,6 +51,8 @@ public:
     declare_parameter<double>("control_track_m", 0.390);
     declare_parameter<double>("wheel_radius_m", 0.103);
     declare_parameter<double>("max_navigation_speed_mps", 0.2);
+    declare_parameter<double>("steer_filter_alpha", 0.25);
+    declare_parameter<double>("max_steer_rate_degps", 30.0);
     declare_parameter<std::string>("safety_profile", "bench");
     declare_parameter<bool>("receive_only", true);
     declare_parameter<bool>("sensor_calibrated", false);
@@ -87,6 +89,8 @@ private:
     wheelbase_m_ = get_parameter("wheelbase_m").as_double();
     control_track_m_ = get_parameter("control_track_m").as_double();
     wheel_radius_m_ = get_parameter("wheel_radius_m").as_double();
+    steer_filter_alpha_ = get_parameter("steer_filter_alpha").as_double();
+    max_steer_rate_degps_ = get_parameter("max_steer_rate_degps").as_double();
     receive_only_ = get_parameter("receive_only").as_bool();
     sensor_calibrated_ = get_parameter("sensor_calibrated").as_bool();
     odom_frame_ = get_parameter("odom_frame").as_string();
@@ -102,7 +106,7 @@ private:
     } else if (profile == "navigation") {
       navigation_profile_ = true;
       limits_.max_speed_mps = std::clamp(
-        get_parameter("max_navigation_speed_mps").as_double(), 0.1, 1.5);
+        get_parameter("max_navigation_speed_mps").as_double(), 0.1, 0.5);
       limits_.max_steer_deg = 22.0;
     } else {
       RCLCPP_ERROR(get_logger(), "Unknown safety_profile '%s'", profile.c_str());
@@ -117,7 +121,8 @@ private:
       (!receive_only_ && command_endian_ == "unverified") ||
       tx_rate <= 0.0 || command_timeout_.count() <= 0.0 ||
       feedback_timeout_.count() <= 0.0 || auto_transition_timeout_.count() <= 0.0 ||
-      wheel_radius_m_ <= 0.0)
+      wheel_radius_m_ <= 0.0 || steer_filter_alpha_ <= 0.0 ||
+      steer_filter_alpha_ > 1.0 || max_steer_rate_degps_ <= 0.0)
     {
       RCLCPP_ERROR(get_logger(), "Invalid serial, timeout, or vehicle parameter");
       return CallbackReturn::FAILURE;
@@ -163,12 +168,14 @@ private:
       y_ = 0.0;
       yaw_ = 0.0;
       wheel_positions_.fill(0.0);
+      filtered_steer_deg_ = 0.0;
       const auto steady_now = std::chrono::steady_clock::now();
       last_command_time_ = steady_now;
       last_feedback_time_ = steady_now;
       last_alive_change_time_ = steady_now;
       auto_request_time_ = steady_now;
       last_odom_time_ = steady_now;
+      last_tx_time_ = steady_now;
     }
 
     if (!open_serial()) {
@@ -208,17 +215,23 @@ private:
 
   CallbackReturn on_deactivate(const rclcpp_lifecycle::State &) override
   {
-    if (!receive_only_ && serial_open_.load()) {
-      Command command;
-      command.auto_mode = true;
-      command.estop = true;
-      command.alive = hlv_alive_++;
-      send_command(command);
-    }
+    Command command;
+    const bool should_send = !receive_only_ && serial_open_.load();
     {
       std::scoped_lock lock(state_mutex_);
-      bridge_state_ = BridgeState::kEstop;
-      software_estop_ = true;
+      // A routine lifecycle stop is not an emergency.  Send a zero Manual
+      // frame so Ctrl-C/restart hands control back without leaving Hi_E-ST
+      // latched on the PCU.  An already-latched software E-stop is preserved.
+      command.auto_mode = software_estop_;
+      command.estop = software_estop_;
+      command.steer_mode = SteerMode::k2Wis;
+      command.alive = hlv_alive_++;
+      bridge_state_ = software_estop_ ? BridgeState::kEstop : BridgeState::kConnectedSafe;
+      desired_control_ = {};
+      filtered_steer_deg_ = 0.0;
+    }
+    if (should_send) {
+      send_command(command);
     }
     diagnostics_pub_->on_deactivate();
     joint_pub_->on_deactivate();
@@ -318,6 +331,7 @@ private:
     std::scoped_lock lock(state_mutex_);
     last_command_time_ = std::chrono::steady_clock::now();
     desired_control_ = mapped.valid ? mapped : ControlOutput{};
+    command_timed_out_ = false;
     if (!mapped.valid) {
       RCLCPP_WARN_THROTTLE(
         get_logger(), *get_clock(), 2000,
@@ -440,20 +454,30 @@ private:
     {
       std::scoped_lock lock(state_mutex_);
       const auto steady_now = std::chrono::steady_clock::now();
+      const double tx_dt = std::clamp(
+        std::chrono::duration<double>(steady_now - last_tx_time_).count(), 0.0, 0.2);
+      last_tx_time_ = steady_now;
       feedback_timed_out_ = !have_feedback_ ||
         steady_now - last_feedback_time_ > feedback_timeout_ ||
         steady_now - last_alive_change_time_ > feedback_timeout_;
       if (bridge_state_ == BridgeState::kArmedAuto) {
+        const bool command_was_timed_out = command_timed_out_;
         command_timed_out_ = auto_confirmed_ &&
           steady_now - last_command_time_ > command_timeout_;
         const bool auto_transition_timed_out = auto_request_sent_ && !auto_confirmed_ &&
           steady_now - auto_request_time_ > auto_transition_timeout_;
-        if (command_timed_out_ || feedback_timed_out_ || auto_transition_timed_out) {
-          if (command_timed_out_) {
-            RCLCPP_ERROR(
-              get_logger(), "Command watchdog expired after %.3f s; latching HLV E-stop",
-              std::chrono::duration<double>(steady_now - last_command_time_).count());
-          } else if (feedback_timed_out_) {
+        if (command_timed_out_ && !command_was_timed_out) {
+          // A planner/collision-monitor pause is an ordinary controlled stop,
+          // not an emergency. Keep the 20 Hz Auto heartbeat alive with zero
+          // motion so the PCU does not show Hi_E-ST or Auto Fail. A fresh Twist
+          // resumes automatically; genuine PCU/serial faults still hard-stop.
+          desired_control_ = {};
+          RCLCPP_WARN(
+            get_logger(), "Command watchdog expired after %.3f s; holding zero without HLV E-stop",
+            std::chrono::duration<double>(steady_now - last_command_time_).count());
+        }
+        if (feedback_timed_out_ || auto_transition_timed_out) {
+          if (feedback_timed_out_) {
             RCLCPP_ERROR(get_logger(), "PCU feedback watchdog expired; latching HLV E-stop");
           } else if (auto_transition_timed_out) {
             RCLCPP_ERROR(get_logger(), "PCU did not confirm the Auto transition in time");
@@ -477,11 +501,19 @@ private:
         command.auto_mode = true;
         if (auto_confirmed_) {
           command.speed_mps = desired_control_.speed_mps;
-          command.steer_deg = desired_control_.pcu_steer_deg;
+          const double filtered_target = filtered_steer_deg_ +
+            steer_filter_alpha_ * (desired_control_.pcu_steer_deg - filtered_steer_deg_);
+          const double max_delta = max_steer_rate_degps_ * tx_dt;
+          filtered_steer_deg_ += std::clamp(
+            filtered_target - filtered_steer_deg_, -max_delta, max_delta);
+          command.steer_deg = filtered_steer_deg_;
         }
       } else if (bridge_state_ == BridgeState::kEstop) {
         command.auto_mode = true;
         command.estop = true;
+        filtered_steer_deg_ = 0.0;
+      } else {
+        filtered_steer_deg_ = 0.0;
       }
     }
 
@@ -644,15 +676,16 @@ private:
         std::chrono::steady_clock::now() - last_command_time_).count();
     }
 
-    if (!status.connected || status.estop || status.command_timed_out || status.feedback_timed_out) {
+    if (!status.connected || status.estop || status.feedback_timed_out) {
       serial_status.level = diagnostic_msgs::msg::DiagnosticStatus::ERROR;
-      if (status.command_timed_out) {
-        serial_status.message = "Command timeout E-stop";
-      } else if (status.feedback_timed_out) {
+      if (status.feedback_timed_out) {
         serial_status.message = "PCU feedback timeout E-stop";
       } else {
         serial_status.message = status.estop ? "E-stop active" : "Serial fault";
       }
+    } else if (status.command_timed_out) {
+      serial_status.level = diagnostic_msgs::msg::DiagnosticStatus::WARN;
+      serial_status.message = "Command timeout soft stop; Auto heartbeat remains active";
     } else if (receive_only_) {
       serial_status.level = diagnostic_msgs::msg::DiagnosticStatus::WARN;
       serial_status.message = "Receive-only validation mode";
@@ -680,6 +713,7 @@ private:
     add_value("commanded_steer_deg", std::to_string(desired_steer_deg));
     add_value("command_age_sec", std::to_string(command_age_sec));
     add_value("command_timeout_sec", std::to_string(command_timeout_.count()));
+    add_value("command_timeout_action", "soft_zero");
     add_value("pcu_alive", std::to_string(status.pcu_alive));
     add_value("pcu_estop_raw", std::to_string(latest_feedback_.estop_raw));
     add_value("hlv_alive", std::to_string(status.hlv_alive));
@@ -704,6 +738,8 @@ private:
   double wheelbase_m_{0.323};
   double control_track_m_{0.390};
   double wheel_radius_m_{0.103};
+  double steer_filter_alpha_{0.25};
+  double max_steer_rate_degps_{30.0};
   std::string odom_frame_{"odom"};
   std::string base_frame_{"base_link"};
   std::chrono::duration<double> command_timeout_{0.15};
@@ -736,6 +772,8 @@ private:
   std::chrono::steady_clock::time_point last_alive_change_time_;
   std::chrono::steady_clock::time_point auto_request_time_;
   std::chrono::steady_clock::time_point last_odom_time_;
+  std::chrono::steady_clock::time_point last_tx_time_;
+  double filtered_steer_deg_{0.0};
   double x_{0.0};
   double y_{0.0};
   double yaw_{0.0};

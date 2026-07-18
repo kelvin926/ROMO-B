@@ -58,10 +58,22 @@ if [[ -f "$repo_root/robot_ws/install/local_setup.bash" ]]; then
 fi
 export ROMO_B_ROOT="$repo_root"
 
-# Fast DDS shared-memory lock files accumulated during repeated field-stack
-# restarts and caused participant port failures and dropped intra-host topics.
-# The ROMO-B graph is entirely local, so use the deterministic UDPv4 transport.
-export FASTRTPS_DEFAULT_PROFILES_FILE="$repo_root/config/dds/fastdds_udp.xml"
+# Full Autoware field logs showed Fast DDS shared-memory lock failures and
+# participant crashes. Prefer Autoware's supported Cyclone DDS RMW when it is
+# installed. Existing hosts fall back to Fast DDS with shared memory disabled
+# until setup_host.sh installs Cyclone DDS.
+if [[ -n "${ROMO_B_RMW_IMPLEMENTATION:-}" ]]; then
+  export RMW_IMPLEMENTATION="$ROMO_B_RMW_IMPLEMENTATION"
+elif [[ -f /opt/ros/humble/share/rmw_cyclonedds_cpp/package.xml ]]; then
+  export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+else
+  export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+fi
+if [[ "$RMW_IMPLEMENTATION" == rmw_fastrtps_cpp ]]; then
+  export FASTRTPS_DEFAULT_PROFILES_FILE="$repo_root/config/dds/fastdds_udp.xml"
+else
+  unset FASTRTPS_DEFAULT_PROFILES_FILE
+fi
 
 if [[ "$romo_b_nounset_was_enabled" == true ]]; then
   set -u

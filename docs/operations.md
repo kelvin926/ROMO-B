@@ -14,7 +14,7 @@ Use `--project-only` while developing without Livox or localization sources.
 ## Profiles
 
 - `bench`: 0.1 m/s, +/-5 degrees, Nav2 disabled.
-- `navigation`: 0.2 m/s, +/-22 degrees, forward-only 2WIS.
+- `navigation`: up to 0.5 m/s, +/-22 degrees, forward-only 2WIS.
 
 The bridge starts inactive and disarmed. Activating the lifecycle node does not
 arm motion. Use `/romo_b/arm` only after `doctor.sh --hardware` is green.
@@ -35,6 +35,13 @@ After the measured-speed calibration passes, start the complete stack with:
 ```bash
 ./scripts/run_field_navigation.sh
 ```
+
+This starts the Nav2 baseline, not the full Autoware graph. It defaults to
+0.5 m/s and accepts `MAX_SPEED_MPS=...` only within the bridge's 0.5 m/s hard
+ceiling. Set the pose with `2D Pose Estimate`, then use `Nav2 Goal` for a single
+goal or `Publish Point` plus the waypoint services for a continuous route.
+`source_env.sh` selects Cyclone DDS on configured hosts; set
+`ROMO_B_RMW_IMPLEMENTATION=rmw_fastrtps_cpp` only for an intentional fallback.
 
 In RViz, set the initial pose, add points with `Publish Point`, save them, then
 execute only after the platform status is healthy:
@@ -98,7 +105,8 @@ visualization; runtime localization remains the sole owner of `map -> odom`.
 
 Two point-cloud products are intentional. The obstacle topic
 `/sensing/lidar/top/pointcloud_filtered` is transformed to `base_footprint` and
-height-sliced to 0.10--1.80 m. Localization consumes
+height-sliced to 0.15--1.80 m, range-limited to 8 m, and voxelized at 0.10 m.
+Localization consumes
 `/sensing/lidar/top/pointcloud_localization`, transformed to `base_link` with
 full vertical structure retained. Both preserve Livox intensity and omit its
 vendor nanosecond timestamp field. Reusing the obstacle slice for 6-DoF NDT can

@@ -7,12 +7,13 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
-def include(package, launch_file, arguments):
+def include(package, launch_file, arguments, condition=None):
     return IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([FindPackageShare(package), "launch", launch_file])
         ),
         launch_arguments=arguments.items(),
+        condition=condition,
     )
 
 
@@ -49,6 +50,12 @@ def generate_launch_description():
             "use_sim_time": "false",
         },
     )
+    perception = include(
+        "romo_b_autoware",
+        "perception.launch.py",
+        {},
+        condition=IfCondition(LaunchConfiguration("use_object_tracking")),
+    )
     rviz = Node(
         package="rviz2",
         executable="rviz2",
@@ -60,6 +67,12 @@ def generate_launch_description():
             ),
         ],
         condition=IfCondition(LaunchConfiguration("use_rviz")),
+        # PRIME offload keeps the large point cloud and costmap rendering off
+        # the CPU/iGPU. Perception and planning remain deterministic on CPU.
+        additional_env={
+            "__NV_PRIME_RENDER_OFFLOAD": "1",
+            "__GLX_VENDOR_LIBRARY_NAME": "nvidia",
+        },
     )
     return LaunchDescription(
         [
@@ -69,10 +82,12 @@ def generate_launch_description():
             DeclareLaunchArgument("map"),
             DeclareLaunchArgument("waypoint_file"),
             DeclareLaunchArgument("use_rviz", default_value="true"),
-            DeclareLaunchArgument("max_speed_mps", default_value="1.0"),
+            DeclareLaunchArgument("use_object_tracking", default_value="true"),
+            DeclareLaunchArgument("max_speed_mps", default_value="0.5"),
             hardware,
             localization,
             navigation,
+            perception,
             rviz,
         ]
     )

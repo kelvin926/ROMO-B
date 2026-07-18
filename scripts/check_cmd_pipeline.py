@@ -80,13 +80,17 @@ def main():
             raise RuntimeError("Command pipeline subscriptions did not appear")
 
         clear_samples = node.run_phase([], 0.5, 2.0)
-        obstacle = [(0.50, -0.05, 0.50), (0.50, 0.0, 0.50), (0.50, 0.05, 0.50)]
+        obstacle = [
+            (0.50 + 0.02 * row, -0.08 + 0.04 * column, 0.50)
+            for row in range(3)
+            for column in range(5)
+        ]
         stop_samples = node.run_phase(obstacle, 0.2, 1.0)
         maximum_clear_speed = max((sample[0] for sample in clear_samples), default=math.nan)
         recent_stop = stop_samples[-5:]
         checks = {
             "clear_output_present": bool(clear_samples),
-            "velocity_clamped": 0.15 <= maximum_clear_speed <= 0.2001,
+            "velocity_clamped": 0.45 <= maximum_clear_speed <= 0.5001,
             "obstacle_output_present": bool(stop_samples),
             "obstacle_stop": len(recent_stop) == 5
             and all(abs(linear) < 1e-4 and abs(angular) < 1e-4 for linear, angular in recent_stop),

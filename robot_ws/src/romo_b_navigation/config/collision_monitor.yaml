@@ -10,7 +10,7 @@ collision_monitor:
     # Mid-360 publishes at 10 Hz.  The measured end-to-end age under the full
     # Autoware field load is 0.20-0.38 s, so 0.20 s rejected every live cloud.
     # A stale source still fails closed: the monitor stops publishing and the
-    # PCU bridge's independent 0.15 s command timeout stops the platform.
+    # command heartbeat holds the platform at zero without latching Hi_E-ST.
     source_timeout: 0.50
     # Fixed-frame odom lookup caused extrapolation failures with live stamps.
     base_shift_correction: false
@@ -18,18 +18,18 @@ collision_monitor:
     polygons: [StopZone, SlowdownZone]
     StopZone:
       type: polygon
-      points: [0.30, 0.55, 1.50, 0.55, 1.50, -0.55, 0.30, -0.55]
+      points: [0.30, 0.52, 1.00, 0.52, 1.00, -0.52, 0.30, -0.52]
       action_type: stop
-      max_points: 2
+      max_points: 8
       visualize: true
       polygon_pub_topic: /romo_b/stop_zone
       enabled: true
     SlowdownZone:
       type: polygon
-      points: [0.25, 0.85, 3.00, 0.85, 3.00, -0.85, 0.25, -0.85]
+      points: [0.25, 0.75, 2.00, 0.75, 2.00, -0.75, 0.25, -0.75]
       action_type: slowdown
       slowdown_ratio: 0.30
-      max_points: 2
+      max_points: 8
       visualize: true
       polygon_pub_topic: /romo_b/slowdown_zone
       enabled: true
@@ -37,6 +37,6 @@ collision_monitor:
     pointcloud:
       type: pointcloud
       topic: /sensing/lidar/top/pointcloud_filtered
-      min_height: 0.10
+      min_height: 0.15
       max_height: 1.80
       enabled: true

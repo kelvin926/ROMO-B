@@ -1,0 +1,4 @@
+[INFO] [1784367216.733123843] [static_transform_publisher_DLWOnMmlrCvJb5b8]: Spinning until stopped - publishing transform
+translation: ('0.000000', '0.000000', '0.000000')
+rotation: ('0.000000', '0.000000', '0.000000', '1.000000')
+from 'odom' to 'base_link'

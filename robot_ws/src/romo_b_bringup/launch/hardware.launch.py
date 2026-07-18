@@ -203,7 +203,7 @@ def generate_launch_description():
             DeclareLaunchArgument("livox_config", default_value="config/local/MID360_config.json"),
             DeclareLaunchArgument("receive_only", default_value="true"),
             DeclareLaunchArgument("safety_profile", default_value="bench"),
-            DeclareLaunchArgument("max_navigation_speed_mps", default_value="0.2"),
+            DeclareLaunchArgument("max_navigation_speed_mps", default_value="0.5"),
             DeclareLaunchArgument("autostart_bridge", default_value="true"),
             DeclareLaunchArgument("use_livox", default_value="false"),
             DeclareLaunchArgument("use_ekf", default_value="true"),

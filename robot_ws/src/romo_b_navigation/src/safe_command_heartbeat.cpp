@@ -20,8 +20,8 @@ public:
     output_topic_ = declare_parameter<std::string>("output_topic", "/cmd_vel_safe");
     input_timeout_sec_ = declare_parameter<double>("input_timeout_sec", 0.12);
     publish_frequency_ = declare_parameter<double>("publish_frequency", 20.0);
-    max_forward_speed_ = declare_parameter<double>("max_forward_speed", 0.20);
-    max_angular_speed_ = declare_parameter<double>("max_angular_speed", 0.25);
+    max_forward_speed_ = declare_parameter<double>("max_forward_speed", 0.50);
+    max_angular_speed_ = declare_parameter<double>("max_angular_speed", 0.80);
     if (
       input_timeout_sec_ <= 0.0 || input_timeout_sec_ >= 0.15 ||
       publish_frequency_ < 10.0 || max_forward_speed_ <= 0.0 || max_angular_speed_ <= 0.0)
@@ -82,8 +82,8 @@ private:
   std::string output_topic_;
   double input_timeout_sec_{0.12};
   double publish_frequency_{20.0};
-  double max_forward_speed_{0.20};
-  double max_angular_speed_{0.25};
+  double max_forward_speed_{0.50};
+  double max_angular_speed_{0.80};
   bool command_received_{false};
   rclcpp::Time last_command_time_{0, 0, RCL_ROS_TIME};
   geometry_msgs::msg::Twist last_command_;

@@ -57,8 +57,8 @@ def generate_launch_description():
                 "output_topic": "/cmd_vel_safe",
                 "input_timeout_sec": 0.12,
                 "publish_frequency": 20.0,
-                "max_forward_speed": 0.20,
-                "max_angular_speed": 0.25,
+                "max_forward_speed": 0.50,
+                "max_angular_speed": 0.80,
             }
         ],
     )

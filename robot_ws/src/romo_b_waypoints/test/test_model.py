@@ -22,7 +22,7 @@ def test_yaml_round_trip(tmp_path):
     assert loaded.waypoints[0].yaw == pytest.approx(0.0)
 
 
-@pytest.mark.parametrize("speed", [-0.1, 0.0, 0.21])
+@pytest.mark.parametrize("speed", [-0.1, 0.0, 0.51])
 def test_rejects_unsafe_speed(tmp_path, speed):
     path = tmp_path / "bad.yaml"
     path.write_text(

@@ -25,6 +25,12 @@ def generate_launch_description():
         output="screen",
         parameters=[PathJoinSubstitution([share, "config", "object_tracker.yaml"])],
     )
+    markers = Node(
+        package="romo_b_autoware",
+        executable="object_markers",
+        name="romo_b_object_markers",
+        output="screen",
+    )
     # Autoware's AEB requires base_link and logs every non-base_link input as
     # an error.  Re-transform the already cropped cloud instead of relaying its
     # base_footprint header unchanged.  The primary Collision Monitor continues
@@ -51,4 +57,4 @@ def generate_launch_description():
             }
         ],
     )
-    return LaunchDescription([cluster, tracker, pointcloud_relay])
+    return LaunchDescription([cluster, tracker, markers, pointcloud_relay])

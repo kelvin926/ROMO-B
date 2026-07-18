@@ -43,12 +43,16 @@ public:
     enable_height_filter_ = declare_parameter<bool>("enable_height_filter", true);
     min_z_ = declare_parameter<double>("min_z", 0.10);
     max_z_ = declare_parameter<double>("max_z", 1.80);
+    min_range_ = declare_parameter<double>("min_range", 0.0);
+    max_range_ = declare_parameter<double>("max_range", 100.0);
     self_half_x_ = declare_parameter<double>("self_half_x", 0.398);
     self_half_y_ = declare_parameter<double>("self_half_y", 0.319);
     self_min_z_ = declare_parameter<double>("self_min_z", 0.0);
     self_max_z_ = declare_parameter<double>("self_max_z", 0.45);
     transform_timeout_sec_ = declare_parameter<double>("transform_timeout_sec", 0.05);
-    if (voxel_size_ <= 0.0 || min_z_ >= max_z_ || self_half_x_ <= 0.0 || self_half_y_ <= 0.0) {
+    if (voxel_size_ <= 0.0 || min_z_ >= max_z_ || min_range_ < 0.0 ||
+      min_range_ >= max_range_ || self_half_x_ <= 0.0 || self_half_y_ <= 0.0)
+    {
       throw std::invalid_argument("Invalid point cloud filter parameters");
     }
 
@@ -105,9 +109,21 @@ private:
     self_filter.setNegative(true);
     self_filter.filter(*without_robot);
 
+    auto range_filtered = std::make_shared<pcl::PointCloud<pcl::PointXYZI>>();
+    range_filtered->reserve(without_robot->size());
+    const double min_range_squared = min_range_ * min_range_;
+    const double max_range_squared = max_range_ * max_range_;
+    for (const auto & point : *without_robot) {
+      const double range_squared =
+        static_cast<double>(point.x) * point.x + static_cast<double>(point.y) * point.y;
+      if (range_squared >= min_range_squared && range_squared <= max_range_squared) {
+        range_filtered->push_back(point);
+      }
+    }
+
     pcl::PointCloud<pcl::PointXYZI> filtered;
     pcl::VoxelGrid<pcl::PointXYZI> voxel;
-    voxel.setInputCloud(without_robot);
+    voxel.setInputCloud(range_filtered);
     const auto leaf = static_cast<float>(voxel_size_);
     voxel.setLeafSize(leaf, leaf, leaf);
     voxel.filter(filtered);
@@ -126,6 +142,8 @@ private:
   bool enable_height_filter_{true};
   double min_z_{0.10};
   double max_z_{1.80};
+  double min_range_{0.0};
+  double max_range_{100.0};
   double self_half_x_{0.398};
   double self_half_y_{0.319};
   double self_min_z_{0.0};
