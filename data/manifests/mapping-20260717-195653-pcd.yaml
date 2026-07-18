@@ -15,7 +15,7 @@ frames:
   sensor: livox_frame
 size_bytes: 946882
 sha256: 0246b15b4c32cad13c0b510c19ab2e891370fd614f8bc053e837d8f6537a37b9
-uri: pending
+uri: repo://data/local/maps/mapping-20260717-195653/map.pcd
 mapping:
   frontend: RKO-LIO
   backend: graph_based_slam

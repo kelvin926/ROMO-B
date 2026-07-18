@@ -1,6 +1,6 @@
 {
-  "pose_graph": "/home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/pose_graph.g2o",
-  "pointcloud_map": "/home/hyunseo/ROMO-B/data/local/maps/mapping-20260717-195653/map.pcd",
+  "pose_graph": "../pose_graph.g2o",
+  "pointcloud_map": "../map.pcd",
   "reversal_indices": [
     68,
     134

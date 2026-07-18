@@ -12,7 +12,7 @@ frames:
   sensor: livox_frame
 size_bytes: 1732436
 sha256: 5bb91ae3766b4d72577a9568312a2f77f4d5b171ff58a82b1d126c4de40c690c
-uri: pending
+uri: repo://data/local/maps/mapping-20260717-195653/nav2-raycast/map.pgm
 occupancy:
   resolution_m: 0.05
   width_cells: 1843

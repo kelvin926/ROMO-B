@@ -11,7 +11,7 @@ frames:
   sensor: livox_frame
 size_bytes: 90721
 sha256: a9ade352869d08611f8bb49d5718b38a9eb541900f0ca7f09cca8e336860c5ae
-uri: pending
+uri: repo://data/local/maps/mapping-20260717-195653/autoware/lanelet2_map.osm
 inputs:
   pointcloud_map_id: mapping-20260717-195653-pcd
   pointcloud_map_sha256: 0246b15b4c32cad13c0b510c19ab2e891370fd614f8bc053e837d8f6537a37b9

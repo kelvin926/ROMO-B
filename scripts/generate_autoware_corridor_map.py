@@ -325,8 +325,12 @@ def main() -> int:
     )
     replace_symlink(args.output / "pointcloud_map.pcd", args.pointcloud_map.resolve())
     report = {
-        "pose_graph": str(args.pose_graph.resolve()),
-        "pointcloud_map": str(args.pointcloud_map.resolve()),
+        # Keep generated metadata portable across clones.  These paths are
+        # interpreted relative to generation_report.json's directory.
+        "pose_graph": os.path.relpath(args.pose_graph.resolve(), args.output.resolve()),
+        "pointcloud_map": os.path.relpath(
+            args.pointcloud_map.resolve(), args.output.resolve()
+        ),
         "reversal_indices": reversals,
         "source_pose_count": len(poses),
         "centerline_point_count": len(centerline),
