@@ -320,8 +320,9 @@ class OperatorNode(Node):
                     "pivot_rate_radps": 0.0,
                 }
             )
-        for _ in range(3):
-            self._publish_twist(0.0, 0.0)
+        if rclpy.ok():
+            for _ in range(3):
+                self._publish_twist(0.0, 0.0)
 
     def program_stop(self) -> dict:
         self.stop_motion()
