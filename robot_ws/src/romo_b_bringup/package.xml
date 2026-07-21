@@ -18,6 +18,7 @@
   <exec_depend>romo_b_autoware</exec_depend>
   <exec_depend>romo_b_description</exec_depend>
   <exec_depend>romo_b_navigation</exec_depend>
+  <exec_depend>romo_b_operator_ui</exec_depend>
   <exec_depend>romo_b_perception</exec_depend>
   <exec_depend>rviz2</exec_depend>
   <exec_depend>tf2_ros</exec_depend>

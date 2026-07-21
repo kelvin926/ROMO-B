@@ -111,6 +111,11 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - `scripts/run_field_navigation.sh` now starts the complete live Mid-360, EKF,
   PCD localization, Nav2, collision-monitor, waypoint, and RViz stack. The
   bridge remains disarmed until the explicit arm service is called.
+- The field stack now also serves a laptop operator console on port 8765. Its
+  manual-style Main and algorithm tabs provide deadman 2WIS/Pivot teleoperation,
+  live PCU/Alive feedback, waypoint execution/cancel, localization, and ROS
+  diagnostics while preserving the existing mux/smoother/collision-monitor
+  command path. It never exposes a software E-stop command.
 - The first live full-stack attempt exposed a duplicate bench bridge and raw
   Mid-360 acceleration integration. The launcher now refuses to start beside an
   existing bridge, EKF uses wheel odometry only until IMU bias/covariance are

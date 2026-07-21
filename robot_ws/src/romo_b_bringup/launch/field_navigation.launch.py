@@ -74,6 +74,20 @@ def generate_launch_description():
             "__GLX_VENDOR_LIBRARY_NAME": "nvidia",
         },
     )
+    operator_ui = Node(
+        package="romo_b_operator_ui",
+        executable="operator_ui",
+        name="romo_b_operator_ui",
+        output="screen",
+        parameters=[
+            {
+                "open_browser": LaunchConfiguration("open_operator_ui_browser"),
+                "host": "127.0.0.1",
+                "port": 8765,
+            }
+        ],
+        condition=IfCondition(LaunchConfiguration("use_operator_ui")),
+    )
     return LaunchDescription(
         [
             DeclareLaunchArgument("hardware_config"),
@@ -82,12 +96,15 @@ def generate_launch_description():
             DeclareLaunchArgument("map"),
             DeclareLaunchArgument("waypoint_file"),
             DeclareLaunchArgument("use_rviz", default_value="true"),
+            DeclareLaunchArgument("use_operator_ui", default_value="true"),
+            DeclareLaunchArgument("open_operator_ui_browser", default_value="true"),
             DeclareLaunchArgument("use_object_tracking", default_value="true"),
             DeclareLaunchArgument("max_speed_mps", default_value="0.5"),
             hardware,
             localization,
             navigation,
             perception,
+            operator_ui,
             rviz,
         ]
     )

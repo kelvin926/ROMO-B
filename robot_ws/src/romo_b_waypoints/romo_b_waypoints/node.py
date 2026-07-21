@@ -42,7 +42,10 @@ class WaypointManager(Node):
         self.create_service(Trigger, "/romo_b/waypoints/reload", self.on_reload)
         self.create_service(Trigger, "/romo_b/waypoints/save", self.on_save)
         self.create_service(Trigger, "/romo_b/waypoints/execute", self.on_execute)
+        self.create_service(Trigger, "/romo_b/waypoints/cancel", self.on_cancel)
         self.navigation_client = ActionClient(self, NavigateThroughPoses, "/navigate_through_poses")
+        self.active_goal_handle = None
+        self.goal_request_pending = False
 
         if self.file_path.is_file():
             try:
@@ -109,6 +112,7 @@ class WaypointManager(Node):
 
         goal = NavigateThroughPoses.Goal()
         goal.poses = self.to_pose_messages()
+        self.goal_request_pending = True
         future = self.navigation_client.send_goal_async(goal)
         future.add_done_callback(self.on_goal_response)
         response.success = True
@@ -118,17 +122,33 @@ class WaypointManager(Node):
         return response
 
     def on_goal_response(self, future):
+        self.goal_request_pending = False
         handle = future.result()
         if not handle.accepted:
             self.get_logger().error("NavigateThroughPoses goal rejected")
             return
+        self.active_goal_handle = handle
         self.get_logger().info("NavigateThroughPoses goal accepted")
         result = handle.get_result_async()
-        result.add_done_callback(
-            lambda completed: self.get_logger().info(
-                f"NavigateThroughPoses finished with status {completed.result().status}"
-            )
+        result.add_done_callback(self.on_goal_result)
+
+    def on_goal_result(self, future):
+        self.active_goal_handle = None
+        self.get_logger().info(
+            f"NavigateThroughPoses finished with status {future.result().status}"
         )
+
+    def on_cancel(self, _request, response):
+        if self.goal_request_pending:
+            response.message = "Navigation goal is still being accepted; try cancel again"
+            return response
+        if self.active_goal_handle is None:
+            response.message = "No active waypoint navigation goal"
+            return response
+        self.active_goal_handle.cancel_goal_async()
+        response.success = True
+        response.message = "Waypoint navigation cancel requested"
+        return response
 
     def to_pose_messages(self):
         stamp = self.get_clock().now().to_msg()

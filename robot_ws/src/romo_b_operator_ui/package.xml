@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>romo_b_operator_ui</name>
+  <version>0.1.0</version>
+  <description>Browser-based ROS 2 operator console for ROMO-B.</description>
+  <maintainer email="futile-nutmegs0d@icloud.com">Jang HyunSeo</maintainer>
+  <license>Proprietary</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>diagnostic_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>python3-flask</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>romo_b_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

@@ -43,6 +43,21 @@ This starts the Nav2 baseline, not the full Autoware graph. It defaults to
 0.5 m/s and accepts `MAX_SPEED_MPS=...` only within the bridge's 0.5 m/s hard
 ceiling. Set the pose with `2D Pose Estimate`, then use `Nav2 Goal` for a single
 goal or `Publish Point` plus the waypoint services for a continuous route.
+It also opens the laptop operator console at `http://127.0.0.1:8765/`. Set
+`USE_OPERATOR_UI=false` to omit it, or run only the console against an existing
+ROS graph with:
+
+```bash
+./scripts/run_operator_ui.sh
+```
+
+The **Main** tab mirrors the manual's HLV test program: Auto/Manual request,
+read-only physical E-stop feedback, 2WIS/Pivot selection, speed/steer inputs,
+PCU wheel feedback, and Alive counters. Motion is sent only while the on-screen
+deadman button is held, at 20 Hz through `/cmd_vel_teleop`; releasing it sends
+zero. **Program Stop** sends zero and explicitly requests Manual/disarm. The UI
+does not expose or transmit a software E-stop command. The **Navigation** tab
+can save, reload, clear, execute, and cancel the active waypoint route.
 `source_env.sh` selects Cyclone DDS on configured hosts; set
 `ROMO_B_RMW_IMPLEMENTATION=rmw_fastrtps_cpp` only for an intentional fallback.
 

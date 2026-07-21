@@ -89,10 +89,17 @@ ros2 launch romo_b_bringup localization.launch.py \
 # Forward waypoint navigation with Pivot heading alignment
 ros2 launch romo_b_navigation navigation.launch.py \
   map:=data/local/maps/map.yaml
+
+# Complete field stack; opens RViz and the browser operator console
+./scripts/run_field_navigation.sh
 ```
 
 The operator must separately select PCU Auto, verify diagnostics, disable
 `receive_only`, and explicitly call `/romo_b/arm`. No launch file arms motion.
+The field launch opens the ROMO-B operator console at
+`http://127.0.0.1:8765/`. It exposes live PCU feedback, forward 2WIS/Pivot
+deadman control, waypoint operations, localization, and diagnostics without
+bypassing the existing `twist_mux` and Collision Monitor command chain.
 
 ## Autoware corridor runtime
 
