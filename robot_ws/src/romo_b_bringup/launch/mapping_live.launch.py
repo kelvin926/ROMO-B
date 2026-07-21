@@ -3,7 +3,12 @@
 import os
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
+from launch.actions import (
+    DeclareLaunchArgument,
+    ExecuteProcess,
+    IncludeLaunchDescription,
+    TimerAction,
+)
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -158,7 +163,12 @@ def generate_launch_description():
             DeclareLaunchArgument("record_bag", default_value="true"),
             DeclareLaunchArgument("use_rviz", default_value="true"),
             hardware,
-            rko_lio,
+            # Mid-360 emits one stale startup cloud while changing to Normal
+            # work mode, followed by a roughly 1.7 s timestamp jump. RKO-LIO
+            # permanently rejects every later frame if it subscribes to that
+            # startup cloud. Wait until the Livox 10 Hz stream is continuous;
+            # sensor-data QoS is volatile, so the stale frame is not replayed.
+            TimerAction(period=6.0, actions=[rko_lio]),
             graph_slam,
             map_to_odom,
             recorder,
