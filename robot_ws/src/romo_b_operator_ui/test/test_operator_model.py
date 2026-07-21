@@ -23,8 +23,9 @@ def test_ackermann_twist_uses_vehicle_wheelbase():
 
 
 def test_signed_command_is_clamped_and_reverse_is_supported():
-    assert ackermann_twist(2.0, 90.0)[0] == pytest.approx(0.5)
+    assert ackermann_twist(2.0, 90.0)[0] == pytest.approx(1.5)
     assert ackermann_twist(-0.2, 0.0) == (-0.2, 0.0)
+    assert ackermann_twist(-2.0, 0.0)[0] == pytest.approx(-1.5)
 
 
 def test_four_wis_has_half_wheelbase_turning_geometry():

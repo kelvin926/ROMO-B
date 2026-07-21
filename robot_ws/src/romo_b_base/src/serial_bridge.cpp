@@ -74,7 +74,7 @@ public:
     declare_parameter<double>("wheelbase_m", 0.323);
     declare_parameter<double>("control_track_m", 0.390);
     declare_parameter<double>("wheel_radius_m", 0.103);
-    declare_parameter<double>("max_navigation_speed_mps", 0.2);
+    declare_parameter<double>("max_navigation_speed_mps", 1.5);
     declare_parameter<double>("max_pivot_speed_mps", 0.15);
     declare_parameter<double>("steer_filter_alpha", 0.25);
     declare_parameter<double>("max_steer_rate_degps", 30.0);
@@ -137,7 +137,7 @@ private:
       navigation_profile_ = true;
       limits_.allow_pivot = true;
       limits_.max_speed_mps = std::clamp(
-        get_parameter("max_navigation_speed_mps").as_double(), 0.1, 0.5);
+        get_parameter("max_navigation_speed_mps").as_double(), 0.1, 1.5);
       limits_.max_pivot_speed_mps = std::clamp(
         get_parameter("max_pivot_speed_mps").as_double(), 0.05, 0.20);
       limits_.max_steer_deg = 22.0;
@@ -799,6 +799,7 @@ private:
     add_value("command_age_sec", std::to_string(command_age_sec));
     add_value("command_timeout_sec", std::to_string(command_timeout_.count()));
     add_value("command_timeout_action", "soft_zero");
+    add_value("feedback_timeout_sec", std::to_string(feedback_timeout_.count()));
     add_value("feedback_timeout_action", "zero_retain_arm_retry_auto");
     add_value("automatic_disarm", "disabled");
     add_value("software_estop_tx", "disabled");

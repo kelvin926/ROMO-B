@@ -131,6 +131,10 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   직접제어만 켜는 `로봇만 연결` 모드를 추가했다. 4WIS/Pivot 전환 중
   Auto 피드백이 잠깐 바뀌어도 선택 모드를 보존하며, 최종 heartbeat도
   음수 속도를 허용해 웹 후진 명령을 전달한다.
+- 직접제어 전·후진 상한을 매뉴얼의 HLV SPEED 범위인 +/-1.5 m/s로
+  통일했다. 자율주행 기본 순항속도는 복도 튜닝값 0.5 m/s를 유지한다.
+  직접제어에서는 짧은 FTDI/PCU 피드백 지터가 명령을 반복해서 0으로
+  덮지 않도록 피드백 watchdog을 1.0초로 설정했다.
 - The first live full-stack attempt exposed a duplicate bench bridge and raw
   Mid-360 acceleration integration. The launcher now refuses to start beside an
   existing bridge, EKF uses wheel odometry only until IMU bias/covariance are

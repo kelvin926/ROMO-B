@@ -13,4 +13,4 @@ fi
 exec ros2 launch romo_b_bringup robot_control.launch.py \
   hardware_config:="$repo_root/config/local/hardware.yaml" \
   livox_config:="$repo_root/config/local/MID360_config.json" \
-  max_speed_mps:="${MAX_SPEED_MPS:-0.5}"
+  max_speed_mps:="${MAX_SPEED_MPS:-1.5}"

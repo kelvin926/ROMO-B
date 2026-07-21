@@ -290,7 +290,7 @@ class OperationManager:
             output = self.bag_root / f"mapping-{self._stamp()}"
             return [self._script("record_mapping_bag.sh"), str(output)], env
         if operation_id == "robot_control":
-            env["MAX_SPEED_MPS"] = str(payload.get("max_speed_mps", 0.5))
+            env["MAX_SPEED_MPS"] = str(payload.get("max_speed_mps", 1.5))
             return [self._script("run_robot_control.sh")], env
         if operation_id == "field_navigation":
             env.update(

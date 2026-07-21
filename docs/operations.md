@@ -14,7 +14,8 @@ Use `--project-only` while developing without Livox or localization sources.
 ## Profiles
 
 - `bench`: 0.1 m/s, +/-5 degrees, Nav2 disabled.
-- `navigation`: signed speed up to +/-0.5 m/s, +/-22 degrees in 2WIS,
+- `navigation`: the bridge accepts the manual-defined signed range up to
+  +/-1.5 m/s, +/-22 degrees in 2WIS,
   +/-18 degrees in counter-phase 4WIS, plus Pivot heading alignment capped at
   0.15 m/s tangential wheel speed. Nav2 remains forward-preferred; signed
   reverse is available to the browser deadman control and compatible planners.
@@ -41,9 +42,9 @@ After the measured-speed calibration passes, start the complete stack with:
 ./scripts/run_field_navigation.sh
 ```
 
-This starts the Nav2 baseline, not the full Autoware graph. It defaults to
-0.5 m/s and accepts `MAX_SPEED_MPS=...` only within the bridge's 0.5 m/s hard
-ceiling. Set the pose with `2D Pose Estimate`, then use `Nav2 Goal` for a single
+This starts the Nav2 baseline, not the full Autoware graph. Its tuned default
+remains 0.5 m/s, while the serial bridge's specification ceiling is 1.5 m/s.
+Set the pose with `2D Pose Estimate`, then use `Nav2 Goal` for a single
 goal or `Publish Point` plus the waypoint services for a continuous route.
 The laptop operator console is installed as a user service and remains at
 `http://127.0.0.1:8765/` even when the field stack is stopped. Install or repair
@@ -77,7 +78,8 @@ terminal-only.
 작업은 `robot_control.launch.py`로 PCU 브리지와 `/cmd_vel_teleop` →
 `/cmd_vel_safe` 릴레이만 실행하므로 2D Pose Estimate가 필요하지 않고
 LiDAR, 위치추정, Nav2, RViz도 실행하지 않습니다. 전진과 후진은 모두
-최대 0.5 m/s 범위에서 같은 20 Hz deadman 경로를 사용합니다.
+매뉴얼의 최대 속도인 1.5 m/s 범위에서 같은 20 Hz deadman 경로를
+사용합니다. 초기 슬라이더 값은 0.2 m/s이며 운전자가 직접 올립니다.
 `source_env.sh` selects Cyclone DDS on configured hosts; set
 `ROMO_B_RMW_IMPLEMENTATION=rmw_fastrtps_cpp` only for an intentional fallback.
 

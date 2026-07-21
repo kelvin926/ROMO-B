@@ -68,6 +68,9 @@ def _actions(context):
                 # watchdog avoids unnecessary zero/disarm transitions on
                 # scheduler jitter observed during planner/costmap updates.
                 "command_timeout_sec": 0.50 if safety_profile == "navigation" else 0.15,
+                "feedback_timeout_sec": ParameterValue(
+                    LaunchConfiguration("feedback_timeout_sec"), value_type=float
+                ),
                 "max_navigation_speed_mps": ParameterValue(
                     LaunchConfiguration("max_navigation_speed_mps"), value_type=float
                 ),
@@ -206,7 +209,8 @@ def generate_launch_description():
             DeclareLaunchArgument("livox_config", default_value="config/local/MID360_config.json"),
             DeclareLaunchArgument("receive_only", default_value="true"),
             DeclareLaunchArgument("safety_profile", default_value="bench"),
-            DeclareLaunchArgument("max_navigation_speed_mps", default_value="0.5"),
+            DeclareLaunchArgument("max_navigation_speed_mps", default_value="1.5"),
+            DeclareLaunchArgument("feedback_timeout_sec", default_value="0.2"),
             DeclareLaunchArgument("allow_reverse", default_value="false"),
             DeclareLaunchArgument("autostart_bridge", default_value="true"),
             DeclareLaunchArgument("use_livox", default_value="false"),

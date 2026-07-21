@@ -20,6 +20,11 @@ def generate_launch_description():
             "receive_only": "false",
             "safety_profile": "navigation",
             "max_navigation_speed_mps": LaunchConfiguration("max_speed_mps"),
+            # The FTDI/PCU stream showed occasional short scheduling gaps on
+            # the field laptop. Keep direct control armed across those gaps;
+            # the independent command watchdog still replaces stale motion
+            # with zero after 0.5 s.
+            "feedback_timeout_sec": "1.0",
             "allow_reverse": "true",
             "use_livox": "false",
             "use_ekf": "false",
@@ -55,7 +60,7 @@ def generate_launch_description():
             DeclareLaunchArgument(
                 "livox_config", default_value="config/local/MID360_config.json"
             ),
-            DeclareLaunchArgument("max_speed_mps", default_value="0.5"),
+            DeclareLaunchArgument("max_speed_mps", default_value="1.5"),
             hardware,
             direct_teleop,
         ]

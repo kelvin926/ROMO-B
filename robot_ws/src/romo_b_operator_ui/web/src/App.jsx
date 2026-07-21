@@ -407,8 +407,8 @@ function CommandPanel({ state, onPost, demo }) {
               <label htmlFor="speed">주행 속도 크기</label>
               <output>{format(speed, 2)} m/s</output>
             </div>
-            <input id="speed" type="range" min="0" max="0.5" step="0.01" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} />
-            <div className="range-labels"><span>0</span><span>전진·후진 최대 ±0.5</span></div>
+            <input id="speed" type="range" min="0" max="1.5" step="0.01" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} />
+            <div className="range-labels"><span>0</span><span>매뉴얼 최고속도: 전진·후진 ±1.5 m/s</span></div>
           </div>
           <div className="slider-field">
             <div className="field-label-row">
@@ -617,7 +617,7 @@ function AlgorithmView() {
           </div>
           <div className="slider-field">
             <div className="field-label-row"><label>중심 속도</label><output>{format(speed, 2)} m/s</output></div>
-            <input type="range" min="-0.5" max="0.5" step="0.01" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} />
+            <input type="range" min="-1.5" max="1.5" step="0.01" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} />
           </div>
           <div className="slider-field">
             <div className="field-label-row"><label>중앙 조향각</label><output>{format(steer, 1)}°</output></div>

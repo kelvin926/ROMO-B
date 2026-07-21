@@ -3,7 +3,9 @@ import math
 
 WHEELBASE_M = 0.323
 CONTROL_TRACK_M = 0.39
-MAX_SPEED_MPS = 0.5
+# ROMO-B manual section 6.1 and HLV SPEED command section 18.5 both define
+# the platform command range as -1.50 .. +1.50 m/s.
+MAX_SPEED_MPS = 1.5
 MAX_STEER_DEG = 22.0
 MAX_PIVOT_RATE_RADPS = 0.75
 
