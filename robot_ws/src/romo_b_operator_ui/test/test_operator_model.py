@@ -6,6 +6,7 @@ from romo_b_operator_ui.model import (
     MAX_PIVOT_RATE_RADPS,
     WHEELBASE_M,
     ackermann_twist,
+    four_wis_twist,
     mode_name,
     pivot_twist,
     state_name,
@@ -21,9 +22,18 @@ def test_ackermann_twist_uses_vehicle_wheelbase():
     )
 
 
-def test_forward_command_is_clamped_and_reverse_is_rejected():
+def test_signed_command_is_clamped_and_reverse_is_supported():
     assert ackermann_twist(2.0, 90.0)[0] == pytest.approx(0.5)
-    assert ackermann_twist(-0.2, 0.0) == (0.0, 0.0)
+    assert ackermann_twist(-0.2, 0.0) == (-0.2, 0.0)
+
+
+def test_four_wis_has_half_wheelbase_turning_geometry():
+    linear, angular = four_wis_twist(0.2, 10.0)
+    assert linear == pytest.approx(0.2)
+    assert angular == pytest.approx(
+        0.2 * math.tan(math.radians(10.0)) / (WHEELBASE_M * 0.5)
+    )
+    assert four_wis_twist(-0.2, 0.0) == (-0.2, 0.0)
 
 
 def test_pivot_and_labels():

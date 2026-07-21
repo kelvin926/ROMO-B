@@ -2,6 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export ROMO_B_ROOT="$repo_root"
 source "$repo_root/scripts/source_env.sh"
 
 exec ros2 run romo_b_operator_ui operator_ui --ros-args \

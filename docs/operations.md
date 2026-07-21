@@ -14,8 +14,10 @@ Use `--project-only` while developing without Livox or localization sources.
 ## Profiles
 
 - `bench`: 0.1 m/s, +/-5 degrees, Nav2 disabled.
-- `navigation`: up to 0.5 m/s, +/-22 degrees in forward 2WIS, plus Pivot
-  heading alignment capped at 0.15 m/s tangential wheel speed.
+- `navigation`: signed speed up to +/-0.5 m/s, +/-22 degrees in 2WIS,
+  +/-18 degrees in counter-phase 4WIS, plus Pivot heading alignment capped at
+  0.15 m/s tangential wheel speed. Nav2 remains forward-preferred; signed
+  reverse is available to the browser deadman control and compatible planners.
 
 The bridge starts inactive and disarmed. Activating the lifecycle node does not
 arm motion. Use `/romo_b/arm` only after `doctor.sh --hardware` is green.
@@ -43,21 +45,27 @@ This starts the Nav2 baseline, not the full Autoware graph. It defaults to
 0.5 m/s and accepts `MAX_SPEED_MPS=...` only within the bridge's 0.5 m/s hard
 ceiling. Set the pose with `2D Pose Estimate`, then use `Nav2 Goal` for a single
 goal or `Publish Point` plus the waypoint services for a continuous route.
-It also opens the laptop operator console at `http://127.0.0.1:8765/`. Set
-`USE_OPERATOR_UI=false` to omit it, or run only the console against an existing
-ROS graph with:
+The laptop operator console is installed as a user service and remains at
+`http://127.0.0.1:8765/` even when the field stack is stopped. Install or repair
+that login-time service with:
 
 ```bash
-./scripts/run_operator_ui.sh
+./scripts/install_operator_ui_service.sh
 ```
 
-The **Main** tab mirrors the manual's HLV test program: Auto/Manual request,
-read-only physical E-stop feedback, 2WIS/Pivot selection, speed/steer inputs,
-PCU wheel feedback, and Alive counters. Motion is sent only while the on-screen
-deadman button is held, at 20 Hz through `/cmd_vel_teleop`; releasing it sends
-zero. **Program Stop** sends zero and explicitly requests Manual/disarm. The UI
-does not expose or transmit a software E-stop command. The **Navigation** tab
-can save, reload, clear, execute, and cancel the active waypoint route.
+The **Main** tab mirrors the manual's HLV test program while separating the HLV
+software arm request from PCU-confirmed Auto feedback. It shows every Auto-entry
+condition, all wheel speeds and steering angles, Alive counters, and signed
+forward/reverse deadman control for 2WIS, 4WIS, and Pivot. Motion is sent only
+while the on-screen button is held, at 20 Hz through `/cmd_vel_teleop`; releasing
+it sends zero. Selecting a steering mode first requests that mode at zero speed,
+so PCU feedback and all four steering readouts update before motion.
+**ZERO + MANUAL** is an explicit operator action. The UI never
+exposes or transmits a software E-stop command. The **Navigation** tab sets an
+initial map pose, submits/cancels a direct Nav2 goal, and manages waypoint routes.
+The **System control** tab starts/stops the full field stack and shows the command
+pipeline, sensors, node graph, and log path. **Diagnostics** includes all ROS
+diagnostic key/value pairs.
 `source_env.sh` selects Cyclone DDS on configured hosts; set
 `ROMO_B_RMW_IMPLEMENTATION=rmw_fastrtps_cpp` only for an intentional fallback.
 
@@ -87,8 +95,8 @@ ros2 service call /romo_b/arm std_srvs/srv/SetBool '{data: false}'
 ```
 
 There is intentionally no `/romo_b/software_estop` service. Command loss,
-feedback loss, an Auto transition failure, and normal shutdown all produce a
-zero-speed Manual/disarm handoff without setting the HLV E-stop bit. Use the
+feedback loss, an Auto transition failure, and normal shutdown hold zero while
+the software arm state is retained; they never set the HLV E-stop bit. Use the
 physical/RC E-stop for an operator-requested emergency stop.
 
 The command path is fixed as Nav2, the Autoware trajectory follower, or teleop

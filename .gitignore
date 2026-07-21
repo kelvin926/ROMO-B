@@ -15,6 +15,7 @@
 *.bag
 *.db3
 *.mcap
+/data/local/logs/
 
 # Editor, Python and test caches
 .idea/

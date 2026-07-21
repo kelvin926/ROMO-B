@@ -177,7 +177,10 @@ VehicleMotion estimate_vehicle_motion(
     return motion;
   }
 
-  motion.center_speed_mps =
+  motion.center_speed_mps = feedback.steer_mode == SteerMode::k4Wis ?
+    0.25 * (
+    feedback.wheel_speed_mps[0] + feedback.wheel_speed_mps[1] +
+    feedback.wheel_speed_mps[2] + feedback.wheel_speed_mps[3]) :
     0.5 * (feedback.wheel_speed_mps[2] + feedback.wheel_speed_mps[3]);
 
   // Convert PCU negative-left convention to ROS positive-left convention.
@@ -185,11 +188,13 @@ VehicleMotion estimate_vehicle_motion(
   const double fr = -feedback.wheel_steer_rad[1];
   std::array<double, 2> radii{};
   std::size_t count = 0;
+  const double longitudinal_offset = feedback.steer_mode == SteerMode::k4Wis ?
+    wheelbase_m * 0.5 : wheelbase_m;
   if (std::abs(std::tan(fl)) > 1.0e-5) {
-    radii[count++] = wheelbase_m / std::tan(fl) + control_track_m * 0.5;
+    radii[count++] = longitudinal_offset / std::tan(fl) + control_track_m * 0.5;
   }
   if (std::abs(std::tan(fr)) > 1.0e-5) {
-    radii[count++] = wheelbase_m / std::tan(fr) - control_track_m * 0.5;
+    radii[count++] = longitudinal_offset / std::tan(fr) - control_track_m * 0.5;
   }
   if (count == 0) {
     return motion;
@@ -206,7 +211,7 @@ VehicleMotion estimate_vehicle_motion(
     return motion;
   }
   const double curvature = 1.0 / radius;
-  motion.equivalent_steer_rad = std::atan(wheelbase_m * curvature);
+  motion.equivalent_steer_rad = std::atan(longitudinal_offset * curvature);
   motion.yaw_rate_radps = motion.center_speed_mps * curvature;
   return motion;
 }

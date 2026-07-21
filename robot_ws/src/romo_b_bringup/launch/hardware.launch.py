@@ -71,6 +71,9 @@ def _actions(context):
                 "max_navigation_speed_mps": ParameterValue(
                     LaunchConfiguration("max_navigation_speed_mps"), value_type=float
                 ),
+                "allow_reverse": ParameterValue(
+                    LaunchConfiguration("allow_reverse"), value_type=bool
+                ),
                 "sensor_calibrated": bool(lidar.get("calibrated", False)),
             }
         ],
@@ -204,6 +207,7 @@ def generate_launch_description():
             DeclareLaunchArgument("receive_only", default_value="true"),
             DeclareLaunchArgument("safety_profile", default_value="bench"),
             DeclareLaunchArgument("max_navigation_speed_mps", default_value="0.5"),
+            DeclareLaunchArgument("allow_reverse", default_value="false"),
             DeclareLaunchArgument("autostart_bridge", default_value="true"),
             DeclareLaunchArgument("use_livox", default_value="false"),
             DeclareLaunchArgument("use_ekf", default_value="true"),

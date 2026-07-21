@@ -1,6 +1,12 @@
 import math
 
-from romo_b_sim.protocol import CommandParser, ackermann_feedback, encode_feedback
+from romo_b_sim.protocol import (
+    CommandParser,
+    ackermann_feedback,
+    encode_feedback,
+    four_wis_feedback,
+    pivot_feedback,
+)
 
 
 def test_command_parser_handles_fragments_and_signed_values():
@@ -27,3 +33,16 @@ def test_ackermann_right_turn_has_inner_right_wheel():
     assert angles[1] > angles[0] > 0.0
     assert speeds[1] < speeds[0]
     assert math.isclose(angles[2], 0.0)
+
+
+def test_four_wis_uses_opposite_rear_steering():
+    speeds, angles = four_wis_feedback(-0.2, 12.0)
+    assert all(speed < 0.0 for speed in speeds)
+    assert angles[2] == -angles[0]
+    assert angles[3] == -angles[1]
+
+
+def test_pivot_has_x_steering_and_opposite_wheel_speeds():
+    speeds, angles = pivot_feedback(0.1)
+    assert speeds == [0.1, -0.1, 0.1, -0.1]
+    assert angles == [30.0, -30.0, -30.0, 30.0]

@@ -1,0 +1,18 @@
+[Unit]
+Description=ROMO-B browser operator console
+After=graphical-session.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/ROMO-B
+Environment=OPEN_BROWSER=false
+Environment=OPERATOR_UI_HOST=127.0.0.1
+Environment=OPERATOR_UI_PORT=8765
+Environment=ROMO_B_ROOT=%h/ROMO-B
+ExecStart=%h/ROMO-B/scripts/run_operator_ui.sh
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=5
+
+[Install]
+WantedBy=default.target

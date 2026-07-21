@@ -57,6 +57,14 @@ def ackermann_feedback(speed_mps, steer_deg, wheelbase=0.323, track=0.390):
     return speeds, [math.degrees(fl_angle), math.degrees(fr_angle), 0.0, 0.0]
 
 
+def four_wis_feedback(speed_mps, steer_deg, wheelbase=0.323, track=0.390):
+    """Counter-phase 4WIS feedback using the manual's L/2 geometry."""
+    speeds, front_angles = ackermann_feedback(
+        speed_mps, steer_deg, wheelbase=wheelbase * 0.5, track=track
+    )
+    return speeds, [front_angles[0], front_angles[1], -front_angles[0], -front_angles[1]]
+
+
 def pivot_feedback(speed_mps):
     """Mirror the ROMO-B PCU Pivot feedback convention.
 

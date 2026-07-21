@@ -24,6 +24,7 @@
 #include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "romo_b_msgs/msg/platform_status.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
+#include "std_msgs/msg/u_int8.hpp"
 #include "std_srvs/srv/set_bool.hpp"
 
 namespace romo_b_base
@@ -34,7 +35,7 @@ namespace
 
 bool is_supported_auto_mode(const SteerMode mode)
 {
-  return mode == SteerMode::k2Wis || mode == SteerMode::kPivot;
+  return mode == SteerMode::k2Wis || mode == SteerMode::k4Wis || mode == SteerMode::kPivot;
 }
 
 const char * steer_mode_name(const SteerMode mode)
@@ -77,6 +78,8 @@ public:
     declare_parameter<double>("max_pivot_speed_mps", 0.15);
     declare_parameter<double>("steer_filter_alpha", 0.25);
     declare_parameter<double>("max_steer_rate_degps", 30.0);
+    declare_parameter<double>("mode_override_timeout_sec", 0.60);
+    declare_parameter<bool>("allow_reverse", false);
     declare_parameter<std::string>("safety_profile", "bench");
     declare_parameter<bool>("receive_only", true);
     declare_parameter<bool>("sensor_calibrated", false);
@@ -114,6 +117,8 @@ private:
     wheel_radius_m_ = get_parameter("wheel_radius_m").as_double();
     steer_filter_alpha_ = get_parameter("steer_filter_alpha").as_double();
     max_steer_rate_degps_ = get_parameter("max_steer_rate_degps").as_double();
+    mode_override_timeout_ = std::chrono::duration<double>(
+      get_parameter("mode_override_timeout_sec").as_double());
     receive_only_ = get_parameter("receive_only").as_bool();
     sensor_calibrated_ = get_parameter("sensor_calibrated").as_bool();
     odom_frame_ = get_parameter("odom_frame").as_string();
@@ -122,7 +127,7 @@ private:
     const auto profile = get_parameter("safety_profile").as_string();
     limits_.wheelbase_m = wheelbase_m_;
     limits_.control_track_m = control_track_m_;
-    limits_.allow_reverse = false;
+    limits_.allow_reverse = get_parameter("allow_reverse").as_bool();
     if (profile == "bench") {
       navigation_profile_ = false;
       limits_.allow_pivot = false;
@@ -150,7 +155,8 @@ private:
       tx_rate <= 0.0 || command_timeout_.count() <= 0.0 ||
       feedback_timeout_.count() <= 0.0 || auto_transition_timeout_.count() <= 0.0 ||
       wheel_radius_m_ <= 0.0 || steer_filter_alpha_ <= 0.0 ||
-      steer_filter_alpha_ > 1.0 || max_steer_rate_degps_ <= 0.0)
+      steer_filter_alpha_ > 1.0 || max_steer_rate_degps_ <= 0.0 ||
+      mode_override_timeout_.count() <= 0.0)
     {
       RCLCPP_ERROR(get_logger(), "Invalid serial, timeout, or vehicle parameter");
       return CallbackReturn::FAILURE;
@@ -168,6 +174,9 @@ private:
     cmd_sub_ = create_subscription<geometry_msgs::msg::Twist>(
       "/cmd_vel_safe", rclcpp::QoS(10),
       std::bind(&SerialBridge::on_command, this, std::placeholders::_1));
+    steer_mode_sub_ = create_subscription<std_msgs::msg::UInt8>(
+      "/romo_b/steer_mode_request", rclcpp::QoS(10),
+      std::bind(&SerialBridge::on_steer_mode_request, this, std::placeholders::_1));
     arm_service_ = create_service<std_srvs::srv::SetBool>(
       "/romo_b/arm",
       std::bind(&SerialBridge::on_arm, this, std::placeholders::_1, std::placeholders::_2));
@@ -200,6 +209,9 @@ private:
       auto_request_time_ = steady_now;
       last_odom_time_ = steady_now;
       last_tx_time_ = steady_now;
+      last_mode_request_time_ = steady_now - std::chrono::duration_cast<
+        std::chrono::steady_clock::duration>(mode_override_timeout_);
+      requested_steer_mode_ = SteerMode::k2Wis;
     }
 
     if (!open_serial()) {
@@ -266,6 +278,7 @@ private:
     close_serial();
     tx_timer_.reset();
     cmd_sub_.reset();
+    steer_mode_sub_.reset();
     arm_service_.reset();
     status_pub_.reset();
     odom_pub_.reset();
@@ -346,16 +359,52 @@ private:
 
   void on_command(const geometry_msgs::msg::Twist::SharedPtr message)
   {
-    const auto mapped = map_twist(message->linear.x, message->angular.z, limits_);
     std::scoped_lock lock(state_mutex_);
+    const auto steady_now = std::chrono::steady_clock::now();
+    const bool mode_override_fresh =
+      steady_now - last_mode_request_time_ <= mode_override_timeout_;
+    ControlLimits effective_limits = limits_;
+    if (mode_override_fresh && requested_steer_mode_ == SteerMode::k4Wis) {
+      // Symmetric counter-phase 4WIS turns around the vehicle center, so the
+      // Twist-to-steering geometry uses L/2 and the manual's +/-18 deg limit.
+      effective_limits.wheelbase_m = wheelbase_m_ * 0.5;
+      effective_limits.max_steer_deg = std::min(effective_limits.max_steer_deg, 18.0);
+    }
+    auto mapped = map_twist(message->linear.x, message->angular.z, effective_limits);
+    if (mapped.valid && mode_override_fresh) {
+      const bool twist_requests_pivot = mapped.steer_mode == SteerMode::kPivot;
+      if (requested_steer_mode_ == SteerMode::kPivot && !twist_requests_pivot &&
+        std::abs(message->linear.x) > effective_limits.zero_speed_epsilon)
+      {
+        mapped.valid = false;
+      } else if (requested_steer_mode_ != SteerMode::kPivot && !twist_requests_pivot) {
+        mapped.steer_mode = requested_steer_mode_;
+      } else if (requested_steer_mode_ == SteerMode::kPivot &&
+        std::abs(message->linear.x) <= effective_limits.zero_speed_epsilon)
+      {
+        mapped.steer_mode = SteerMode::kPivot;
+      }
+    }
     last_command_time_ = std::chrono::steady_clock::now();
     desired_control_ = mapped.valid ? mapped : ControlOutput{};
     command_timed_out_ = false;
     if (!mapped.valid) {
       RCLCPP_WARN_THROTTLE(
         get_logger(), *get_clock(), 2000,
-        "Rejected reverse, unsupported profile rotation, non-finite, or otherwise invalid Twist");
+        "Rejected unsupported mode/Twist combination, non-finite value, or profile-limited motion");
     }
+  }
+
+  void on_steer_mode_request(const std_msgs::msg::UInt8::SharedPtr message)
+  {
+    if (message->data > static_cast<std::uint8_t>(SteerMode::kPivot)) {
+      RCLCPP_WARN_THROTTLE(
+        get_logger(), *get_clock(), 2000, "Rejected unknown steering mode %u", message->data);
+      return;
+    }
+    std::scoped_lock lock(state_mutex_);
+    requested_steer_mode_ = static_cast<SteerMode>(message->data);
+    last_mode_request_time_ = std::chrono::steady_clock::now();
   }
 
   void on_arm(
@@ -449,9 +498,11 @@ private:
         if (command_timed_out_ && !command_was_timed_out) {
           // A planner/collision-monitor pause is an ordinary controlled stop,
           // not an emergency. Keep the 20 Hz Auto heartbeat alive with zero
-          // motion so the PCU does not show Hi_E-ST or Auto Fail. A fresh Twist
-          // resumes automatically.
+          // motion so the PCU does not show Hi_E-ST or Auto Fail. Retain the
+          // selected steering mode at zero; a fresh Twist resumes automatically.
+          const auto hold_mode = desired_control_.steer_mode;
           desired_control_ = {};
+          desired_control_.steer_mode = hold_mode;
           RCLCPP_WARN(
             get_logger(), "Command watchdog expired after %.3f s; holding zero without HLV E-stop",
             std::chrono::duration<double>(steady_now - last_command_time_).count());
@@ -503,7 +554,7 @@ private:
         if (auto_confirmed_) {
           command.steer_mode = desired_control_.steer_mode;
           // Change the steering geometry at zero wheel speed. Motion begins
-          // only after PCU feedback confirms the requested 2WIS/Pivot mode.
+          // only after PCU feedback confirms the requested 2WIS/4WIS/Pivot mode.
           const bool mode_confirmed = have_feedback_ &&
             latest_feedback_.steer_mode == command.steer_mode;
           command.speed_mps = mode_confirmed ? desired_control_.speed_mps : 0.0;
@@ -602,7 +653,7 @@ private:
           auto_confirmed_ = true;
           desired_control_ = {};
           last_command_time_ = steady_now;
-          RCLCPP_INFO(get_logger(), "PCU confirmed Auto; 2WIS and Pivot commands are enabled");
+          RCLCPP_INFO(get_logger(), "PCU confirmed Auto; 2WIS, 4WIS and Pivot commands are enabled");
         }
       }
 
@@ -724,6 +775,7 @@ private:
     add_value("receive_only", receive_only_ ? "true" : "false");
     add_value("command_endian", command_endian_);
     add_value("sensor_calibrated", sensor_calibrated_ ? "true" : "false");
+    add_value("reverse_enabled", limits_.allow_reverse ? "true" : "false");
     add_value("auto_confirmed", auto_confirmed ? "true" : "false");
     add_value("manual_zero_sent", manual_zero_sent ? "true" : "false");
     add_value("commanded_speed_mps", std::to_string(desired_speed_mps));
@@ -769,6 +821,7 @@ private:
   std::chrono::duration<double> command_timeout_{0.15};
   std::chrono::duration<double> feedback_timeout_{0.20};
   std::chrono::duration<double> auto_transition_timeout_{0.50};
+  std::chrono::duration<double> mode_override_timeout_{0.60};
   ControlLimits limits_;
 
   boost::asio::io_context io_context_;
@@ -797,6 +850,8 @@ private:
   std::chrono::steady_clock::time_point auto_request_time_;
   std::chrono::steady_clock::time_point last_odom_time_;
   std::chrono::steady_clock::time_point last_tx_time_;
+  std::chrono::steady_clock::time_point last_mode_request_time_;
+  SteerMode requested_steer_mode_{SteerMode::k2Wis};
   double filtered_steer_deg_{0.0};
   double x_{0.0};
   double y_{0.0};
@@ -808,6 +863,7 @@ private:
   rclcpp_lifecycle::LifecyclePublisher<sensor_msgs::msg::JointState>::SharedPtr joint_pub_;
   rclcpp_lifecycle::LifecyclePublisher<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr diagnostics_pub_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_sub_;
+  rclcpp::Subscription<std_msgs::msg::UInt8>::SharedPtr steer_mode_sub_;
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr arm_service_;
   rclcpp::TimerBase::SharedPtr tx_timer_;
 };

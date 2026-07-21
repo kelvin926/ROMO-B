@@ -9,9 +9,10 @@ with Nav2 or Autoware Universe 1.8.0 local obstacle avoidance.
 The protocol source of truth is the tracked
 [verified manual extraction](ROMO-B_manual_verified_complete.md).
 
-The supported host is **Ubuntu 22.04 x86_64 with ROS 2 Humble**. The V1 runtime
-uses forward-only 2WIS Ackermann motion while driving and the PCU's Pivot mode
-for Nav2 path/goal-heading alignment. 4WIS and reverse recovery remain disabled.
+The supported host is **Ubuntu 22.04 x86_64 with ROS 2 Humble**. Nav2 remains
+forward-preferred 2WIS Ackermann while driving and uses the PCU's Pivot mode for
+path/goal-heading alignment. The browser's hold-to-run control additionally
+supports signed reverse and counter-phase 4WIS for direct operator maneuvering.
 
 > **Safety:** This software and a single LiDAR are not safety-rated. Keep the
 > physical/RC E-stop available, lift the wheels for first motion tests, and do
@@ -86,7 +87,7 @@ ros2 launch romo_b_bringup hardware.launch.py use_livox:=true
 ros2 launch romo_b_bringup localization.launch.py \
   pcd_map:=data/local/maps/mapping_run/map.pcd
 
-# Forward waypoint navigation with Pivot heading alignment
+# Forward-preferred waypoint navigation with Pivot heading alignment
 ros2 launch romo_b_navigation navigation.launch.py \
   map:=data/local/maps/map.yaml
 
@@ -95,11 +96,12 @@ ros2 launch romo_b_navigation navigation.launch.py \
 ```
 
 The operator must separately select PCU Auto, verify diagnostics, disable
-`receive_only`, and explicitly call `/romo_b/arm`. No launch file arms motion.
-The field launch opens the ROMO-B operator console at
-`http://127.0.0.1:8765/`. It exposes live PCU feedback, forward 2WIS/Pivot
-deadman control, waypoint operations, localization, and diagnostics without
-bypassing the existing `twist_mux` and Collision Monitor command chain.
+`receive_only`, and explicitly request HLV Arm. No launch file arms motion.
+The persistent ROMO-B operator console at `http://127.0.0.1:8765/` can start
+or stop the complete field stack, request Arm/Manual, set initial pose and a
+Nav2 goal, run waypoint routes, and show dense PCU/ROS diagnostics. Its signed
+hold-to-run control supports 2WIS, 4WIS, and Pivot without bypassing the existing
+`twist_mux`, smoother, and Collision Monitor command chain.
 
 ## Autoware corridor runtime
 

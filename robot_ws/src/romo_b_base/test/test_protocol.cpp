@@ -109,6 +109,16 @@ TEST(TwistMapping, RejectsReverseAndPureRotation)
   EXPECT_TRUE(rb::map_twist(0.0, 0.0, limits).valid);
 }
 
+TEST(TwistMapping, SupportsSignedReverseWhenEnabled)
+{
+  rb::ControlLimits limits;
+  limits.allow_reverse = true;
+  const auto output = rb::map_twist(-0.2, 0.0, limits);
+  ASSERT_TRUE(output.valid);
+  EXPECT_DOUBLE_EQ(output.speed_mps, -0.2);
+  EXPECT_DOUBLE_EQ(output.pcu_steer_deg, 0.0);
+}
+
 TEST(TwistMapping, ConvertsRosRotationToPcuPivotWithOppositeSign)
 {
   rb::ControlLimits limits;
@@ -144,6 +154,20 @@ TEST(Odometry, RecoversEquivalentLeftTurn)
   feedback.wheel_speed_mps = {0.18, 0.22, 0.18, 0.22};
   feedback.wheel_steer_rad = {
     -20.0 * rb::kDegreesToRadians, -13.0 * rb::kDegreesToRadians, 0.0, 0.0};
+  const auto motion = rb::estimate_vehicle_motion(feedback);
+  EXPECT_NEAR(motion.center_speed_mps, 0.20, 1.0e-9);
+  EXPECT_GT(motion.equivalent_steer_rad, 0.0);
+  EXPECT_GT(motion.yaw_rate_radps, 0.0);
+}
+
+TEST(Odometry, FourWisUsesHalfWheelbaseGeometry)
+{
+  rb::Feedback feedback;
+  feedback.steer_mode = rb::SteerMode::k4Wis;
+  feedback.wheel_speed_mps = {0.18, 0.22, 0.18, 0.22};
+  feedback.wheel_steer_rad = {
+    -20.0 * rb::kDegreesToRadians, -13.0 * rb::kDegreesToRadians,
+    20.0 * rb::kDegreesToRadians, 13.0 * rb::kDegreesToRadians};
   const auto motion = rb::estimate_vehicle_motion(feedback);
   EXPECT_NEAR(motion.center_speed_mps, 0.20, 1.0e-9);
   EXPECT_GT(motion.equivalent_steer_rad, 0.0);

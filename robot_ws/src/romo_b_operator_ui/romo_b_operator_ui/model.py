@@ -20,12 +20,22 @@ def clamp(value: float, lower: float, upper: float) -> float:
 
 
 def ackermann_twist(speed_mps: float, steer_deg: float) -> tuple[float, float]:
-    """Return a forward-only ROS Twist x/z pair for a center steering angle."""
-    speed = clamp(speed_mps, 0.0, MAX_SPEED_MPS)
+    """Return a signed 2WIS ROS Twist for a ROS-positive-left steering angle."""
+    speed = clamp(speed_mps, -MAX_SPEED_MPS, MAX_SPEED_MPS)
     steer = clamp(steer_deg, -MAX_STEER_DEG, MAX_STEER_DEG)
-    if speed <= 1e-6:
+    if abs(speed) <= 1e-6:
         return 0.0, 0.0
     angular = speed * math.tan(math.radians(steer)) / WHEELBASE_M
+    return speed, angular
+
+
+def four_wis_twist(speed_mps: float, steer_deg: float) -> tuple[float, float]:
+    """Return the body Twist produced by symmetric counter-phase 4WIS."""
+    speed = clamp(speed_mps, -MAX_SPEED_MPS, MAX_SPEED_MPS)
+    steer = clamp(steer_deg, -18.0, 18.0)
+    if abs(speed) <= 1e-6:
+        return 0.0, 0.0
+    angular = speed * math.tan(math.radians(steer)) / (WHEELBASE_M * 0.5)
     return speed, angular
 
 

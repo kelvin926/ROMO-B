@@ -27,6 +27,7 @@ def generate_launch_description():
             "receive_only": "false",
             "safety_profile": "navigation",
             "max_navigation_speed_mps": LaunchConfiguration("max_speed_mps"),
+            "allow_reverse": "true",
             "use_livox": "true",
             "use_ekf": "true",
             "use_sim_time": "false",

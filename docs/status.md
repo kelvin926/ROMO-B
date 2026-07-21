@@ -112,10 +112,17 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   PCD localization, Nav2, collision-monitor, waypoint, and RViz stack. The
   bridge remains disarmed until the explicit arm service is called.
 - The field stack now also serves a laptop operator console on port 8765. Its
-  manual-style Main and algorithm tabs provide deadman 2WIS/Pivot teleoperation,
-  live PCU/Alive feedback, waypoint execution/cancel, localization, and ROS
-  diagnostics while preserving the existing mux/smoother/collision-monitor
-  command path. It never exposes a software E-stop command.
+  manual-style Main and algorithm tabs provide signed 2WIS/4WIS and Pivot
+  deadman teleoperation, live PCU/Alive feedback, waypoint execution/cancel,
+  localization, and ROS diagnostics while preserving the existing
+  mux/smoother/collision-monitor command path. It never exposes a software
+  E-stop command.
+- The operator console is now a login-time user service and can start/stop the
+  field stack without a terminal. It separates HLV Arm from PCU Auto feedback,
+  exposes Auto-entry blockers, direct initial-pose/goal controls, full sensor and
+  command-pipeline telemetry, and all diagnostic key/value pairs. Manual
+  deadman control and the serial bridge support signed 2WIS, counter-phase 4WIS,
+  and Pivot; rear steering feedback is displayed for both all-wheel modes.
 - The first live full-stack attempt exposed a duplicate bench bridge and raw
   Mid-360 acceleration integration. The launcher now refuses to start beside an
   existing bridge, EKF uses wheel odometry only until IMU bias/covariance are

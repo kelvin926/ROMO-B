@@ -19,6 +19,7 @@ find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(romo_b_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(Threads REQUIRED)
 
@@ -32,7 +33,7 @@ target_link_libraries(romo_b_serial_bridge
   romo_b_protocol Boost::system Threads::Threads)
 ament_target_dependencies(romo_b_serial_bridge
   diagnostic_msgs geometry_msgs lifecycle_msgs nav_msgs rclcpp rclcpp_lifecycle romo_b_msgs
-  sensor_msgs std_srvs)
+  sensor_msgs std_msgs std_srvs)
 
 install(TARGETS romo_b_protocol romo_b_serial_bridge
   EXPORT export_romo_b_protocol
