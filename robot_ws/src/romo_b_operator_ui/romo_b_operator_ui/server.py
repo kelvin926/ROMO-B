@@ -182,7 +182,7 @@ class OperatorNode(Node):
             "cmd_safe": deque(maxlen=40),
         }
         self._state = {
-            "version": "0.3.0",
+            "version": "0.3.1",
             "platform": {
                 "state": 0,
                 "state_name": "DISCONNECTED",
@@ -856,36 +856,42 @@ class OperatorNode(Node):
         }
         platform = state["platform"]
         bridge = state["diagnostics"].get("bridge_values", {})
+        feedback_fresh = bool(
+            platform["connected"] and health["platform"]["online"]
+        )
         wheels_stopped = max(abs(value) for value in platform["wheel_speed_mps"]) < 0.02
         checks = [
             {
                 "key": "serial",
                 "label": "PCU 시리얼 피드백",
-                "ok": bool(platform["connected"] and health["platform"]["online"]),
+                "ok": feedback_fresh,
                 "detail": "/dev/romo_b_pcu 실시간 수신",
             },
             {
                 "key": "tx",
                 "label": "명령 전송",
-                "ok": bridge.get("receive_only", "false") == "false",
+                "ok": bool(bridge)
+                and bridge.get("receive_only", "false") == "false",
                 "detail": "receive_only가 false여야 합니다",
             },
             {
                 "key": "estop",
                 "label": "물리 비상정지",
-                "ok": not platform["estop"],
+                "ok": feedback_fresh and not platform["estop"],
                 "detail": "PCU 비상정지 피드백이 해제되어야 합니다",
             },
             {
                 "key": "initial_mode",
                 "label": "초기 조향 모드",
-                "ok": platform["steer_mode"] == 0 or platform["state"] == 2,
+                "ok": feedback_fresh
+                and (platform["steer_mode"] == 0 or platform["state"] == 2),
                 "detail": "Arm 전환은 2WIS에서 시작합니다",
             },
             {
                 "key": "stopped",
                 "label": "바퀴 정지 상태",
-                "ok": wheels_stopped or platform["state"] == 2,
+                "ok": feedback_fresh
+                and (wheels_stopped or platform["state"] == 2),
                 "detail": "모든 바퀴 피드백이 0.02 m/s 미만이어야 합니다",
             },
             {
@@ -911,9 +917,10 @@ class OperatorNode(Node):
         ]
         state["readiness"] = {
             "bridge_armed": platform["state"] == 2,
-            "pcu_auto_confirmed": platform["auto_mode"],
+            "pcu_auto_confirmed": feedback_fresh and platform["auto_mode"],
             "ready_to_arm": all(item["ok"] for item in checks[:-1]),
-            "control_ready": platform["state"] == 2
+            "control_ready": feedback_fresh
+            and platform["state"] == 2
             and platform["auto_mode"]
             and not platform["estop"],
             "checks": checks,

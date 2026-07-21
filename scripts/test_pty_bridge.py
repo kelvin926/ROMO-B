@@ -16,6 +16,7 @@ from nav_msgs.msg import Odometry
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from romo_b_msgs.msg import PlatformStatus
+from std_msgs.msg import UInt8
 from std_srvs.srv import SetBool
 
 
@@ -25,6 +26,7 @@ class Probe(Node):
         self.status = None
         self.status_count = 0
         self.max_speed = 0.0
+        self.latest_speed = 0.0
         self.max_yaw_rate = 0.0
         self.min_yaw_rate = 0.0
         self.create_subscription(
@@ -34,6 +36,7 @@ class Probe(Node):
             Odometry, "/wheel/odometry_raw", self._on_odom, qos_profile_sensor_data
         )
         self.command_pub = self.create_publisher(Twist, "/cmd_vel_safe", 10)
+        self.mode_pub = self.create_publisher(UInt8, "/romo_b/steer_mode_request", 10)
         self.lifecycle = self.create_client(
             ChangeState, "/romo_b_serial_bridge/change_state"
         )
@@ -46,7 +49,8 @@ class Probe(Node):
         self.status_count += 1
 
     def _on_odom(self, message):
-        self.max_speed = max(self.max_speed, abs(message.twist.twist.linear.x))
+        self.latest_speed = message.twist.twist.linear.x
+        self.max_speed = max(self.max_speed, self.latest_speed)
         self.max_yaw_rate = max(self.max_yaw_rate, message.twist.twist.angular.z)
         self.min_yaw_rate = min(self.min_yaw_rate, message.twist.twist.angular.z)
 
@@ -107,17 +111,22 @@ def terminate(process):
             process.wait(timeout=2.0)
 
 
-def publish_forward(probe):
+def publish_motion(probe, speed_mps, angular_radps, steer_mode=0):
+    mode = UInt8()
+    mode.data = steer_mode
+    probe.mode_pub.publish(mode)
     message = Twist()
-    message.linear.x = 0.08
-    message.angular.z = 0.04
+    message.linear.x = speed_mps
+    message.angular.z = angular_radps
     probe.command_pub.publish(message)
+
+
+def publish_forward(probe):
+    publish_motion(probe, 0.08, 0.04)
 
 
 def publish_pivot(probe, angular_z):
-    message = Twist()
-    message.angular.z = angular_z
-    probe.command_pub.publish(message)
+    publish_motion(probe, 0.0, angular_z, 2)
 
 
 def main():
@@ -154,7 +163,8 @@ def main():
                         "ros2", "run", "romo_b_base", "romo_b_serial_bridge", "--ros-args",
                         "-p", f"device:={symlink}", "-p", "receive_only:=false",
                         "-p", "safety_profile:=navigation", "-p", "sensor_calibrated:=true",
-                        "-p", "max_navigation_speed_mps:=0.1", "-p", "command_endian:=big",
+                        "-p", "max_navigation_speed_mps:=0.1", "-p", "allow_reverse:=true",
+                        "-p", "command_endian:=big",
                     ],
                     stdout=bridge_log,
                     stderr=subprocess.STDOUT,
@@ -193,6 +203,39 @@ def main():
                     2.0,
                     tick=lambda: publish_forward(probe),
                     description="non-zero odometry",
+                )
+
+                # Exercise the signed command all the way through Twist
+                # mapping, HLV frame encoding, the simulated PCU, feedback
+                # decoding, and odometry. This catches a positive-only clamp
+                # in any layer of the direct browser-control path.
+                wait_until(
+                    probe,
+                    lambda: probe.status is not None
+                    and probe.status.steer_mode == 0
+                    and probe.latest_speed < -0.04,
+                    2.0,
+                    tick=lambda: publish_motion(probe, -0.08, 0.0, 0),
+                    description="signed 2WIS reverse feedback and odometry",
+                )
+
+                wait_until(
+                    probe,
+                    lambda: probe.status is not None
+                    and probe.status.steer_mode == 1
+                    and probe.latest_speed > 0.04,
+                    2.0,
+                    tick=lambda: publish_motion(probe, 0.08, 0.04, 1),
+                    description="4WIS forward feedback and odometry",
+                )
+                wait_until(
+                    probe,
+                    lambda: probe.status is not None
+                    and probe.status.steer_mode == 1
+                    and probe.latest_speed < -0.04,
+                    2.0,
+                    tick=lambda: publish_motion(probe, -0.08, -0.04, 1),
+                    description="signed 4WIS reverse feedback and odometry",
                 )
 
                 # Navigation may pivot in place when the path starts behind
@@ -322,7 +365,8 @@ def main():
                     description="automatic ALIVE recovery without re-arm",
                 )
                 print(
-                    "PTY_INTEGRATION_OK: Auto handshake, 2WIS motion, signed Pivot odometry, "
+                    "PTY_INTEGRATION_OK: Auto handshake, signed 2WIS/4WIS motion, "
+                    "signed Pivot odometry, "
                     "command soft-stop/recovery, "
                     "feedback/ALIVE arm-retaining Auto recovery, software E-stop disabled"
                 )

@@ -214,6 +214,11 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   including 2WIS motion, both signed Pivot directions/yaw odometry, command
   soft-stop/recovery, and feedback/ALIVE arm-retaining Auto recovery without
   software E-stop transmission.
+- The complete 11-package workspace now passes all 44 package tests. The PTY
+  integration additionally covers signed forward/reverse feedback through both
+  2WIS and 4WIS. Operator task completion is race-free, hardware discovery no
+  longer mistakes Tailscale for an Ethernet adapter, and stale/missing PCU
+  feedback is displayed as unknown instead of an E-stop/Auto confirmation.
 
 ## Reproduction still required
 

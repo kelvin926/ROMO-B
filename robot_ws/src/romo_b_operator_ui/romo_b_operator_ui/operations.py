@@ -604,7 +604,13 @@ class OperationManager:
             owned = owned_records.get(operation_id)
             item_history = history.get(operation_id, {})
             pids = discovered.get(operation_id, [])
-            running = bool(pids) or bool(owned and owned["process"].poll() is None)
+            # _poll_owned() already made the process/history transition
+            # atomically for this snapshot. Do not poll a second time here:
+            # a short-lived process can exit between those two polls, which
+            # used to expose running=false together with exit_code=None.
+            # Keep it running for this one snapshot and publish the recorded
+            # exit code on the next call.
+            running = bool(pids) or owned is not None
             pid = owned["process"].pid if owned else (pids[0] if pids else item_history.get("pid"))
             started_at = owned["started_at"] if owned else item_history.get("started_at")
             tasks.append(

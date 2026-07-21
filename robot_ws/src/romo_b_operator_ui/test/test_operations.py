@@ -29,6 +29,17 @@ def test_artifact_ids_cannot_escape_local_roots(tmp_path):
         manager._map({"map_id": "../outside"})
 
 
+def test_robot_control_defaults_to_manual_speed_limit(tmp_path):
+    manager = make_manager(tmp_path)
+    script = tmp_path / "scripts" / "run_robot_control.sh"
+    script.write_text("#!/bin/sh\n")
+    script.chmod(0o755)
+
+    _command, environment = manager._command("robot_control", {})
+
+    assert environment["MAX_SPEED_MPS"] == "1.5"
+
+
 def test_map_and_bag_inventory_reports_readiness(tmp_path):
     manager = make_manager(tmp_path)
     map_run = manager.map_root / "mapping-20260721-120000"

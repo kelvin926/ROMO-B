@@ -54,7 +54,7 @@ const DEMO_TASKS = [
 }));
 
 const DEMO_STATE = {
-  version: "0.3.0",
+  version: "0.3.1",
   platform: {
     state: 2,
     state_name: "ARMED_AUTO",
@@ -325,6 +325,9 @@ function CommandPanel({ state, onPost, demo }) {
   const [steer, setSteer] = useState(0);
   const [pivotRate, setPivotRate] = useState(0.45);
   const bridgeArmed = state.platform.state === 2;
+  const pcuFeedbackFresh = Boolean(
+    state.health?.platform?.online && state.platform.connected
+  );
   const controlReady = Boolean(state.readiness?.control_ready);
   const controlLabel = controlReady
     ? "주행 준비 완료"
@@ -381,10 +384,10 @@ function CommandPanel({ state, onPost, demo }) {
           <Power weight="bold" />
           <span>{bridgeArmed ? "HLV 수동 전환 요청" : "HLV Auto / Arm 요청"}</span>
         </button>
-        <div className={`readonly-control ${state.platform.estop ? "alert" : ""}`}>
+        <div className={`readonly-control ${pcuFeedbackFresh && state.platform.estop ? "alert" : ""}`}>
           <ShieldCheck weight="bold" />
           <span>물리 비상정지</span>
-          <strong>{state.platform.estop ? "작동 중" : "해제됨"}</strong>
+          <strong>{!pcuFeedbackFresh ? "확인 불가" : state.platform.estop ? "작동 중" : "해제됨"}</strong>
         </div>
       </div>
 
@@ -483,6 +486,7 @@ function WheelCard({ name, speed, steer, steerEnabled }) {
 
 function FeedbackPanel({ state }) {
   const platform = state.platform;
+  const feedbackFresh = Boolean(state.health?.platform?.online && platform.connected);
   const allWheelSteering = platform.steer_mode !== 0;
   return (
     <section className="panel feedback-panel">
@@ -497,10 +501,10 @@ function FeedbackPanel({ state }) {
         </div>
       </div>
       <div className="feedback-flags">
-        <div><StatusDot active={platform.connected} /><span>통신 상태</span><strong>{platform.connected ? "연결됨" : "끊김"}</strong></div>
+        <div><StatusDot active={feedbackFresh} /><span>통신 상태</span><strong>{feedbackFresh ? "연결됨" : "끊김"}</strong></div>
         <div><StatusDot active={state.readiness?.bridge_armed} /><span>HLV 요청</span><strong>{state.readiness?.bridge_armed ? "ARMED" : "수동"}</strong></div>
-        <div><StatusDot active={platform.auto_mode} /><span>PCU 피드백</span><strong>{platform.auto_mode ? "AUTO" : "수동"}</strong></div>
-        <div><StatusDot active danger={platform.estop} /><span>비상정지</span><strong>{platform.estop ? "작동 중" : "해제"}</strong></div>
+        <div><StatusDot active={feedbackFresh && platform.auto_mode} /><span>PCU 피드백</span><strong>{!feedbackFresh ? "확인 불가" : platform.auto_mode ? "AUTO" : "수동"}</strong></div>
+        <div><StatusDot active={feedbackFresh} danger={feedbackFresh && platform.estop} /><span>비상정지</span><strong>{!feedbackFresh ? "확인 불가" : platform.estop ? "작동 중" : "해제"}</strong></div>
       </div>
       <div className="vehicle-feedback">
         <div className="wheel-column">
@@ -870,7 +874,7 @@ function OperationsView({ state, onPost, demo }) {
       use_rviz: useRviz,
       receive_only: receiveOnly,
       rate: replayRate,
-      max_speed_mps: maxSpeed,
+      max_speed_mps: task.id === "robot_control" ? 1.5 : maxSpeed,
     };
     postJson(`/api/operations/${task.id}/${verb}`, payload)
       .then((result) => onPost(result.message, true, true))
@@ -898,12 +902,13 @@ function OperationsView({ state, onPost, demo }) {
           <span className={selectedMapInfo?.has_nav2 ? "pass" : ""}>NAV2 {selectedMapInfo?.has_nav2 ? "있음" : "없음"}</span>
           <span className={selectedMapInfo?.has_autoware ? "pass" : ""}>AUTOWARE {selectedMapInfo?.has_autoware ? "있음" : "없음"}</span>
           <span className={selectedBagInfo?.has_metadata ? "pass" : ""}>BAG {selectedBagInfo?.has_metadata ? `DB3 ${selectedBagInfo.db3_count || 0}개` : "없음"}</span>
+          <span className="pass">직접제어 ±1.5 m/s</span>
         </div>
         <div className="launch-options">
           <label><input type="checkbox" checked={useRviz} onChange={(event) => setUseRviz(event.target.checked)} /> RViz 열기</label>
           <label><input type="checkbox" checked={receiveOnly} onChange={(event) => setReceiveOnly(event.target.checked)} /> Autoware 수신 전용</label>
           <label><span>재생 배속</span><input type="number" min="0.1" max="4" step="0.1" value={replayRate} onChange={(event) => setReplayRate(Number(event.target.value))} />×</label>
-          <label><span>최대 속도</span><input type="number" min="0.05" max="1.5" step="0.05" value={maxSpeed} onChange={(event) => setMaxSpeed(Number(event.target.value))} />m/s</label>
+          <label><span>Nav2 최대 속도</span><input type="number" min="0.05" max="1.5" step="0.05" value={maxSpeed} onChange={(event) => setMaxSpeed(Number(event.target.value))} />m/s</label>
         </div>
         {primaryRunning && <div className="primary-running"><StatusDot active /><div><span>현재 실행 중인 주 스택</span><strong>{primaryRunning.label}</strong></div><em>PID {primaryRunning.pid || "확인 중"}</em></div>}
       </section>
@@ -1009,7 +1014,9 @@ export function App() {
       .catch((error) => notify(error.message, false, true));
   };
 
-  const connected = state.platform.connected && (streamOnline || demo);
+  const connected = state.platform.connected
+    && Boolean(state.health?.platform?.online)
+    && (streamOnline || demo);
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -1037,8 +1044,8 @@ export function App() {
         <div className="status-ribbon">
           <div><StatusDot active={connected} /><span>PCU 연결</span><strong>{connected ? "정상" : "끊김"}</strong></div>
           <div><StatusDot active={state.readiness?.bridge_armed} /><span>HLV 브리지</span><strong>{state.readiness?.bridge_armed ? "ARMED" : "수동"}</strong></div>
-          <div><StatusDot active={state.platform.auto_mode} /><span>PCU 피드백</span><strong>{state.platform.auto_mode ? "AUTO" : "수동"}</strong></div>
-          <div><StatusDot active danger={state.platform.estop} /><span>물리 비상정지</span><strong>{state.platform.estop ? "작동 중" : "해제"}</strong></div>
+          <div><StatusDot active={connected && state.platform.auto_mode} /><span>PCU 피드백</span><strong>{!connected ? "확인 불가" : state.platform.auto_mode ? "AUTO" : "수동"}</strong></div>
+          <div><StatusDot active={connected} danger={connected && state.platform.estop} /><span>물리 비상정지</span><strong>{!connected ? "확인 불가" : state.platform.estop ? "작동 중" : "해제"}</strong></div>
           <div><StatusDot active={state.health.lidar?.online} /><span>Mid-360</span><strong>{format(state.health.lidar?.rate_hz, 1)} Hz</strong></div>
           <div><StatusDot active={state.health.localization?.online} /><span>위치추정</span><strong>{state.health.localization?.online ? "추적 중" : "대기 중"}</strong></div>
         </div>

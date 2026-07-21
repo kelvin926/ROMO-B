@@ -57,7 +57,18 @@ if [[ "$mode" != "--autoware" ]]; then
     [[ "$mode" == "--hardware" ]] && fail 'USB-RS232 adapter not detected' || wait_for 'USB-RS232 adapter'
   fi
 
-  wired_if="$(find /sys/class/net -mindepth 1 -maxdepth 1 -printf '%f\n' 2>/dev/null | grep -Ev '^(lo|wl)' | head -n 1)"
+  wired_if=""
+  for interface_path in /sys/class/net/*; do
+    interface_name="${interface_path##*/}"
+    # A physical Ethernet adapter has a backing device, Ethernet ARPHRD
+    # type 1, and no Linux wireless directory. This excludes virtual links
+    # such as tailscale0, Docker bridges, tun/tap, and loopback.
+    [[ -e "$interface_path/device" ]] || continue
+    [[ ! -d "$interface_path/wireless" ]] || continue
+    [[ "$(cat "$interface_path/type" 2>/dev/null)" == 1 ]] || continue
+    wired_if="$interface_name"
+    break
+  done
   if [[ -n "$wired_if" ]]; then
     pass "wired interface detected: $wired_if"
   else

@@ -28,7 +28,17 @@ if [[ "$mode" == "--generate" && -e "$hardware_yaml" && "$force" != "true" ]]; t
   exit 1
 fi
 serial_link="$(find /dev/serial/by-id -mindepth 1 -maxdepth 1 -type l -print 2>/dev/null | head -n 1 || true)"
-wired_if="$(find /sys/class/net -mindepth 1 -maxdepth 1 -printf '%f\n' 2>/dev/null | grep -Ev '^(lo|wl)' | head -n 1 || true)"
+wired_if=""
+for interface_path in /sys/class/net/*; do
+  interface_name="${interface_path##*/}"
+  # Select only a physical Ethernet device. Virtual interfaces such as
+  # tailscale0 must never become the generated Mid-360 interface.
+  [[ -e "$interface_path/device" ]] || continue
+  [[ ! -d "$interface_path/wireless" ]] || continue
+  [[ "$(cat "$interface_path/type" 2>/dev/null)" == 1 ]] || continue
+  wired_if="$interface_name"
+  break
+done
 
 printf 'USB-RS232 by-id: %s\n' "${serial_link:-not detected}"
 if [[ -n "$serial_link" ]]; then
