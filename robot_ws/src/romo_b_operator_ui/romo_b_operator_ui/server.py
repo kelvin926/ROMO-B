@@ -242,12 +242,12 @@ class OperatorNode(Node):
                 "waypoint_count": 0,
                 "goal_state": "IDLE",
                 "goal": None,
-                "last_action": "Waiting for operator",
+                "last_action": "사용자 명령 대기 중",
                 "last_action_success": True,
             },
             "diagnostics": {
                 "level": 3,
-                "summary": "No diagnostics",
+                "summary": "진단 정보 없음",
                 "items": [],
                 "bridge_values": {},
             },
@@ -400,7 +400,7 @@ class OperatorNode(Node):
             summary = worst["message"] or worst["name"]
             level = worst["level"]
         else:
-            summary = "Diagnostics are empty"
+            summary = "진단 정보가 비어 있습니다"
             level = 3
         with self._lock:
             bridge_values = next(
@@ -860,53 +860,53 @@ class OperatorNode(Node):
         checks = [
             {
                 "key": "serial",
-                "label": "PCU serial feedback",
+                "label": "PCU 시리얼 피드백",
                 "ok": bool(platform["connected"] and health["platform"]["online"]),
-                "detail": "/dev/romo_b_pcu live",
+                "detail": "/dev/romo_b_pcu 실시간 수신",
             },
             {
                 "key": "tx",
-                "label": "Command transmission",
+                "label": "명령 전송",
                 "ok": bridge.get("receive_only", "false") == "false",
-                "detail": "receive_only must be false",
+                "detail": "receive_only가 false여야 합니다",
             },
             {
                 "key": "estop",
-                "label": "Physical E-stop",
+                "label": "물리 비상정지",
                 "ok": not platform["estop"],
-                "detail": "PCU feedback must be clear",
+                "detail": "PCU 비상정지 피드백이 해제되어야 합니다",
             },
             {
                 "key": "initial_mode",
-                "label": "Initial steering mode",
+                "label": "초기 조향 모드",
                 "ok": platform["steer_mode"] == 0 or platform["state"] == 2,
-                "detail": "Arm transition starts in 2WIS",
+                "detail": "Arm 전환은 2WIS에서 시작합니다",
             },
             {
                 "key": "stopped",
-                "label": "Wheel standstill",
+                "label": "바퀴 정지 상태",
                 "ok": wheels_stopped or platform["state"] == 2,
-                "detail": "all wheel feedback below 0.02 m/s",
+                "detail": "모든 바퀴 피드백이 0.02 m/s 미만이어야 합니다",
             },
             {
                 "key": "calibration",
-                "label": "LiDAR transform approved",
+                "label": "LiDAR 장착 위치 승인",
                 "ok": bridge.get("sensor_calibrated", "false") == "true",
-                "detail": "navigation arm requirement",
+                "detail": "자율주행 Arm 필수 조건입니다",
             },
             {
                 "key": "manual_zero",
-                "label": "Manual zero handshake",
+                "label": "수동 0 명령 확인",
                 "ok": bridge.get("manual_zero_sent", "false") == "true"
                 or platform["state"] == 2,
-                "detail": "required before Auto rising edge",
+                "detail": "Auto 전환 전에 필요합니다",
             },
             {
                 "key": "auto_confirmed",
-                "label": "Auto control usable",
+                "label": "Auto 제어 가능",
                 "ok": platform["auto_mode"]
                 and bridge.get("auto_confirmed", "false") == "true",
-                "detail": "PCU Auto feedback plus bridge confirmation",
+                "detail": "PCU Auto 피드백과 브리지 확인이 모두 필요합니다",
             },
         ]
         state["readiness"] = {

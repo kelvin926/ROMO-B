@@ -127,6 +127,10 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   4WIS/Pivot no longer revert to 2WIS when a forward/reverse hold is released.
   The Operations tab covers mapping, recording, navigation, Autoware, replay,
   validation, build, artifact selection, conflict handling, PID, and live logs.
+- 웹 화면을 한국어 중심으로 바꾸고, LiDAR·Nav2·RViz 없이 PCU와 웹
+  직접제어만 켜는 `로봇만 연결` 모드를 추가했다. 4WIS/Pivot 전환 중
+  Auto 피드백이 잠깐 바뀌어도 선택 모드를 보존하며, 최종 heartbeat도
+  음수 속도를 허용해 웹 후진 명령을 전달한다.
 - The first live full-stack attempt exposed a duplicate bench bridge and raw
   Mid-360 acceleration integration. The launcher now refuses to start beside an
   existing bridge, EKF uses wheel odometry only until IMU bias/covariance are

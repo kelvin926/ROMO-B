@@ -105,7 +105,8 @@ hold-to-run control supports 2WIS, 4WIS, and Pivot without bypassing the existin
 tab also starts/stops live mapping, map save, rosbag recording, Nav2/Autoware,
 replay, diagnostics, validation, and builds while showing PID, exit status, and
 live logs. The selected steering mode is maintained at 20 Hz even after a
-forward/reverse hold is released.
+forward/reverse hold is released. **로봇만 연결** 작업은 LiDAR, 위치추정,
+Nav2와 RViz 없이 PCU 브리지와 웹 직접제어 경로만 실행합니다.
 
 ## Autoware corridor runtime
 

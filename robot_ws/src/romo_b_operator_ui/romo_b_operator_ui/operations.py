@@ -30,175 +30,183 @@ class OperationSpec:
 
 
 OPERATION_SPECS = {
+    "robot_control": OperationSpec(
+        "로봇만 연결",
+        "자율주행",
+        "PCU 브리지와 웹 직접제어 명령 경로만 실행합니다. LiDAR·Nav2·위치추정·RViz는 실행하지 않습니다.",
+        primary=True,
+        discover_markers=("robot_control.launch.py",),
+        caution="메인 제어에서 PCU 상태 확인 후 Arm 하면 바로 전진·후진·조향할 수 있습니다.",
+    ),
     "live_mapping": OperationSpec(
-        "Live mapping",
-        "Mapping",
-        "Start Mid-360 + IMU + wheel odometry mapping, rosbag recording, and RViz.",
+        "실시간 매핑",
+        "매핑",
+        "Mid-360, IMU, 휠 오도메트리를 사용해 지도를 만들고 rosbag과 RViz를 함께 실행합니다.",
         primary=True,
         discover_markers=("mapping_live.launch.py",),
-        caution="RC Manual only; drive slowly after LIO odometry appears.",
+        caution="RC 수동 모드에서만 사용하고, LIO 오도메트리가 나타난 뒤 천천히 주행하세요.",
     ),
     "save_live_mapping": OperationSpec(
-        "Save current map",
-        "Mapping",
-        "Optimize the active graph, save PCD/pose graph, and generate the Nav2 map.",
+        "현재 지도 저장",
+        "매핑",
+        "현재 그래프를 최적화하고 PCD·포즈 그래프·Nav2 점유 지도를 생성합니다.",
         selection="map",
     ),
     "record_mapping_bag": OperationSpec(
-        "Record mapping bag",
-        "Mapping",
-        "Record LiDAR, IMU, wheel odometry, TF, platform, and diagnostics topics.",
+        "매핑 bag 기록",
+        "매핑",
+        "LiDAR, IMU, 휠 오도메트리, TF, 플랫폼 상태와 진단 토픽을 기록합니다.",
         discover_markers=("ros2 bag record",),
     ),
     "field_navigation": OperationSpec(
-        "Nav2 field navigation",
-        "Navigation",
-        "Start the complete ROMO-B LiDAR localization, Nav2, obstacle avoidance, and RViz stack.",
+        "Nav2 실주행",
+        "자율주행",
+        "ROMO-B LiDAR 위치추정, Nav2, 장애물 회피와 RViz 전체 스택을 실행합니다.",
         selection="map",
         primary=True,
         discover_markers=("field_navigation.launch.py",),
-        caution="The bridge starts disarmed; arm explicitly from Main after checking PCU feedback.",
+        caution="브리지는 비활성 상태로 시작합니다. PCU 피드백 확인 후 메인 화면에서 Arm 하세요.",
     ),
     "autoware_field": OperationSpec(
-        "Autoware field",
-        "Navigation",
-        "Start the Autoware Universe field stack with the selected map.",
+        "Autoware 실주행",
+        "자율주행",
+        "선택한 지도로 Autoware Universe 실주행 스택을 실행합니다.",
         selection="map",
         primary=True,
         discover_markers=("romo_b_autoware", "field.launch.py"),
-        caution="Receive-only is the default and can be changed in the operation controls.",
+        caution="기본값은 수신 전용입니다. 위 실행 설정에서 변경할 수 있습니다.",
     ),
     "autoware_planning_sim": OperationSpec(
-        "Autoware planning simulation",
-        "Navigation",
-        "Start Autoware planning simulation and RViz without robot command hardware.",
+        "Autoware 계획 시뮬레이션",
+        "자율주행",
+        "로봇 구동 명령 없이 Autoware 경로 계획과 RViz를 실행합니다.",
         selection="map",
         primary=True,
         discover_markers=("planning_sim.launch.py",),
     ),
     "localization_replay": OperationSpec(
-        "Localization replay",
-        "Navigation",
-        "Replay a selected bag against a selected PCD map in an isolated ROS domain.",
+        "위치추정 재생",
+        "자율주행",
+        "격리된 ROS 도메인에서 선택한 bag과 PCD 지도로 위치추정을 재생합니다.",
         selection="map_bag",
     ),
     "doctor_preflight": OperationSpec(
-        "Host preflight",
-        "Validation",
-        "Check Ubuntu, ROS 2, tools, serial, network, and local hardware configuration.",
+        "노트북 사전 점검",
+        "점검",
+        "Ubuntu, ROS 2, 개발 도구, 시리얼, 네트워크와 하드웨어 설정을 확인합니다.",
     ),
     "doctor_hardware": OperationSpec(
-        "Hardware doctor",
-        "Validation",
-        "Run strict USB-RS232, Ethernet, LiDAR, and transform checks.",
+        "하드웨어 정밀 점검",
+        "점검",
+        "USB-RS232, 이더넷, LiDAR와 센서 좌표변환을 엄격하게 확인합니다.",
     ),
     "doctor_autoware": OperationSpec(
-        "Autoware doctor",
-        "Validation",
-        "Verify pinned Autoware, build markers, presets, dependencies, and map bundle.",
+        "Autoware 환경 점검",
+        "점검",
+        "고정된 Autoware 버전, 빌드, 프리셋, 의존성과 지도 묶음을 확인합니다.",
         selection="map",
     ),
     "hardware_discovery": OperationSpec(
-        "Discover hardware",
-        "Validation",
-        "Read-only discovery of USB-RS232 and USB-Ethernet devices; transmits no serial data.",
+        "하드웨어 검색",
+        "점검",
+        "USB-RS232와 USB 이더넷을 읽기 전용으로 검색하며 시리얼 데이터는 전송하지 않습니다.",
     ),
     "serial_receive_only": OperationSpec(
-        "PCU receive-only probe",
-        "Validation",
-        "Decode PCU feedback for five seconds without ever calling serial.write().",
-        caution="Stop any stack already using /dev/romo_b_pcu first.",
+        "PCU 수신 전용 확인",
+        "점검",
+        "시리얼 쓰기 없이 5초 동안 PCU 피드백 프레임을 해석합니다.",
+        caution="먼저 /dev/romo_b_pcu를 사용 중인 다른 스택을 종료하세요.",
     ),
     "mapping_calibration": OperationSpec(
-        "Mapping calibration probe",
-        "Validation",
-        "Compare live LiDAR, IMU, wheel odometry, timestamps, extrinsics, and yaw motion.",
+        "매핑 보정 확인",
+        "점검",
+        "LiDAR, IMU, 휠 오도메트리, 시간 동기, 외부 파라미터와 회전 방향을 비교합니다.",
     ),
     "yaw_sign": OperationSpec(
-        "Yaw-sign check",
-        "Validation",
-        "Compare wheel-odometry and Mid-360 IMU yaw direction during a short turn.",
+        "회전 방향 확인",
+        "점검",
+        "짧게 회전하며 휠 오도메트리와 Mid-360 IMU의 yaw 부호를 비교합니다.",
     ),
     "command_pipeline": OperationSpec(
-        "Command pipeline check",
-        "Validation",
-        "Inject synthetic commands/obstacles and verify mux, smoother, and collision monitor output.",
+        "속도 명령 경로 확인",
+        "점검",
+        "합성 명령과 장애물로 mux, 속도 평활기와 충돌 감시기 출력을 확인합니다.",
     ),
     "simulation_smoke": OperationSpec(
-        "Simulation smoke test",
-        "Validation",
-        "Run the isolated ROMO-B PTY/simulation smoke test.",
+        "시뮬레이션 기본 시험",
+        "점검",
+        "격리된 환경에서 ROMO-B PTY 시뮬레이션 기본 시험을 실행합니다.",
     ),
     "nav2_preflight": OperationSpec(
-        "Nav2 map preflight",
-        "Validation",
-        "Validate lifecycle, planning, command pipeline, and rotation shim on the selected map.",
+        "Nav2 지도 사전 점검",
+        "점검",
+        "선택한 지도에서 lifecycle, 경로 계획, 명령 경로와 회전 동작을 확인합니다.",
         selection="map",
     ),
     "handoff": OperationSpec(
-        "Repository handoff check",
-        "Validation",
-        "Verify repository layout, documentation, locks, scripts, and reproducibility markers.",
+        "저장소 인수인계 점검",
+        "점검",
+        "저장소 구조, 문서, 버전 잠금, 스크립트와 재현성 표시를 확인합니다.",
     ),
     "autoware_validation": OperationSpec(
-        "Autoware validation suite",
-        "Validation",
-        "Run all isolated Autoware interface, perception, planning, safety, and waypoint checks.",
+        "Autoware 전체 점검",
+        "점검",
+        "Autoware 인터페이스, 인지, 계획, 안전 게이트와 웨이포인트 시험을 실행합니다.",
         selection="map",
     ),
     "autoware_localization_check": OperationSpec(
-        "Autoware localization check",
-        "Validation",
-        "Run the isolated Autoware localization-interface validation.",
+        "Autoware 위치추정 점검",
+        "점검",
+        "격리된 환경에서 Autoware 위치추정 인터페이스를 확인합니다.",
         selection="map",
     ),
     "autoware_perception_check": OperationSpec(
-        "Autoware perception check",
-        "Validation",
-        "Run the isolated pointcloud-to-object perception validation.",
+        "Autoware 인지 점검",
+        "점검",
+        "격리된 환경에서 포인트클라우드 기반 객체 인지를 확인합니다.",
     ),
     "autoware_planning_check": OperationSpec(
-        "Autoware planning check",
-        "Validation",
-        "Run the isolated Autoware planning validation.",
+        "Autoware 경로 계획 점검",
+        "점검",
+        "격리된 환경에서 Autoware 경로 계획을 확인합니다.",
         selection="map",
     ),
     "autoware_safety_check": OperationSpec(
-        "Autoware safety-gate check",
-        "Validation",
-        "Validate command gates and operation-mode behavior in an isolated domain.",
+        "Autoware 안전 게이트 점검",
+        "점검",
+        "격리된 도메인에서 명령 게이트와 운전 모드 동작을 확인합니다.",
     ),
     "autoware_waypoint_check": OperationSpec(
-        "Autoware waypoint check",
-        "Validation",
-        "Validate the waypoint-to-route sender in an isolated domain.",
+        "Autoware 웨이포인트 점검",
+        "점검",
+        "격리된 도메인에서 웨이포인트 경로 전송기를 확인합니다.",
     ),
     "build_project": OperationSpec(
-        "Build ROMO-B workspace",
-        "Build & data",
-        "Build only repository ROS 2 packages with tests enabled.",
+        "ROMO-B 워크스페이스 빌드",
+        "빌드 및 데이터",
+        "저장소의 ROS 2 패키지만 빌드합니다.",
     ),
     "build_all": OperationSpec(
-        "Build all dependencies",
-        "Build & data",
-        "Fetch and build Livox/vendor overlays plus the ROMO-B workspace.",
-        caution="This can take a long time and uses substantial CPU and disk.",
+        "전체 의존성 빌드",
+        "빌드 및 데이터",
+        "Livox·외부 의존성 overlay와 ROMO-B 워크스페이스를 모두 빌드합니다.",
+        caution="시간이 오래 걸릴 수 있으며 CPU와 디스크를 많이 사용합니다.",
     ),
     "fetch_dependencies": OperationSpec(
-        "Fetch pinned dependencies",
-        "Build & data",
-        "Import or update repository-pinned vendor sources.",
+        "고정 버전 의존성 받기",
+        "빌드 및 데이터",
+        "저장소에서 버전을 고정한 외부 소스를 가져오거나 갱신합니다.",
     ),
     "prepare_autoware_map": OperationSpec(
-        "Prepare Autoware map",
-        "Build & data",
-        "Generate the corridor Lanelet2/PCD/projector bundle from the selected map.",
+        "Autoware 지도 준비",
+        "빌드 및 데이터",
+        "선택한 지도에서 복도용 Lanelet2·PCD·투영 설정 묶음을 생성합니다.",
         selection="map",
     ),
     "tracked_sizes": OperationSpec(
-        "Check tracked file sizes",
-        "Build & data",
-        "Confirm no oversized generated artifact is about to be committed.",
+        "Git 파일 용량 확인",
+        "빌드 및 데이터",
+        "커밋하려는 파일에 대용량 생성물이 포함되지 않았는지 확인합니다.",
     ),
 }
 
@@ -230,16 +238,16 @@ class OperationManager:
     def _script(self, name: str) -> str:
         path = (self.repo_root / "scripts" / name).resolve()
         if path.parent != (self.repo_root / "scripts").resolve() or not path.is_file():
-            raise ValueError(f"Repository script is missing: {name}")
+            raise ValueError(f"저장소 스크립트가 없습니다: {name}")
         return str(path)
 
     @staticmethod
     def _contained_directory(root: pathlib.Path, artifact_id: str) -> pathlib.Path:
         if not artifact_id or pathlib.Path(artifact_id).name != artifact_id:
-            raise ValueError("Select a valid local artifact")
+            raise ValueError("올바른 로컬 데이터를 선택하세요")
         candidate = (root / artifact_id).resolve()
         if candidate.parent != root.resolve() or not candidate.is_dir():
-            raise ValueError(f"Local artifact does not exist: {artifact_id}")
+            raise ValueError(f"로컬 데이터가 없습니다: {artifact_id}")
         return candidate
 
     def _map(self, payload: dict, required: bool = True) -> pathlib.Path | None:
@@ -250,7 +258,7 @@ class OperationManager:
         if maps:
             return pathlib.Path(maps[0]["path"])
         if required:
-            raise ValueError("No local map run is available")
+            raise ValueError("사용할 수 있는 로컬 지도가 없습니다")
         return None
 
     def _bag(self, payload: dict) -> pathlib.Path:
@@ -259,7 +267,7 @@ class OperationManager:
             return self._contained_directory(self.bag_root, artifact_id)
         bags = self.artifacts()["bags"]
         if not bags:
-            raise ValueError("No local rosbag is available")
+            raise ValueError("사용할 수 있는 로컬 rosbag이 없습니다")
         return pathlib.Path(bags[0]["path"])
 
     @staticmethod
@@ -281,6 +289,9 @@ class OperationManager:
         if operation_id == "record_mapping_bag":
             output = self.bag_root / f"mapping-{self._stamp()}"
             return [self._script("record_mapping_bag.sh"), str(output)], env
+        if operation_id == "robot_control":
+            env["MAX_SPEED_MPS"] = str(payload.get("max_speed_mps", 0.5))
+            return [self._script("run_robot_control.sh")], env
         if operation_id == "field_navigation":
             env.update(
                 {
@@ -309,7 +320,7 @@ class OperationManager:
         if operation_id == "localization_replay":
             rate = float(payload.get("rate", 1.0))
             if not 0.1 <= rate <= 4.0:
-                raise ValueError("Replay rate must be from 0.1 to 4.0")
+                raise ValueError("재생 배속은 0.1~4.0이어야 합니다")
             return [
                 self._script("run_localization_replay.sh"),
                 str(self._bag(payload)),
@@ -373,7 +384,7 @@ class OperationManager:
             return [self._script("prepare_autoware_map.sh"), str(self._map(payload))], env
         if operation_id == "tracked_sizes":
             return [self._script("check_tracked_file_sizes.sh")], env
-        raise ValueError(f"Unknown operation: {operation_id}")
+        raise ValueError(f"알 수 없는 작업입니다: {operation_id}")
 
     def _scan_processes(self) -> dict[str, list[int]]:
         now = time.monotonic()
@@ -424,21 +435,21 @@ class OperationManager:
                     "finished_at": time.time(),
                     "exit_code": return_code,
                     "log_path": record["log_path"],
-                    "message": "Completed" if return_code == 0 else f"Exited with code {return_code}",
+                    "message": "완료" if return_code == 0 else f"종료 코드 {return_code}",
                 }
                 del self._owned[operation_id]
                 self._discovery_deadline = 0.0
 
     def start(self, operation_id: str, payload: dict | None = None) -> dict:
         if operation_id not in OPERATION_SPECS:
-            raise ValueError(f"Unknown operation: {operation_id}")
+            raise ValueError(f"알 수 없는 작업입니다: {operation_id}")
         payload = payload or {}
         self._poll_owned()
         discovered = self._scan_processes()
         if discovered.get(operation_id):
             return {
                 "accepted": False,
-                "message": f"{OPERATION_SPECS[operation_id].label} is already running (PID {discovered[operation_id][0]})",
+                "message": f"{OPERATION_SPECS[operation_id].label} 작업이 이미 실행 중입니다 (PID {discovered[operation_id][0]})",
             }
         if OPERATION_SPECS[operation_id].primary:
             conflict = next(
@@ -452,13 +463,13 @@ class OperationManager:
             if conflict:
                 return {
                     "accepted": False,
-                    "message": f"Stop {OPERATION_SPECS[conflict].label} before starting this stack",
+                    "message": f"먼저 {OPERATION_SPECS[conflict].label} 작업을 종료하세요",
                 }
         with self._lock:
             if operation_id in self._owned:
                 return {
                     "accepted": False,
-                    "message": f"{OPERATION_SPECS[operation_id].label} is already running",
+                    "message": f"{OPERATION_SPECS[operation_id].label} 작업이 이미 실행 중입니다",
                 }
         command, env = self._command(operation_id, payload)
         self.log_root.mkdir(parents=True, exist_ok=True)
@@ -489,20 +500,20 @@ class OperationManager:
                 "finished_at": None,
                 "exit_code": None,
                 "log_path": str(log_path),
-                "message": "Start requested",
+                "message": "실행 요청됨",
             }
             self._discovery_deadline = 0.0
             self._artifact_deadline = 0.0
         return {
             "accepted": True,
-            "message": f"{OPERATION_SPECS[operation_id].label} start requested (PID {process.pid})",
+            "message": f"{OPERATION_SPECS[operation_id].label} 실행을 요청했습니다 (PID {process.pid})",
             "pid": process.pid,
             "log_path": str(log_path),
         }
 
     def stop(self, operation_id: str) -> dict:
         if operation_id not in OPERATION_SPECS:
-            raise ValueError(f"Unknown operation: {operation_id}")
+            raise ValueError(f"알 수 없는 작업입니다: {operation_id}")
         self._poll_owned()
         stopped = []
         with self._lock:
@@ -525,11 +536,11 @@ class OperationManager:
         if not stopped:
             return {
                 "accepted": True,
-                "message": f"{OPERATION_SPECS[operation_id].label} is already stopped",
+                "message": f"{OPERATION_SPECS[operation_id].label} 작업은 이미 종료되어 있습니다",
             }
         return {
             "accepted": True,
-            "message": f"Stop requested for {OPERATION_SPECS[operation_id].label} PID(s): "
+            "message": f"{OPERATION_SPECS[operation_id].label} 종료를 요청했습니다. PID: "
             + ", ".join(str(pid) for pid in stopped),
         }
 
@@ -613,17 +624,17 @@ class OperationManager:
                     "elapsed_sec": round(now - started_at, 1) if running and started_at else None,
                     "exit_code": None if running else item_history.get("exit_code"),
                     "log_path": owned["log_path"] if owned else item_history.get("log_path", ""),
-                    "message": "Running" if running else item_history.get("message", "Ready"),
+                    "message": "실행 중" if running else item_history.get("message", "실행 대기"),
                 }
             )
         return {
             "tasks": tasks,
             "artifacts": self.artifacts(),
             "terminal_only": [
-                "Host package installation (setup_host.sh)",
-                "Hardware udev/network apply (onboard_hardware.sh --apply)",
-                "Autoware source installation (setup_autoware.sh)",
-                "acados source installation (setup_acados.sh)",
+                "노트북 패키지 설치 (setup_host.sh)",
+                "하드웨어 udev·네트워크 적용 (onboard_hardware.sh --apply)",
+                "Autoware 소스 설치 (setup_autoware.sh)",
+                "acados 소스 설치 (setup_acados.sh)",
             ],
         }
 
@@ -640,11 +651,11 @@ class OperationManager:
 
     def log_tail(self, operation_id: str, max_bytes: int = 24000) -> dict:
         if operation_id not in OPERATION_SPECS:
-            raise ValueError(f"Unknown operation: {operation_id}")
+            raise ValueError(f"알 수 없는 작업입니다: {operation_id}")
         task = next(task for task in self.snapshot()["tasks"] if task["id"] == operation_id)
         path_text = task.get("log_path", "")
         if not path_text:
-            return {"id": operation_id, "log_path": "", "tail": "No run log yet."}
+            return {"id": operation_id, "log_path": "", "tail": "아직 실행 로그가 없습니다."}
         path = pathlib.Path(path_text)
         try:
             with path.open("rb") as stream:
@@ -653,5 +664,5 @@ class OperationManager:
                 stream.seek(max(0, size - max_bytes))
                 data = stream.read().decode(errors="replace")
         except OSError as error:
-            data = f"Could not read log: {error}"
+            data = f"로그를 읽을 수 없습니다: {error}"
         return {"id": operation_id, "log_path": str(path), "tail": data}

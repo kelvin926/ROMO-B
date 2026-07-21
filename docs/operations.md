@@ -72,6 +72,12 @@ mapping, map save, bag recording, Nav2/Autoware launch, localization replay,
 software checks, builds, and map preparation, with artifact selectors, conflict
 handling, PID, exit status, and live logs. Privileged host setup remains
 terminal-only.
+
+단순 원격조종만 필요하면 **실행 관리 → 로봇만 연결**을 사용합니다. 이
+작업은 `robot_control.launch.py`로 PCU 브리지와 `/cmd_vel_teleop` →
+`/cmd_vel_safe` 릴레이만 실행하므로 2D Pose Estimate가 필요하지 않고
+LiDAR, 위치추정, Nav2, RViz도 실행하지 않습니다. 전진과 후진은 모두
+최대 0.5 m/s 범위에서 같은 20 Hz deadman 경로를 사용합니다.
 `source_env.sh` selects Cyclone DDS on configured hosts; set
 `ROMO_B_RMW_IMPLEMENTATION=rmw_fastrtps_cpp` only for an intentional fallback.
 

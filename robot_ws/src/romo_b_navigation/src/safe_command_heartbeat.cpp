@@ -21,10 +21,12 @@ public:
     input_timeout_sec_ = declare_parameter<double>("input_timeout_sec", 0.12);
     publish_frequency_ = declare_parameter<double>("publish_frequency", 20.0);
     max_forward_speed_ = declare_parameter<double>("max_forward_speed", 0.50);
+    max_reverse_speed_ = declare_parameter<double>("max_reverse_speed", 0.50);
     max_angular_speed_ = declare_parameter<double>("max_angular_speed", 0.80);
     if (
       input_timeout_sec_ <= 0.0 || input_timeout_sec_ >= 0.15 ||
-      publish_frequency_ < 10.0 || max_forward_speed_ <= 0.0 || max_angular_speed_ <= 0.0)
+      publish_frequency_ < 10.0 || max_forward_speed_ <= 0.0 ||
+      max_reverse_speed_ <= 0.0 || max_angular_speed_ <= 0.0)
     {
       throw std::invalid_argument("Invalid safe command heartbeat parameters");
     }
@@ -53,11 +55,12 @@ private:
   {
     geometry_msgs::msg::Twist safe;
     if (
-      finite(message) && message.linear.x >= 0.0 &&
+      finite(message) &&
       std::abs(message.linear.y) < 1.0e-6 && std::abs(message.linear.z) < 1.0e-6 &&
       std::abs(message.angular.x) < 1.0e-6 && std::abs(message.angular.y) < 1.0e-6)
     {
-      safe.linear.x = std::min(message.linear.x, max_forward_speed_);
+      safe.linear.x = std::clamp(
+        message.linear.x, -max_reverse_speed_, max_forward_speed_);
       safe.angular.z = std::clamp(
         message.angular.z, -max_angular_speed_, max_angular_speed_);
     }
@@ -83,6 +86,7 @@ private:
   double input_timeout_sec_{0.12};
   double publish_frequency_{20.0};
   double max_forward_speed_{0.50};
+  double max_reverse_speed_{0.50};
   double max_angular_speed_{0.80};
   bool command_received_{false};
   rclcpp::Time last_command_time_{0, 0, RCL_ROS_TIME};

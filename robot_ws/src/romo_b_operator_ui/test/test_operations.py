@@ -19,13 +19,13 @@ def make_manager(tmp_path: pathlib.Path) -> OperationManager:
 
 def test_unknown_operations_are_rejected(tmp_path):
     manager = make_manager(tmp_path)
-    with pytest.raises(ValueError, match="Unknown operation"):
+    with pytest.raises(ValueError, match="알 수 없는 작업"):
         manager.start("arbitrary_shell", {})
 
 
 def test_artifact_ids_cannot_escape_local_roots(tmp_path):
     manager = make_manager(tmp_path)
-    with pytest.raises(ValueError, match="valid local artifact"):
+    with pytest.raises(ValueError, match="올바른 로컬 데이터"):
         manager._map({"map_id": "../outside"})
 
 

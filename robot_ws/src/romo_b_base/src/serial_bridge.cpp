@@ -520,7 +520,11 @@ private:
           auto_confirmed_ = false;
           auto_request_sent_ = false;
           auto_recovery_manual_pending_ = true;
+          const auto hold_mode =
+            steady_now - last_mode_request_time_ <= mode_override_timeout_ ?
+            requested_steer_mode_ : SteerMode::k2Wis;
           desired_control_ = {};
+          desired_control_.steer_mode = hold_mode;
           filtered_steer_deg_ = 0.0;
         }
       } else if (bridge_state_ == BridgeState::kConnectedSafe) {
@@ -642,7 +646,11 @@ private:
           auto_confirmed_ = false;
           auto_request_sent_ = false;
           auto_recovery_manual_pending_ = true;
+          const auto hold_mode =
+            steady_now - last_mode_request_time_ <= mode_override_timeout_ ?
+            requested_steer_mode_ : SteerMode::k2Wis;
           desired_control_ = {};
+          desired_control_.steer_mode = hold_mode;
           filtered_steer_deg_ = 0.0;
           RCLCPP_WARN_THROTTLE(
             get_logger(), *get_clock(), 2000,
@@ -651,7 +659,11 @@ private:
             static_cast<unsigned int>(feedback.steer_mode));
         } else if (!auto_confirmed_ && auto_request_sent_ && feedback.auto_mode) {
           auto_confirmed_ = true;
+          const auto hold_mode =
+            steady_now - last_mode_request_time_ <= mode_override_timeout_ ?
+            requested_steer_mode_ : SteerMode::k2Wis;
           desired_control_ = {};
+          desired_control_.steer_mode = hold_mode;
           last_command_time_ = steady_now;
           RCLCPP_INFO(get_logger(), "PCU confirmed Auto; 2WIS, 4WIS and Pivot commands are enabled");
         }

@@ -34,22 +34,23 @@ import {
 } from "@phosphor-icons/react";
 
 const DEMO_TASKS = [
-  ["live_mapping", "Live mapping", "Mapping", "Start Mid-360 + IMU + wheel odometry mapping, rosbag recording, and RViz.", "none", true],
-  ["save_live_mapping", "Save current map", "Mapping", "Optimize and save PCD, pose graph, and Nav2 occupancy map.", "map", false],
-  ["record_mapping_bag", "Record mapping bag", "Mapping", "Record all mapping and platform topics.", "none", false],
-  ["field_navigation", "Nav2 field navigation", "Navigation", "Start localization, Nav2, obstacle avoidance, and RViz.", "map", true],
-  ["autoware_field", "Autoware field", "Navigation", "Start the Autoware Universe field stack.", "map", true],
-  ["autoware_planning_sim", "Autoware planning simulation", "Navigation", "Start Autoware planning without robot hardware.", "map", true],
-  ["localization_replay", "Localization replay", "Navigation", "Replay a selected bag against the selected map.", "map_bag", false],
-  ["doctor_preflight", "Host preflight", "Validation", "Check the host and software prerequisites.", "none", false],
-  ["doctor_hardware", "Hardware doctor", "Validation", "Check PCU and Mid-360 hardware readiness.", "none", false],
-  ["mapping_calibration", "Mapping calibration probe", "Validation", "Compare LiDAR, IMU, wheel odometry, and timing.", "none", false],
-  ["nav2_preflight", "Nav2 map preflight", "Validation", "Validate lifecycle and planning on the selected map.", "map", false],
-  ["autoware_validation", "Autoware validation suite", "Validation", "Run the full isolated Autoware validation suite.", "map", false],
-  ["build_project", "Build ROMO-B workspace", "Build & data", "Build repository ROS 2 packages.", "none", false],
-  ["prepare_autoware_map", "Prepare Autoware map", "Build & data", "Generate the Lanelet2 and PCD map bundle.", "map", false],
+  ["robot_control", "로봇만 연결", "자율주행", "PCU와 웹 직접제어만 실행하며 LiDAR·Nav2·RViz는 켜지 않습니다.", "none", true],
+  ["live_mapping", "실시간 매핑", "매핑", "Mid-360, IMU와 휠 오도메트리로 지도와 rosbag을 만듭니다.", "none", true],
+  ["save_live_mapping", "현재 지도 저장", "매핑", "PCD, 포즈 그래프와 Nav2 점유 지도를 저장합니다.", "map", false],
+  ["record_mapping_bag", "매핑 bag 기록", "매핑", "매핑과 플랫폼 관련 토픽을 모두 기록합니다.", "none", false],
+  ["field_navigation", "Nav2 실주행", "자율주행", "위치추정, Nav2, 장애물 회피와 RViz를 실행합니다.", "map", true],
+  ["autoware_field", "Autoware 실주행", "자율주행", "Autoware Universe 실주행 스택을 실행합니다.", "map", true],
+  ["autoware_planning_sim", "Autoware 계획 시뮬레이션", "자율주행", "로봇 구동 없이 Autoware 경로 계획을 실행합니다.", "map", true],
+  ["localization_replay", "위치추정 재생", "자율주행", "선택한 bag과 지도로 위치추정을 재생합니다.", "map_bag", false],
+  ["doctor_preflight", "노트북 사전 점검", "점검", "노트북과 소프트웨어 준비 상태를 확인합니다.", "none", false],
+  ["doctor_hardware", "하드웨어 정밀 점검", "점검", "PCU와 Mid-360 하드웨어 준비 상태를 확인합니다.", "none", false],
+  ["mapping_calibration", "매핑 보정 확인", "점검", "LiDAR, IMU, 휠 오도메트리와 시간 동기를 비교합니다.", "none", false],
+  ["nav2_preflight", "Nav2 지도 사전 점검", "점검", "선택한 지도의 lifecycle과 경로 계획을 확인합니다.", "map", false],
+  ["autoware_validation", "Autoware 전체 점검", "점검", "격리된 Autoware 시험 전체를 실행합니다.", "map", false],
+  ["build_project", "ROMO-B 워크스페이스 빌드", "빌드 및 데이터", "저장소 ROS 2 패키지를 빌드합니다.", "none", false],
+  ["prepare_autoware_map", "Autoware 지도 준비", "빌드 및 데이터", "Lanelet2와 PCD 지도 묶음을 생성합니다.", "map", false],
 ].map(([id, label, group, description, selection, primary]) => ({
-  id, label, group, description, selection, primary, caution: "", running: id === "field_navigation", owned_by_ui: id === "field_navigation", pids: id === "field_navigation" ? [24831] : [], pid: id === "field_navigation" ? 24831 : null, elapsed_sec: id === "field_navigation" ? 128.4 : null, exit_code: null, log_path: id === "field_navigation" ? "/home/hyunseo/ROMO-B/data/local/logs/operator-field.log" : "", message: id === "field_navigation" ? "Running" : "Ready",
+  id, label, group, description, selection, primary, caution: "", running: id === "field_navigation", owned_by_ui: id === "field_navigation", pids: id === "field_navigation" ? [24831] : [], pid: id === "field_navigation" ? 24831 : null, elapsed_sec: id === "field_navigation" ? 128.4 : null, exit_code: null, log_path: id === "field_navigation" ? "/home/hyunseo/ROMO-B/data/local/logs/operator-field.log" : "", message: id === "field_navigation" ? "실행 중" : "실행 대기",
 }));
 
 const DEMO_STATE = {
@@ -169,7 +170,7 @@ const DEMO_STATE = {
       maps: [{ id: "mapping-20260721-134953", path: "/home/hyunseo/ROMO-B/data/local/maps/mapping-20260721-134953", ready_nav2: true, has_pcd: true, has_pose_graph: true, has_nav2: true, has_autoware: true }],
       bags: [{ id: "mapping-20260721-134953", path: "/home/hyunseo/ROMO-B/data/local/bags/mapping-20260721-134953", has_metadata: true, db3_count: 1 }],
     },
-    terminal_only: ["Host package installation", "udev/network apply", "Autoware source installation"],
+    terminal_only: ["노트북 패키지 설치", "udev·네트워크 적용", "Autoware 소스 설치"],
   },
   graph: { node_count: 31, topic_count: 84, nodes: ["/romo_b_serial_bridge", "/controller_server", "/planner_server", "/lidar_localization_node", "/livox_lidar_publisher"] },
   host: { hostname: "hyunseo-2204", load_1m: 2.14, memory_used_gb: 9.8, memory_total_gb: 31.1, uptime_hours: 18.4, gpu: { available: true, name: "NVIDIA GPU", utilization_percent: 28, memory_used_mb: 1140, memory_total_mb: 4096, temperature_c: 51 } },
@@ -187,7 +188,7 @@ const EMPTY_STATE = {
     wheel_steer_deg: [0, 0, 0, 0],
   },
   localization: { available: false, x_m: 0, y_m: 0, yaw_deg: 0 },
-  diagnostics: { level: 3, summary: "Waiting for ROS 2 data", items: [] },
+  diagnostics: { level: 3, summary: "ROS 2 데이터 대기 중", items: [] },
   health: {
     platform: { online: false, age_sec: null, rate_hz: 0 },
     lidar: { online: false, age_sec: null, rate_hz: 0 },
@@ -212,18 +213,18 @@ const EMPTY_STATE = {
   },
   readiness: { ...DEMO_STATE.readiness, bridge_armed: false, pcu_auto_confirmed: false, ready_to_arm: false, control_ready: false, checks: DEMO_STATE.readiness.checks.map((item) => ({ ...item, ok: false })) },
   runtime: { field_running: false, field_pids: [], owned_by_ui: false, log_path: "" },
-  operations: { ...DEMO_STATE.operations, tasks: DEMO_TASKS.map((task) => ({ ...task, running: false, owned_by_ui: false, pids: [], pid: null, elapsed_sec: null, log_path: "", message: "Ready" })) },
+  operations: { ...DEMO_STATE.operations, tasks: DEMO_TASKS.map((task) => ({ ...task, running: false, owned_by_ui: false, pids: [], pid: null, elapsed_sec: null, log_path: "", message: "실행 대기" })) },
   graph: { node_count: 1, topic_count: 0, nodes: ["/romo_b_operator_ui"] },
   host: { hostname: "hyunseo-2204", load_1m: 0, memory_used_gb: 0, memory_total_gb: 0, uptime_hours: 0, gpu: { available: false } },
 };
 
 const TABS = [
-  { id: "main", label: "Main", icon: Gauge },
-  { id: "algorithm", label: "Platform control algorithm", icon: Wrench },
-  { id: "navigation", label: "Navigation", icon: MapPin },
-  { id: "operations", label: "Operations", icon: PlayCircle },
-  { id: "system", label: "System control", icon: ListChecks },
-  { id: "diagnostics", label: "Diagnostics", icon: Pulse },
+  { id: "main", label: "메인 제어", icon: Gauge },
+  { id: "algorithm", label: "플랫폼 제어 알고리즘", icon: Wrench },
+  { id: "navigation", label: "자율주행", icon: MapPin },
+  { id: "operations", label: "실행 관리", icon: PlayCircle },
+  { id: "system", label: "시스템 상태", icon: ListChecks },
+  { id: "diagnostics", label: "진단", icon: Pulse },
 ];
 
 function format(value, digits = 2) {
@@ -238,7 +239,7 @@ async function postJson(path, payload = {}) {
     body: JSON.stringify(payload),
   });
   const result = await response.json();
-  if (!response.ok) throw new Error(result.message || "Request failed");
+  if (!response.ok) throw new Error(result.message || "요청 처리에 실패했습니다");
   return result;
 }
 
@@ -326,12 +327,12 @@ function CommandPanel({ state, onPost, demo }) {
   const bridgeArmed = state.platform.state === 2;
   const controlReady = Boolean(state.readiness?.control_ready);
   const controlLabel = controlReady
-    ? "CONTROL READY"
+    ? "주행 준비 완료"
     : bridgeArmed && state.platform.auto_mode && state.platform.estop
-      ? "E-STOP BLOCKED"
+      ? "비상정지 작동"
       : bridgeArmed
-        ? "AUTO REQUESTING"
-        : "DISARMED";
+        ? "AUTO 전환 중"
+        : "주행 비활성";
   const canDrive = demo || controlReady;
   const steerLimit = mode === "4wis" ? 18 : 22;
   const firstBlocker = state.readiness?.checks?.find((item) => !item.ok);
@@ -363,8 +364,8 @@ function CommandPanel({ state, onPost, demo }) {
     <section className="panel command-panel">
       <div className="panel-title">
         <div>
-          <span className="eyebrow">Platform status command</span>
-          <h2>Vehicle command</h2>
+          <span className="eyebrow">플랫폼 명령</span>
+          <h2>차량 직접 제어</h2>
         </div>
         <span className={`mode-chip ${controlReady ? "armed" : ""}`}>
           {controlLabel}
@@ -378,18 +379,18 @@ function CommandPanel({ state, onPost, demo }) {
           onClick={() => onPost("arm", !bridgeArmed)}
         >
           <Power weight="bold" />
-          <span>{bridgeArmed ? "HLV: request Manual" : "HLV: request Auto / Arm"}</span>
+          <span>{bridgeArmed ? "HLV 수동 전환 요청" : "HLV Auto / Arm 요청"}</span>
         </button>
         <div className={`readonly-control ${state.platform.estop ? "alert" : ""}`}>
           <ShieldCheck weight="bold" />
-          <span>Physical E-stop</span>
-          <strong>{state.platform.estop ? "ACTIVE" : "RELEASED"}</strong>
+          <span>물리 비상정지</span>
+          <strong>{state.platform.estop ? "작동 중" : "해제됨"}</strong>
         </div>
       </div>
 
       <div className="field-group">
         <div className="field-label-row">
-          <label>Steering mode</label>
+          <label>조향 모드</label>
           <span>PCU: {state.platform.steer_mode_name}</span>
         </div>
         <div className="segmented-control">
@@ -403,19 +404,19 @@ function CommandPanel({ state, onPost, demo }) {
         <>
           <div className="slider-field">
             <div className="field-label-row">
-              <label htmlFor="speed">Drive speed magnitude</label>
+              <label htmlFor="speed">주행 속도 크기</label>
               <output>{format(speed, 2)} m/s</output>
             </div>
             <input id="speed" type="range" min="0" max="0.5" step="0.01" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} />
-            <div className="range-labels"><span>0</span><span>signed max ±0.5</span></div>
+            <div className="range-labels"><span>0</span><span>전진·후진 최대 ±0.5</span></div>
           </div>
           <div className="slider-field">
             <div className="field-label-row">
-              <label htmlFor="steer">Center steering</label>
+              <label htmlFor="steer">중앙 조향각</label>
               <output className={Math.abs(steer) > 18 ? "warning-text" : ""}>{format(steer, 1)}°</output>
             </div>
             <input id="steer" type="range" min={-steerLimit} max={steerLimit} step="0.5" value={steer} onChange={(event) => setSteer(Number(event.target.value))} />
-            <div className="range-labels"><span>Right −{steerLimit}°</span><span>ROS 0°</span><span>Left +{steerLimit}°</span></div>
+            <div className="range-labels"><span>우회전 −{steerLimit}°</span><span>ROS 0°</span><span>좌회전 +{steerLimit}°</span></div>
           </div>
           <div className="drive-pad">
             <HoldButton
@@ -425,7 +426,7 @@ function CommandPanel({ state, onPost, demo }) {
               className="drive-forward"
             >
               <ArrowUp weight="bold" />
-              <span>Hold forward</span>
+              <span>누르는 동안 전진</span>
               <small>+{format(speed, 2)} m/s · {mode.toUpperCase()} · {format(steer, 1)}°</small>
             </HoldButton>
             <HoldButton
@@ -435,11 +436,11 @@ function CommandPanel({ state, onPost, demo }) {
               className="drive-reverse"
             >
               <ArrowDown weight="bold" />
-              <span>Hold reverse</span>
+              <span>누르는 동안 후진</span>
               <small>−{format(speed, 2)} m/s · {mode.toUpperCase()} · {format(steer, 1)}°</small>
             </HoldButton>
             <button className="center-steer" onClick={() => setSteer(0)}>
-              <Crosshair weight="bold" /> Center steering
+              <Crosshair weight="bold" /> 조향 중앙 정렬
             </button>
           </div>
         </>
@@ -447,24 +448,24 @@ function CommandPanel({ state, onPost, demo }) {
         <div className="pivot-control">
           <div className="slider-field">
             <div className="field-label-row">
-              <label htmlFor="pivot">Pivot rate</label>
+              <label htmlFor="pivot">제자리 회전 속도</label>
               <output>{format(pivotRate, 2)} rad/s</output>
             </div>
             <input id="pivot" type="range" min="0.1" max="0.75" step="0.05" value={pivotRate} onChange={(event) => setPivotRate(Number(event.target.value))} />
           </div>
           <div className="pivot-buttons">
             <HoldButton disabled={!canDrive} payload={{ mode: "pivot", pivot_rate_radps: pivotRate }} onSend={drive}>
-              <ArrowLeft weight="bold" /> Hold CCW
+              <ArrowLeft weight="bold" /> 누르는 동안 반시계 회전
             </HoldButton>
             <HoldButton disabled={!canDrive} payload={{ mode: "pivot", pivot_rate_radps: -pivotRate }} onSend={drive}>
-              Hold CW <ArrowRight weight="bold" />
+              누르는 동안 시계 회전 <ArrowRight weight="bold" />
             </HoldButton>
           </div>
         </div>
       )}
 
       {!canDrive && (
-        <div className="control-hint"><HandPalm weight="fill" /> {firstBlocker ? `${firstBlocker.label}: ${firstBlocker.detail}` : "PCU Auto confirmation is required before motion."}</div>
+        <div className="control-hint"><HandPalm weight="fill" /> {firstBlocker ? `${firstBlocker.label}: ${firstBlocker.detail}` : "주행하려면 PCU Auto 확인이 필요합니다."}</div>
       )}
     </section>
   );
@@ -475,7 +476,7 @@ function WheelCard({ name, speed, steer, steerEnabled }) {
     <div className="wheel-card">
       <span>{name}</span>
       <strong>{format(speed, 2)} <small>m/s</small></strong>
-      <em>{steerEnabled ? `${format(steer, 1)}°` : "fixed in 2WIS"}</em>
+      <em>{steerEnabled ? `${format(steer, 1)}°` : "2WIS 고정축"}</em>
     </div>
   );
 }
@@ -487,8 +488,8 @@ function FeedbackPanel({ state }) {
     <section className="panel feedback-panel">
       <div className="panel-title">
         <div>
-          <span className="eyebrow">Platform status feedback</span>
-          <h2>Live PCU feedback</h2>
+          <span className="eyebrow">플랫폼 상태 피드백</span>
+          <h2>실시간 PCU 상태</h2>
         </div>
         <div className="alive-pair">
           <span>PCU <strong>{platform.pcu_alive}</strong></span>
@@ -496,10 +497,10 @@ function FeedbackPanel({ state }) {
         </div>
       </div>
       <div className="feedback-flags">
-        <div><StatusDot active={platform.connected} /><span>Communication</span><strong>{platform.connected ? "ONLINE" : "OFFLINE"}</strong></div>
-        <div><StatusDot active={state.readiness?.bridge_armed} /><span>HLV request</span><strong>{state.readiness?.bridge_armed ? "ARMED" : "MANUAL"}</strong></div>
-        <div><StatusDot active={platform.auto_mode} /><span>PCU feedback</span><strong>{platform.auto_mode ? "AUTO" : "MANUAL"}</strong></div>
-        <div><StatusDot active danger={platform.estop} /><span>E-stop</span><strong>{platform.estop ? "ACTIVE" : "CLEAR"}</strong></div>
+        <div><StatusDot active={platform.connected} /><span>통신 상태</span><strong>{platform.connected ? "연결됨" : "끊김"}</strong></div>
+        <div><StatusDot active={state.readiness?.bridge_armed} /><span>HLV 요청</span><strong>{state.readiness?.bridge_armed ? "ARMED" : "수동"}</strong></div>
+        <div><StatusDot active={platform.auto_mode} /><span>PCU 피드백</span><strong>{platform.auto_mode ? "AUTO" : "수동"}</strong></div>
+        <div><StatusDot active danger={platform.estop} /><span>비상정지</span><strong>{platform.estop ? "작동 중" : "해제"}</strong></div>
       </div>
       <div className="vehicle-feedback">
         <div className="wheel-column">
@@ -507,11 +508,11 @@ function FeedbackPanel({ state }) {
           <WheelCard name="RL" speed={platform.wheel_speed_mps[2]} steer={platform.wheel_steer_deg[2]} steerEnabled={allWheelSteering} />
         </div>
         <div className="vehicle-center">
-          <span className="front-label">FRONT</span>
+          <span className="front-label">전방</span>
           <CarProfile size={94} weight="duotone" />
           <strong>ROMO-B</strong>
           <small>{platform.steer_mode_name}</small>
-          <span className="rear-label">REAR</span>
+          <span className="rear-label">후방</span>
         </div>
         <div className="wheel-column">
           <WheelCard name="FR" speed={platform.wheel_speed_mps[1]} steer={platform.wheel_steer_deg[1]} steerEnabled />
@@ -519,9 +520,9 @@ function FeedbackPanel({ state }) {
         </div>
       </div>
       <div className="feedback-metrics">
-        <Metric label="Safe command" value={format(state.command.safe_linear_mps, 2)} unit="m/s" accent />
-        <Metric label="Wheel odometry" value={format(state.motion.wheel_odom_speed_mps, 2)} unit="m/s" />
-        <Metric label="Yaw rate" value={format(state.motion.wheel_odom_yaw_rate_radps, 2)} unit="rad/s" />
+        <Metric label="최종 안전 명령" value={format(state.command.safe_linear_mps, 2)} unit="m/s" accent />
+        <Metric label="휠 오도메트리" value={format(state.motion.wheel_odom_speed_mps, 2)} unit="m/s" />
+        <Metric label="회전 속도" value={format(state.motion.wheel_odom_yaw_rate_radps, 2)} unit="rad/s" />
       </div>
     </section>
   );
@@ -531,9 +532,9 @@ function AutoReadiness({ state }) {
   return (
     <section className="panel readiness-panel">
       <div className="panel-title compact-title">
-        <div><span className="eyebrow">Auto transition truth table</span><h2>PCU Auto entry & control readiness</h2></div>
+        <div><span className="eyebrow">Auto 전환 조건표</span><h2>PCU Auto 진입 및 주행 준비 상태</h2></div>
         <span className={`mode-chip ${state.readiness?.control_ready ? "armed" : ""}`}>
-          {state.readiness?.control_ready ? "READY" : "CHECK REQUIRED"}
+          {state.readiness?.control_ready ? "준비 완료" : "확인 필요"}
         </span>
       </div>
       <div className="readiness-grid">
@@ -541,13 +542,13 @@ function AutoReadiness({ state }) {
           <div className={`readiness-item ${item.ok ? "pass" : "blocked"}`} key={item.key}>
             {item.ok ? <CheckCircle weight="fill" /> : <Warning weight="fill" />}
             <div><strong>{item.label}</strong><span>{item.detail}</span></div>
-            <em>{item.ok ? "PASS" : "WAIT"}</em>
+            <em>{item.ok ? "정상" : "대기"}</em>
           </div>
         ))}
       </div>
       <div className="readiness-explainer">
         <strong>표시 구분</strong>
-        <span>RC/본체 스위치는 PCU 조건을 만들고, 웹의 HLV Arm은 Auto 상승 에지를 요청합니다. 실제 주행 가능 여부는 PCU 피드백 AUTO와 브리지 ARMED가 모두 확인될 때만 READY로 표시됩니다.</span>
+        <span>RC/본체 스위치로 PCU 조건을 맞춘 뒤 웹의 HLV Arm을 누르면 Auto 전환을 요청합니다. PCU 피드백 AUTO와 브리지 ARMED가 모두 확인되어야 주행 준비 완료로 표시됩니다.</span>
       </div>
     </section>
   );
@@ -603,26 +604,26 @@ function AlgorithmView() {
   return (
     <section className="panel algorithm-panel">
       <div className="panel-title wide-title">
-        <div><span className="eyebrow">Platform control algorithm</span><h2>{mode.toUpperCase()} kinematic preview</h2></div>
+        <div><span className="eyebrow">플랫폼 제어 알고리즘</span><h2>{mode.toUpperCase()} 기구학 미리보기</h2></div>
         <div className="geometry-chips"><span>L 0.323 m</span><span>W 0.390 m</span></div>
       </div>
       <div className="algorithm-layout">
         <div className="algorithm-inputs">
-          <p>Signed 중심 속도와 조향각을 입력하면 매뉴얼 기하에 따라 네 바퀴의 목표 선속도와 조향각을 계산합니다.</p>
+          <p>부호가 있는 중심 속도와 조향각을 입력하면 매뉴얼의 차량 치수에 따라 네 바퀴의 목표 선속도와 조향각을 계산합니다.</p>
           <div className="segmented-control algorithm-mode">
             {[
               ["2wis", "2WIS"], ["4wis", "4WIS"], ["pivot", "Pivot"],
             ].map(([value, label]) => <button className={mode === value ? "active" : ""} onClick={() => setMode(value)} key={value}>{label}</button>)}
           </div>
           <div className="slider-field">
-            <div className="field-label-row"><label>Center speed</label><output>{format(speed, 2)} m/s</output></div>
+            <div className="field-label-row"><label>중심 속도</label><output>{format(speed, 2)} m/s</output></div>
             <input type="range" min="-0.5" max="0.5" step="0.01" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} />
           </div>
           <div className="slider-field">
-            <div className="field-label-row"><label>Center steering</label><output>{format(steer, 1)}°</output></div>
+            <div className="field-label-row"><label>중앙 조향각</label><output>{format(steer, 1)}°</output></div>
             <input type="range" min={-steerLimit} max={steerLimit} step="0.5" value={steer} disabled={mode === "pivot"} onChange={(event) => setSteer(Number(event.target.value))} />
           </div>
-          <div className="formula-card"><span>ROS angular.z</span><strong>{format(mode === "pivot" ? -speed / Math.hypot(0.323 / 2, 0.39 / 2) : speed * Math.tan((steer * Math.PI) / 180) / (mode === "4wis" ? 0.323 / 2 : 0.323), 3)} rad/s</strong><small>{mode === "4wis" ? "ω = v · tan(δ) / (L/2)" : mode === "pivot" ? "PCU positive speed = clockwise" : "ω = v · tan(δ) / L"}</small></div>
+          <div className="formula-card"><span>ROS angular.z</span><strong>{format(mode === "pivot" ? -speed / Math.hypot(0.323 / 2, 0.39 / 2) : speed * Math.tan((steer * Math.PI) / 180) / (mode === "4wis" ? 0.323 / 2 : 0.323), 3)} rad/s</strong><small>{mode === "4wis" ? "ω = v · tan(δ) / (L/2)" : mode === "pivot" ? "PCU 양수 속도 = 시계 방향" : "ω = v · tan(δ) / L"}</small></div>
         </div>
         <div className="algorithm-vehicle">
           <div className="prediction-grid">
@@ -633,7 +634,7 @@ function AlgorithmView() {
                 <small>{format(values[1], 1)}°</small>
               </div>
             ))}
-            <div className="prediction-center"><CarProfile size={126} weight="duotone" /><strong>FRONT</strong></div>
+            <div className="prediction-center"><CarProfile size={126} weight="duotone" /><strong>전방</strong></div>
           </div>
         </div>
       </div>
@@ -667,7 +668,7 @@ function NavigationView({ state, onPost, demo }) {
   const poseInputs = (values, setter) => (
     <div className="pose-inputs">
       {["x_m", "y_m", "yaw_deg"].map((key) => (
-        <label key={key}><span>{key === "yaw_deg" ? "Yaw (deg)" : key === "x_m" ? "Map X (m)" : "Map Y (m)"}</span><input type="number" step={key === "yaw_deg" ? "1" : "0.1"} value={values[key]} onChange={(event) => setter({ ...values, [key]: Number(event.target.value) })} /></label>
+        <label key={key}><span>{key === "yaw_deg" ? "방향각 (도)" : key === "x_m" ? "지도 X (m)" : "지도 Y (m)"}</span><input type="number" step={key === "yaw_deg" ? "1" : "0.1"} value={values[key]} onChange={(event) => setter({ ...values, [key]: Number(event.target.value) })} /></label>
       ))}
     </div>
   );
@@ -675,18 +676,18 @@ function NavigationView({ state, onPost, demo }) {
   return (
     <div className="navigation-grid">
       <section className="panel route-panel">
-        <div className="panel-title"><div><span className="eyebrow">Waypoint navigation</span><h2>Route operations</h2></div><Path size={30} weight="duotone" /></div>
+        <div className="panel-title"><div><span className="eyebrow">웨이포인트 자율주행</span><h2>경로 관리</h2></div><Path size={30} weight="duotone" /></div>
         <div className="route-summary">
-          <div><span>Waypoints</span><strong>{state.navigation.waypoint_count}</strong></div>
-          <div><span>Plan poses</span><strong>{state.navigation.plan_points}</strong></div>
-          <div><span>Plan length</span><strong>{format(state.navigation.plan_length_m, 1)} <small>m</small></strong></div>
+          <div><span>웨이포인트</span><strong>{state.navigation.waypoint_count}</strong></div>
+          <div><span>경로 점 개수</span><strong>{state.navigation.plan_points}</strong></div>
+          <div><span>경로 길이</span><strong>{format(state.navigation.plan_length_m, 1)} <small>m</small></strong></div>
         </div>
         <div className="service-grid">
-          <ServiceButton icon={FloppyDisk} action="save" disabled={!demo && !services.waypoint_save} onAction={action}>Save RViz points</ServiceButton>
-          <ServiceButton icon={ArrowCounterClockwise} action="reload" disabled={!demo && !services.waypoint_reload} onAction={action}>Reload YAML</ServiceButton>
-          <ServiceButton icon={Trash} action="clear" disabled={!demo && !services.waypoint_clear} onAction={action}>Clear editor</ServiceButton>
-          <ServiceButton icon={Play} action="execute" disabled={!demo && !services.waypoint_execute} onAction={action} tone="primary">Execute route</ServiceButton>
-          <ServiceButton icon={Stop} action="cancel" disabled={!demo && !services.waypoint_cancel} onAction={action} tone="danger">Cancel route</ServiceButton>
+          <ServiceButton icon={FloppyDisk} action="save" disabled={!demo && !services.waypoint_save} onAction={action}>RViz 지점 저장</ServiceButton>
+          <ServiceButton icon={ArrowCounterClockwise} action="reload" disabled={!demo && !services.waypoint_reload} onAction={action}>YAML 다시 불러오기</ServiceButton>
+          <ServiceButton icon={Trash} action="clear" disabled={!demo && !services.waypoint_clear} onAction={action}>편집 지점 지우기</ServiceButton>
+          <ServiceButton icon={Play} action="execute" disabled={!demo && !services.waypoint_execute} onAction={action} tone="primary">경로 주행 시작</ServiceButton>
+          <ServiceButton icon={Stop} action="cancel" disabled={!demo && !services.waypoint_cancel} onAction={action} tone="danger">경로 주행 취소</ServiceButton>
         </div>
         <div className={`operation-result ${state.navigation.last_action_success ? "success" : "failure"}`}>
           {state.navigation.last_action_success ? <CheckCircle weight="fill" /> : <Warning weight="fill" />}
@@ -694,37 +695,37 @@ function NavigationView({ state, onPost, demo }) {
         </div>
       </section>
       <section className="panel localization-panel">
-        <div className="panel-title"><div><span className="eyebrow">Map localization</span><h2>Current map pose</h2></div><Crosshair size={30} weight="duotone" /></div>
+        <div className="panel-title"><div><span className="eyebrow">지도 위치추정</span><h2>현재 지도 좌표</h2></div><Crosshair size={30} weight="duotone" /></div>
         <div className="pose-card">
-          <Metric label="Map X" value={format(state.localization.x_m, 2)} unit="m" />
-          <Metric label="Map Y" value={format(state.localization.y_m, 2)} unit="m" />
-          <Metric label="Heading" value={format(state.localization.yaw_deg, 1)} unit="deg" accent />
+          <Metric label="지도 X" value={format(state.localization.x_m, 2)} unit="m" />
+          <Metric label="지도 Y" value={format(state.localization.y_m, 2)} unit="m" />
+          <Metric label="로봇 방향" value={format(state.localization.yaw_deg, 1)} unit="도" accent />
         </div>
         <div className="pose-card secondary-pose">
-          <Metric label="XY std" value={format(state.localization.xy_std_m, 2)} unit="m" />
-          <Metric label="Yaw std" value={format(state.localization.yaw_std_deg, 1)} unit="deg" />
-          <Metric label="Goal state" value={state.navigation.goal_state} />
+          <Metric label="XY 표준편차" value={format(state.localization.xy_std_m, 2)} unit="m" />
+          <Metric label="방향 표준편차" value={format(state.localization.yaw_std_deg, 1)} unit="도" />
+          <Metric label="목표 상태" value={state.navigation.goal_state} />
         </div>
         <div className="localization-note"><MapPin weight="fill" /><div><strong>2D Pose Estimate</strong><span>문·기둥·코너 가까이에서 실제 전방 방향으로 지정하세요. 현재 프로필은 클릭 위치 주변 15 m 밖의 정합을 거부합니다.</span></div></div>
       </section>
       <section className="panel pose-command-panel">
-        <div className="panel-title"><div><span className="eyebrow">Browser-only navigation</span><h2>Initial pose & direct goal</h2></div><MapTrifold size={30} weight="duotone" /></div>
+        <div className="panel-title"><div><span className="eyebrow">웹 자율주행 제어</span><h2>초기 위치 및 목표 지점</h2></div><MapTrifold size={30} weight="duotone" /></div>
         <div className="pose-command-grid">
           <div className="pose-command-card">
-            <div><strong>Set initial pose</strong><span>Publish `/initialpose` with localization covariance</span></div>
+            <div><strong>초기 위치 지정</strong><span>위치추정 오차 범위와 함께 `/initialpose`를 전송합니다.</span></div>
             {poseInputs(initialPose, setInitialPose)}
             <div className="inline-fields">
-              <label><span>XY std (m)</span><input type="number" min="0.05" max="2" step="0.05" value={initialPose.xy_std_m} onChange={(event) => setInitialPose({ ...initialPose, xy_std_m: Number(event.target.value) })} /></label>
-              <label><span>Yaw std (deg)</span><input type="number" min="2" max="45" step="1" value={initialPose.yaw_std_deg} onChange={(event) => setInitialPose({ ...initialPose, yaw_std_deg: Number(event.target.value) })} /></label>
+              <label><span>XY 오차 범위 (m)</span><input type="number" min="0.05" max="2" step="0.05" value={initialPose.xy_std_m} onChange={(event) => setInitialPose({ ...initialPose, xy_std_m: Number(event.target.value) })} /></label>
+              <label><span>방향 오차 범위 (도)</span><input type="number" min="2" max="45" step="1" value={initialPose.yaw_std_deg} onChange={(event) => setInitialPose({ ...initialPose, yaw_std_deg: Number(event.target.value) })} /></label>
             </div>
-            <button className="service-button primary" type="button" onClick={() => sendPose("initial-pose", initialPose)}><Crosshair weight="bold" />Publish initial pose</button>
+            <button className="service-button primary" type="button" onClick={() => sendPose("initial-pose", initialPose)}><Crosshair weight="bold" />초기 위치 전송</button>
           </div>
           <div className="pose-command-card">
-            <div><strong>Navigate to goal</strong><span>Send Nav2 `NavigateToPose` in the map frame</span></div>
+            <div><strong>목표 지점으로 주행</strong><span>지도 좌표계로 Nav2 `NavigateToPose` 목표를 전송합니다.</span></div>
             {poseInputs(goal, setGoal)}
             <div className="goal-actions">
-              <button className="service-button primary" type="button" disabled={!demo && !services.navigate_to_pose} onClick={() => sendPose("goal", goal)}><Play weight="bold" />Send goal</button>
-              <button className="service-button danger" type="button" onClick={cancelGoal}><Stop weight="bold" />Cancel goal</button>
+              <button className="service-button primary" type="button" disabled={!demo && !services.navigate_to_pose} onClick={() => sendPose("goal", goal)}><Play weight="bold" />목표 전송</button>
+              <button className="service-button danger" type="button" onClick={cancelGoal}><Stop weight="bold" />목표 취소</button>
             </div>
           </div>
         </div>
@@ -738,7 +739,7 @@ function HealthCard({ icon: Icon, title, health, expected }) {
   return (
     <div className={`health-card ${online ? "online" : "offline"}`}>
       <Icon weight="duotone" />
-      <div><span>{title}</span><strong>{online ? "ONLINE" : "WAITING"}</strong><small>{format(health?.rate_hz, 1)} Hz · expected {expected}</small></div>
+      <div><span>{title}</span><strong>{online ? "정상 수신" : "대기 중"}</strong><small>{format(health?.rate_hz, 1)} Hz · 기준 {expected}</small></div>
       <StatusDot active={online} />
     </div>
   );
@@ -753,33 +754,33 @@ function SystemView({ state, onPost, demo }) {
   };
   const stages = [
     ["Nav2", "nav", "/cmd_vel_nav"],
-    ["Mux", "selected", "/cmd_vel_selected"],
-    ["Smoother", "smoothed", "/cmd_vel_smoothed"],
-    ["Collision monitor", "safe", "/cmd_vel_safe"],
+    ["명령 선택기", "selected", "/cmd_vel_selected"],
+    ["속도 평활기", "smoothed", "/cmd_vel_smoothed"],
+    ["충돌 감시기", "safe", "/cmd_vel_safe"],
   ];
   const sensorRows = [
-    ["Mid-360 raw", "lidar_raw", state.sensors?.lidar_raw],
-    ["Mid-360 filtered", "lidar_filtered", state.sensors?.lidar_filtered],
+    ["Mid-360 원본", "lidar_raw", state.sensors?.lidar_raw],
+    ["Mid-360 필터링", "lidar_filtered", state.sensors?.lidar_filtered],
     ["Livox IMU", "imu", state.sensors?.imu],
-    ["Wheel odometry", "odometry", { frame_id: "odom", points: "pose + twist" }],
+    ["휠 오도메트리", "odometry", { frame_id: "odom", points: "위치 + 속도" }],
   ];
   return (
     <div className="system-layout">
       <section className="panel runtime-panel">
-        <div className="panel-title"><div><span className="eyebrow">Process control</span><h2>Field navigation stack</h2></div><Power size={30} weight="duotone" /></div>
+        <div className="panel-title"><div><span className="eyebrow">프로세스 제어</span><h2>실주행 전체 스택</h2></div><Power size={30} weight="duotone" /></div>
         <div className={`runtime-state ${state.runtime?.field_running ? "running" : "stopped"}`}>
           <StatusDot active={state.runtime?.field_running} />
-          <div><span>Complete ROS 2 stack</span><strong>{state.runtime?.field_running ? "RUNNING" : "STOPPED"}</strong><small>{state.runtime?.field_running ? `PID ${state.runtime.field_pids?.join(", ") || "detecting"}` : "Ready to launch from this page"}</small></div>
+          <div><span>전체 ROS 2 스택</span><strong>{state.runtime?.field_running ? "실행 중" : "종료됨"}</strong><small>{state.runtime?.field_running ? `PID ${state.runtime.field_pids?.join(", ") || "확인 중"}` : "이 페이지에서 실행할 수 있습니다"}</small></div>
         </div>
         <div className="runtime-actions">
-          <button className="service-button primary" disabled={state.runtime?.field_running} onClick={() => runtimeAction("start")}><PlayCircle weight="bold" />Start navigation + LiDAR + RViz</button>
-          <button className="service-button danger" disabled={!state.runtime?.field_running} onClick={() => runtimeAction("stop")}><StopCircle weight="bold" />Zero & stop field stack</button>
+          <button className="service-button primary" disabled={state.runtime?.field_running} onClick={() => runtimeAction("start")}><PlayCircle weight="bold" />자율주행 + LiDAR + RViz 실행</button>
+          <button className="service-button danger" disabled={!state.runtime?.field_running} onClick={() => runtimeAction("stop")}><StopCircle weight="bold" />속도 0 및 전체 스택 종료</button>
         </div>
-        <div className="runtime-details"><span>Owner</span><strong>{state.runtime?.owned_by_ui ? "WEB UI" : state.runtime?.field_running ? "EXTERNAL TERMINAL" : "—"}</strong><span>Log</span><code>{state.runtime?.log_path || "created on next web launch"}</code></div>
+        <div className="runtime-details"><span>실행 주체</span><strong>{state.runtime?.owned_by_ui ? "웹 화면" : state.runtime?.field_running ? "외부 터미널" : "—"}</strong><span>로그</span><code>{state.runtime?.log_path || "다음 실행 시 생성"}</code></div>
       </section>
 
       <section className="panel pipeline-panel">
-        <div className="panel-title"><div><span className="eyebrow">Command observability</span><h2>Velocity pipeline</h2></div><Path size={30} weight="duotone" /></div>
+        <div className="panel-title"><div><span className="eyebrow">명령 흐름 확인</span><h2>속도 명령 처리 단계</h2></div><Path size={30} weight="duotone" /></div>
         <div className="pipeline-table">
           {stages.map(([label, key, topic], index) => {
             const command = state.commands?.[key] || {};
@@ -790,27 +791,27 @@ function SystemView({ state, onPost, demo }) {
       </section>
 
       <section className="panel sensor-panel">
-        <div className="panel-title"><div><span className="eyebrow">Sensor inventory</span><h2>Live inputs</h2></div><Broadcast size={30} weight="duotone" /></div>
+        <div className="panel-title"><div><span className="eyebrow">센서 목록</span><h2>실시간 입력</h2></div><Broadcast size={30} weight="duotone" /></div>
         <div className="sensor-table">
           {sensorRows.map(([label, key, data]) => <div className="sensor-row" key={key}><StatusDot active={state.health?.[key]?.online} /><div><strong>{label}</strong><span>{data?.frame_id || "frame unavailable"}</span></div><em>{format(state.health?.[key]?.rate_hz, 1)} Hz</em><code>{data?.points ?? (data?.angular_velocity_radps ? `${data.angular_velocity_radps.join(", ")} rad/s` : "—")}</code></div>)}
         </div>
       </section>
 
       <section className="panel host-panel">
-        <div className="panel-title"><div><span className="eyebrow">Laptop resources</span><h2>{state.host?.hostname || "Host"}</h2></div><Gauge size={30} weight="duotone" /></div>
+        <div className="panel-title"><div><span className="eyebrow">노트북 자원</span><h2>{state.host?.hostname || "노트북"}</h2></div><Gauge size={30} weight="duotone" /></div>
         <div className="host-metrics">
-          <Metric label="Load (1m)" value={format(state.host?.load_1m, 2)} />
-          <Metric label="Memory" value={format(state.host?.memory_used_gb, 1)} unit={`/ ${format(state.host?.memory_total_gb, 1)} GB`} />
-          <Metric label="Uptime" value={format(state.host?.uptime_hours, 1)} unit="h" />
-          <Metric label="GPU use" value={state.host?.gpu?.available ? format(state.host.gpu.utilization_percent, 0) : "N/A"} unit={state.host?.gpu?.available ? "%" : ""} accent={state.host?.gpu?.available} />
-          <Metric label="GPU memory" value={state.host?.gpu?.available ? format(state.host.gpu.memory_used_mb, 0) : "N/A"} unit={state.host?.gpu?.available ? `/ ${format(state.host.gpu.memory_total_mb, 0)} MB` : ""} />
-          <Metric label="GPU temp" value={state.host?.gpu?.available ? format(state.host.gpu.temperature_c, 0) : "N/A"} unit={state.host?.gpu?.available ? "°C" : ""} />
+          <Metric label="시스템 부하 (1분)" value={format(state.host?.load_1m, 2)} />
+          <Metric label="메모리" value={format(state.host?.memory_used_gb, 1)} unit={`/ ${format(state.host?.memory_total_gb, 1)} GB`} />
+          <Metric label="가동 시간" value={format(state.host?.uptime_hours, 1)} unit="시간" />
+          <Metric label="GPU 사용률" value={state.host?.gpu?.available ? format(state.host.gpu.utilization_percent, 0) : "없음"} unit={state.host?.gpu?.available ? "%" : ""} accent={state.host?.gpu?.available} />
+          <Metric label="GPU 메모리" value={state.host?.gpu?.available ? format(state.host.gpu.memory_used_mb, 0) : "없음"} unit={state.host?.gpu?.available ? `/ ${format(state.host.gpu.memory_total_mb, 0)} MB` : ""} />
+          <Metric label="GPU 온도" value={state.host?.gpu?.available ? format(state.host.gpu.temperature_c, 0) : "없음"} unit={state.host?.gpu?.available ? "°C" : ""} />
         </div>
-        <div className="gpu-name">{state.host?.gpu?.available ? state.host.gpu.name : "NVIDIA telemetry unavailable"}</div>
+        <div className="gpu-name">{state.host?.gpu?.available ? state.host.gpu.name : "NVIDIA 상태 정보를 사용할 수 없습니다"}</div>
       </section>
 
       <section className="panel graph-panel">
-        <div className="panel-title"><div><span className="eyebrow">ROS graph</span><h2>{state.graph?.node_count || 0} nodes · {state.graph?.topic_count || 0} topics</h2></div><ListChecks size={30} weight="duotone" /></div>
+        <div className="panel-title"><div><span className="eyebrow">ROS 그래프</span><h2>노드 {state.graph?.node_count || 0}개 · 토픽 {state.graph?.topic_count || 0}개</h2></div><ListChecks size={30} weight="duotone" /></div>
         <div className="node-list">{(state.graph?.nodes || []).map((node) => <code key={node}>{node}</code>)}</div>
       </section>
     </div>
@@ -824,7 +825,7 @@ function OperationsView({ state, onPost, demo }) {
   const [selectedMap, setSelectedMap] = useState("");
   const [selectedBag, setSelectedBag] = useState("");
   const [selectedTask, setSelectedTask] = useState("field_navigation");
-  const [log, setLog] = useState({ log_path: "", tail: "Select an operation to inspect its output." });
+  const [log, setLog] = useState({ log_path: "", tail: "작업을 선택하면 실행 로그가 여기에 표시됩니다." });
   const [useRviz, setUseRviz] = useState(true);
   const [receiveOnly, setReceiveOnly] = useState(true);
   const [replayRate, setReplayRate] = useState(1.0);
@@ -846,7 +847,7 @@ function OperationsView({ state, onPost, demo }) {
 
   useEffect(() => {
     if (demo) {
-      setLog({ log_path: "/home/hyunseo/ROMO-B/data/local/logs/operator-demo.log", tail: "[INFO] Browser operation runner ready\n[INFO] Commands are allow-listed and logs stream here\n[INFO] Select a task and press Start / Run" });
+      setLog({ log_path: "/home/hyunseo/ROMO-B/data/local/logs/operator-demo.log", tail: "[정보] 웹 실행 관리 준비 완료\n[정보] 허용된 저장소 명령만 실행됩니다\n[정보] 작업을 선택하고 실행 버튼을 누르세요" });
       return undefined;
     }
     let mounted = true;
@@ -879,43 +880,43 @@ function OperationsView({ state, onPost, demo }) {
     (task.selection === "map" && !selectedMap)
     || (task.selection === "map_bag" && (!selectedMap || !selectedBag))
   );
-  const groups = ["Mapping", "Navigation", "Validation", "Build & data"];
+  const groups = ["매핑", "자율주행", "점검", "빌드 및 데이터"];
   const selectedMapInfo = maps.find((item) => item.id === selectedMap);
   const selectedBagInfo = bags.find((item) => item.id === selectedBag);
 
   return (
     <div className="operations-layout">
       <section className="panel operations-config">
-        <div className="panel-title"><div><span className="eyebrow">Browser workflow control</span><h2>Artifacts & launch settings</h2></div><MapTrifold size={30} weight="duotone" /></div>
+        <div className="panel-title"><div><span className="eyebrow">웹 작업 제어</span><h2>지도·bag 및 실행 설정</h2></div><MapTrifold size={30} weight="duotone" /></div>
         <div className="artifact-selectors">
-          <label><span>Map run</span><select value={selectedMap} onChange={(event) => setSelectedMap(event.target.value)}><option value="">No map found</option>{maps.map((item) => <option value={item.id} key={item.id}>{item.id}{item.ready_nav2 ? " · Nav2 ready" : " · incomplete"}{item.has_autoware ? " · Autoware" : ""}</option>)}</select></label>
-          <label><span>Rosbag</span><select value={selectedBag} onChange={(event) => setSelectedBag(event.target.value)}><option value="">No bag found</option>{bags.map((item) => <option value={item.id} key={item.id}>{item.id}{item.has_metadata ? " · ready" : " · recording/incomplete"}</option>)}</select></label>
+          <label><span>지도 선택</span><select value={selectedMap} onChange={(event) => setSelectedMap(event.target.value)}><option value="">지도 없음</option>{maps.map((item) => <option value={item.id} key={item.id}>{item.id}{item.ready_nav2 ? " · Nav2 준비됨" : " · 미완성"}{item.has_autoware ? " · Autoware" : ""}</option>)}</select></label>
+          <label><span>Rosbag 선택</span><select value={selectedBag} onChange={(event) => setSelectedBag(event.target.value)}><option value="">bag 없음</option>{bags.map((item) => <option value={item.id} key={item.id}>{item.id}{item.has_metadata ? " · 준비됨" : " · 기록 중/미완성"}</option>)}</select></label>
         </div>
         <div className="artifact-facts">
-          <span className={selectedMapInfo?.has_pcd ? "pass" : ""}>PCD {selectedMapInfo?.has_pcd ? "YES" : "NO"}</span>
-          <span className={selectedMapInfo?.has_pose_graph ? "pass" : ""}>POSE GRAPH {selectedMapInfo?.has_pose_graph ? "YES" : "NO"}</span>
-          <span className={selectedMapInfo?.has_nav2 ? "pass" : ""}>NAV2 {selectedMapInfo?.has_nav2 ? "YES" : "NO"}</span>
-          <span className={selectedMapInfo?.has_autoware ? "pass" : ""}>AUTOWARE {selectedMapInfo?.has_autoware ? "YES" : "NO"}</span>
-          <span className={selectedBagInfo?.has_metadata ? "pass" : ""}>BAG {selectedBagInfo?.has_metadata ? `${selectedBagInfo.db3_count || 0} DB3` : "NO"}</span>
+          <span className={selectedMapInfo?.has_pcd ? "pass" : ""}>PCD {selectedMapInfo?.has_pcd ? "있음" : "없음"}</span>
+          <span className={selectedMapInfo?.has_pose_graph ? "pass" : ""}>포즈 그래프 {selectedMapInfo?.has_pose_graph ? "있음" : "없음"}</span>
+          <span className={selectedMapInfo?.has_nav2 ? "pass" : ""}>NAV2 {selectedMapInfo?.has_nav2 ? "있음" : "없음"}</span>
+          <span className={selectedMapInfo?.has_autoware ? "pass" : ""}>AUTOWARE {selectedMapInfo?.has_autoware ? "있음" : "없음"}</span>
+          <span className={selectedBagInfo?.has_metadata ? "pass" : ""}>BAG {selectedBagInfo?.has_metadata ? `DB3 ${selectedBagInfo.db3_count || 0}개` : "없음"}</span>
         </div>
         <div className="launch-options">
-          <label><input type="checkbox" checked={useRviz} onChange={(event) => setUseRviz(event.target.checked)} /> Open RViz</label>
-          <label><input type="checkbox" checked={receiveOnly} onChange={(event) => setReceiveOnly(event.target.checked)} /> Autoware receive-only</label>
-          <label><span>Replay</span><input type="number" min="0.1" max="4" step="0.1" value={replayRate} onChange={(event) => setReplayRate(Number(event.target.value))} />×</label>
-          <label><span>Nav max</span><input type="number" min="0.05" max="1.5" step="0.05" value={maxSpeed} onChange={(event) => setMaxSpeed(Number(event.target.value))} />m/s</label>
+          <label><input type="checkbox" checked={useRviz} onChange={(event) => setUseRviz(event.target.checked)} /> RViz 열기</label>
+          <label><input type="checkbox" checked={receiveOnly} onChange={(event) => setReceiveOnly(event.target.checked)} /> Autoware 수신 전용</label>
+          <label><span>재생 배속</span><input type="number" min="0.1" max="4" step="0.1" value={replayRate} onChange={(event) => setReplayRate(Number(event.target.value))} />×</label>
+          <label><span>최대 속도</span><input type="number" min="0.05" max="1.5" step="0.05" value={maxSpeed} onChange={(event) => setMaxSpeed(Number(event.target.value))} />m/s</label>
         </div>
-        {primaryRunning && <div className="primary-running"><StatusDot active /><div><span>Exclusive primary stack</span><strong>{primaryRunning.label}</strong></div><em>PID {primaryRunning.pid || "detecting"}</em></div>}
+        {primaryRunning && <div className="primary-running"><StatusDot active /><div><span>현재 실행 중인 주 스택</span><strong>{primaryRunning.label}</strong></div><em>PID {primaryRunning.pid || "확인 중"}</em></div>}
       </section>
 
       <section className="panel operation-log-panel">
-        <div className="panel-title"><div><span className="eyebrow">Live process output</span><h2>{operations.tasks.find((task) => task.id === selectedTask)?.label || "Operation log"}</h2></div><Pulse size={30} weight="duotone" /></div>
-        <div className="log-meta"><span>{log.log_path || "No log file yet"}</span><button type="button" onClick={() => setLog({ ...log })}>LIVE · 1 s</button></div>
-        <pre className="operation-log">{log.tail || "Waiting for output…"}</pre>
+        <div className="panel-title"><div><span className="eyebrow">실시간 프로세스 출력</span><h2>{operations.tasks.find((task) => task.id === selectedTask)?.label || "실행 로그"}</h2></div><Pulse size={30} weight="duotone" /></div>
+        <div className="log-meta"><span>{log.log_path || "아직 로그 파일이 없습니다"}</span><button type="button" onClick={() => setLog({ ...log })}>실시간 · 1초</button></div>
+        <pre className="operation-log">{log.tail || "출력 대기 중…"}</pre>
       </section>
 
       {groups.map((group) => (
         <section className="panel operation-group" key={group}>
-          <div className="panel-title compact-title"><div><span className="eyebrow">Allow-listed repository tasks</span><h2>{group}</h2></div><Wrench size={27} weight="duotone" /></div>
+          <div className="panel-title compact-title"><div><span className="eyebrow">허용된 저장소 작업</span><h2>{group}</h2></div><Wrench size={27} weight="duotone" /></div>
           <div className="operation-cards">
             {operations.tasks.filter((task) => task.group === group).map((task) => {
               const conflict = task.primary && primaryRunning && primaryRunning.id !== task.id;
@@ -923,14 +924,14 @@ function OperationsView({ state, onPost, demo }) {
               const passed = task.exit_code === 0;
               return (
                 <article className={`operation-card ${selectedTask === task.id ? "selected" : ""} ${task.running ? "running" : ""}`} key={task.id} onClick={() => setSelectedTask(task.id)}>
-                  <div className="operation-card-head"><div><strong>{task.label}</strong><span>{task.description}</span></div><em className={task.running ? "running" : failed ? "failed" : passed ? "passed" : "ready"}>{task.running ? "RUNNING" : failed ? `EXIT ${task.exit_code}` : passed ? "PASS" : "READY"}</em></div>
+                  <div className="operation-card-head"><div><strong>{task.label}</strong><span>{task.description}</span></div><em className={task.running ? "running" : failed ? "failed" : passed ? "passed" : "ready"}>{task.running ? "실행 중" : failed ? `오류 ${task.exit_code}` : passed ? "완료" : "실행 대기"}</em></div>
                   {task.caution && <p><Warning weight="fill" />{task.caution}</p>}
                   <div className="operation-card-foot">
-                    <span>{task.running ? `${format(task.elapsed_sec, 0)} s · PID ${task.pid || "…"}` : task.message || "Ready"}</span>
+                    <span>{task.running ? `${format(task.elapsed_sec, 0)}초 · PID ${task.pid || "…"}` : task.message || "실행 대기"}</span>
                     {task.running ? (
-                      <button className="task-stop" type="button" onClick={(event) => { event.stopPropagation(); action(task, "stop"); }}><StopCircle weight="bold" />Stop</button>
+                      <button className="task-stop" type="button" onClick={(event) => { event.stopPropagation(); action(task, "stop"); }}><StopCircle weight="bold" />종료</button>
                     ) : (
-                      <button className="task-run" type="button" disabled={selectionMissing(task) || conflict} title={conflict ? `Stop ${primaryRunning.label} first` : ""} onClick={(event) => { event.stopPropagation(); action(task, "start"); }}><PlayCircle weight="bold" />{task.primary ? "Start" : "Run"}</button>
+                      <button className="task-run" type="button" disabled={selectionMissing(task) || conflict} title={conflict ? `먼저 ${primaryRunning.label} 작업을 종료하세요` : ""} onClick={(event) => { event.stopPropagation(); action(task, "start"); }}><PlayCircle weight="bold" />실행</button>
                     )}
                   </div>
                 </article>
@@ -941,7 +942,7 @@ function OperationsView({ state, onPost, demo }) {
       ))}
 
       <section className="panel terminal-only-panel">
-        <div className="panel-title compact-title"><div><span className="eyebrow">Interactive administrator work</span><h2>Terminal confirmation required</h2></div><ShieldCheck size={27} weight="duotone" /></div>
+        <div className="panel-title compact-title"><div><span className="eyebrow">관리자 대화형 작업</span><h2>터미널 확인이 필요한 작업</h2></div><ShieldCheck size={27} weight="duotone" /></div>
         <div className="terminal-only-list">{(operations.terminal_only || []).map((item) => <span key={item}><Warning weight="fill" />{item}</span>)}</div>
       </section>
     </div>
@@ -952,23 +953,23 @@ function DiagnosticsView({ state }) {
   return (
     <div className="diagnostics-layout">
       <section className="health-grid">
-        <HealthCard icon={Broadcast} title="PCU serial feedback" health={state.health.platform} expected="20 Hz" />
-        <HealthCard icon={Robot} title="Wheel odometry" health={state.health.odometry} expected="20 Hz" />
-        <HealthCard icon={Crosshair} title="LiDAR localization" health={state.health.localization} expected="10 Hz" />
-        <HealthCard icon={WifiHigh} title="Mid-360 raw cloud" health={state.health.lidar_raw} expected="10 Hz" />
-        <HealthCard icon={WifiHigh} title="Filtered cloud" health={state.health.lidar_filtered} expected="10 Hz" />
+        <HealthCard icon={Broadcast} title="PCU 시리얼 피드백" health={state.health.platform} expected="20 Hz" />
+        <HealthCard icon={Robot} title="휠 오도메트리" health={state.health.odometry} expected="20 Hz" />
+        <HealthCard icon={Crosshair} title="LiDAR 위치추정" health={state.health.localization} expected="10 Hz" />
+        <HealthCard icon={WifiHigh} title="Mid-360 원본 포인트" health={state.health.lidar_raw} expected="10 Hz" />
+        <HealthCard icon={WifiHigh} title="필터링 포인트" health={state.health.lidar_filtered} expected="10 Hz" />
         <HealthCard icon={Pulse} title="Mid-360 IMU" health={state.health.imu} expected="100 Hz" />
-        <HealthCard icon={Path} title="Safe command" health={state.health.cmd_safe} expected="20 Hz" />
+        <HealthCard icon={Path} title="최종 안전 명령" health={state.health.cmd_safe} expected="20 Hz" />
       </section>
       <section className="panel diagnostic-list">
-        <div className="panel-title"><div><span className="eyebrow">ROS diagnostics</span><h2>{state.diagnostics.summary}</h2></div></div>
+        <div className="panel-title"><div><span className="eyebrow">ROS 진단</span><h2>{state.diagnostics.summary}</h2></div></div>
         {state.diagnostics.items.length ? state.diagnostics.items.map((item) => (
           <div className="diagnostic-row" key={item.name}>
             <StatusDot active={item.level === 0} danger={item.level >= 2} />
             <div><strong>{item.name}</strong><span>{item.message}</span>{item.hardware_id && <code>{item.hardware_id}</code>}<div className="diagnostic-values">{Object.entries(item.values || {}).map(([key, value]) => <span key={key}><b>{key}</b>{value}</span>)}</div></div>
-            <em>{["OK", "WARN", "ERROR", "STALE"][item.level] || item.level}</em>
+            <em>{["정상", "주의", "오류", "오래됨"][item.level] || item.level}</em>
           </div>
-        )) : <div className="empty-state"><Pulse size={36} weight="duotone" /><span>Waiting for `/diagnostics`</span></div>}
+        )) : <div className="empty-state"><Pulse size={36} weight="duotone" /><span>`/diagnostics` 토픽 대기 중</span></div>}
       </section>
     </div>
   );
@@ -989,7 +990,7 @@ export function App() {
   const notify = (message, success = true, isMessage = false) => {
     if (message === "arm") {
       if (demo) {
-        setToast({ message: "Demo: arm request", success: true });
+        setToast({ message: "데모: Arm 요청", success: true });
         return;
       }
       postJson("/api/arm", { armed: success })
@@ -1002,9 +1003,9 @@ export function App() {
   };
 
   const programStop = () => {
-    if (demo) return notify("Demo: zero command and Manual requested", true, true);
+    if (demo) return notify("데모: 속도 0 및 수동 전환 요청", true, true);
     postJson("/api/program-stop")
-      .then(() => notify("Zero command and Manual requested", true, true))
+      .then(() => notify("속도 0 및 수동 전환을 요청했습니다", true, true))
       .catch((error) => notify(error.message, false, true));
   };
 
@@ -1014,19 +1015,19 @@ export function App() {
       <header className="app-header">
         <div className="brand-block">
           <div className="brand-mark"><Robot weight="duotone" /></div>
-          <div><span>ROMO-B</span><strong>Operator Console</strong></div>
+          <div><span>ROMO-B</span><strong>통합 제어 콘솔</strong></div>
         </div>
         <div className="header-status">
           <span className={`connection-pill ${connected ? "online" : "offline"}`}>
             {connected ? <WifiHigh weight="bold" /> : <WifiSlash weight="bold" />}
-            {connected ? "/dev/romo_b_pcu connected" : "Waiting for PCU"}
+            {connected ? "/dev/romo_b_pcu 연결됨" : "PCU 연결 대기 중"}
           </span>
           <div className="clock"><strong>{clock.toLocaleTimeString("ko-KR", { hour12: false })}</strong><span>{clock.toLocaleDateString("ko-KR")}</span></div>
-          <button className="program-stop" title="Publish zero command and explicitly request PCU Manual" onClick={programStop}><Stop weight="fill" /><span>ZERO + MANUAL</span></button>
+          <button className="program-stop" title="속도 0 명령을 보내고 PCU 수동 전환을 요청합니다" onClick={programStop}><Stop weight="fill" /><span>정지 + 수동</span></button>
         </div>
       </header>
 
-      <nav className="tab-bar" aria-label="Operator console views">
+      <nav className="tab-bar" aria-label="로봇 제어 화면">
         {TABS.map(({ id, label, icon: Icon }) => (
           <button key={id} className={tab === id ? "active" : ""} onClick={() => setTab(id)}><Icon weight={tab === id ? "fill" : "regular"} />{label}</button>
         ))}
@@ -1034,12 +1035,12 @@ export function App() {
 
       <main className="content">
         <div className="status-ribbon">
-          <div><StatusDot active={connected} /><span>PCU link</span><strong>{connected ? "ONLINE" : "OFFLINE"}</strong></div>
-          <div><StatusDot active={state.readiness?.bridge_armed} /><span>HLV bridge</span><strong>{state.readiness?.bridge_armed ? "ARMED" : "MANUAL"}</strong></div>
-          <div><StatusDot active={state.platform.auto_mode} /><span>PCU feedback</span><strong>{state.platform.auto_mode ? "AUTO" : "MANUAL"}</strong></div>
-          <div><StatusDot active danger={state.platform.estop} /><span>Physical E-stop</span><strong>{state.platform.estop ? "ACTIVE" : "CLEAR"}</strong></div>
+          <div><StatusDot active={connected} /><span>PCU 연결</span><strong>{connected ? "정상" : "끊김"}</strong></div>
+          <div><StatusDot active={state.readiness?.bridge_armed} /><span>HLV 브리지</span><strong>{state.readiness?.bridge_armed ? "ARMED" : "수동"}</strong></div>
+          <div><StatusDot active={state.platform.auto_mode} /><span>PCU 피드백</span><strong>{state.platform.auto_mode ? "AUTO" : "수동"}</strong></div>
+          <div><StatusDot active danger={state.platform.estop} /><span>물리 비상정지</span><strong>{state.platform.estop ? "작동 중" : "해제"}</strong></div>
           <div><StatusDot active={state.health.lidar?.online} /><span>Mid-360</span><strong>{format(state.health.lidar?.rate_hz, 1)} Hz</strong></div>
-          <div><StatusDot active={state.health.localization?.online} /><span>Localization</span><strong>{state.health.localization?.online ? "TRACKING" : "WAITING"}</strong></div>
+          <div><StatusDot active={state.health.localization?.online} /><span>위치추정</span><strong>{state.health.localization?.online ? "추적 중" : "대기 중"}</strong></div>
         </div>
         {tab === "main" && <MainView state={state} onPost={notify} demo={demo} />}
         {tab === "algorithm" && <AlgorithmView />}
@@ -1051,7 +1052,7 @@ export function App() {
 
       <footer className="app-footer">
         <span>ROS 2 Humble · 115200 8N1 · UI {state.version}</span>
-        <span><StatusDot active={streamOnline || demo} />{demo ? "Demo telemetry" : streamOnline ? "Live telemetry" : "Telemetry reconnecting"}</span>
+        <span><StatusDot active={streamOnline || demo} />{demo ? "데모 상태 정보" : streamOnline ? "실시간 상태 정보" : "상태 정보 재연결 중"}</span>
       </footer>
       {toast && <div className={`toast ${toast.success ? "success" : "failure"}`}>{toast.success ? <CheckCircle weight="fill" /> : <Warning weight="fill" />}<span>{toast.message}</span></div>}
     </div>
