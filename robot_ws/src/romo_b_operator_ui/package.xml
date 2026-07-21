@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>romo_b_operator_ui</name>
-  <version>0.1.0</version>
+  <version>0.3.0</version>
   <description>Browser-based ROS 2 operator console for ROMO-B.</description>
   <maintainer email="futile-nutmegs0d@icloud.com">Jang HyunSeo</maintainer>
   <license>Proprietary</license>

@@ -33,8 +33,27 @@ import {
   PlayCircle,
 } from "@phosphor-icons/react";
 
+const DEMO_TASKS = [
+  ["live_mapping", "Live mapping", "Mapping", "Start Mid-360 + IMU + wheel odometry mapping, rosbag recording, and RViz.", "none", true],
+  ["save_live_mapping", "Save current map", "Mapping", "Optimize and save PCD, pose graph, and Nav2 occupancy map.", "map", false],
+  ["record_mapping_bag", "Record mapping bag", "Mapping", "Record all mapping and platform topics.", "none", false],
+  ["field_navigation", "Nav2 field navigation", "Navigation", "Start localization, Nav2, obstacle avoidance, and RViz.", "map", true],
+  ["autoware_field", "Autoware field", "Navigation", "Start the Autoware Universe field stack.", "map", true],
+  ["autoware_planning_sim", "Autoware planning simulation", "Navigation", "Start Autoware planning without robot hardware.", "map", true],
+  ["localization_replay", "Localization replay", "Navigation", "Replay a selected bag against the selected map.", "map_bag", false],
+  ["doctor_preflight", "Host preflight", "Validation", "Check the host and software prerequisites.", "none", false],
+  ["doctor_hardware", "Hardware doctor", "Validation", "Check PCU and Mid-360 hardware readiness.", "none", false],
+  ["mapping_calibration", "Mapping calibration probe", "Validation", "Compare LiDAR, IMU, wheel odometry, and timing.", "none", false],
+  ["nav2_preflight", "Nav2 map preflight", "Validation", "Validate lifecycle and planning on the selected map.", "map", false],
+  ["autoware_validation", "Autoware validation suite", "Validation", "Run the full isolated Autoware validation suite.", "map", false],
+  ["build_project", "Build ROMO-B workspace", "Build & data", "Build repository ROS 2 packages.", "none", false],
+  ["prepare_autoware_map", "Prepare Autoware map", "Build & data", "Generate the Lanelet2 and PCD map bundle.", "map", false],
+].map(([id, label, group, description, selection, primary]) => ({
+  id, label, group, description, selection, primary, caution: "", running: id === "field_navigation", owned_by_ui: id === "field_navigation", pids: id === "field_navigation" ? [24831] : [], pid: id === "field_navigation" ? 24831 : null, elapsed_sec: id === "field_navigation" ? 128.4 : null, exit_code: null, log_path: id === "field_navigation" ? "/home/hyunseo/ROMO-B/data/local/logs/operator-field.log" : "", message: id === "field_navigation" ? "Running" : "Ready",
+}));
+
 const DEMO_STATE = {
-  version: "0.2.0",
+  version: "0.3.0",
   platform: {
     state: 2,
     state_name: "ARMED_AUTO",
@@ -144,6 +163,14 @@ const DEMO_STATE = {
     ],
   },
   runtime: { field_running: true, field_pids: [24831], owned_by_ui: true, log_path: "/home/hyunseo/ROMO-B/data/local/logs/operator-field.log" },
+  operations: {
+    tasks: DEMO_TASKS,
+    artifacts: {
+      maps: [{ id: "mapping-20260721-134953", path: "/home/hyunseo/ROMO-B/data/local/maps/mapping-20260721-134953", ready_nav2: true, has_pcd: true, has_pose_graph: true, has_nav2: true, has_autoware: true }],
+      bags: [{ id: "mapping-20260721-134953", path: "/home/hyunseo/ROMO-B/data/local/bags/mapping-20260721-134953", has_metadata: true, db3_count: 1 }],
+    },
+    terminal_only: ["Host package installation", "udev/network apply", "Autoware source installation"],
+  },
   graph: { node_count: 31, topic_count: 84, nodes: ["/romo_b_serial_bridge", "/controller_server", "/planner_server", "/lidar_localization_node", "/livox_lidar_publisher"] },
   host: { hostname: "hyunseo-2204", load_1m: 2.14, memory_used_gb: 9.8, memory_total_gb: 31.1, uptime_hours: 18.4, gpu: { available: true, name: "NVIDIA GPU", utilization_percent: 28, memory_used_mb: 1140, memory_total_mb: 4096, temperature_c: 51 } },
 };
@@ -185,6 +212,7 @@ const EMPTY_STATE = {
   },
   readiness: { ...DEMO_STATE.readiness, bridge_armed: false, pcu_auto_confirmed: false, ready_to_arm: false, control_ready: false, checks: DEMO_STATE.readiness.checks.map((item) => ({ ...item, ok: false })) },
   runtime: { field_running: false, field_pids: [], owned_by_ui: false, log_path: "" },
+  operations: { ...DEMO_STATE.operations, tasks: DEMO_TASKS.map((task) => ({ ...task, running: false, owned_by_ui: false, pids: [], pid: null, elapsed_sec: null, log_path: "", message: "Ready" })) },
   graph: { node_count: 1, topic_count: 0, nodes: ["/romo_b_operator_ui"] },
   host: { hostname: "hyunseo-2204", load_1m: 0, memory_used_gb: 0, memory_total_gb: 0, uptime_hours: 0, gpu: { available: false } },
 };
@@ -193,6 +221,7 @@ const TABS = [
   { id: "main", label: "Main", icon: Gauge },
   { id: "algorithm", label: "Platform control algorithm", icon: Wrench },
   { id: "navigation", label: "Navigation", icon: MapPin },
+  { id: "operations", label: "Operations", icon: PlayCircle },
   { id: "system", label: "System control", icon: ListChecks },
   { id: "diagnostics", label: "Diagnostics", icon: Pulse },
 ];
@@ -310,6 +339,13 @@ function CommandPanel({ state, onPost, demo }) {
   useEffect(() => {
     setSteer((value) => Math.max(-steerLimit, Math.min(steerLimit, value)));
   }, [steerLimit]);
+
+  useEffect(() => {
+    const backendMode = state.command?.mode;
+    if (!state.command?.active && ["2wis", "4wis", "pivot"].includes(backendMode)) {
+      setMode(backendMode);
+    }
+  }, [state.command?.mode, state.command?.active]);
 
   const drive = (payload) => {
     if (demo) return;
@@ -781,6 +817,137 @@ function SystemView({ state, onPost, demo }) {
   );
 }
 
+function OperationsView({ state, onPost, demo }) {
+  const operations = state.operations || { tasks: [], artifacts: { maps: [], bags: [] }, terminal_only: [] };
+  const maps = operations.artifacts?.maps || [];
+  const bags = operations.artifacts?.bags || [];
+  const [selectedMap, setSelectedMap] = useState("");
+  const [selectedBag, setSelectedBag] = useState("");
+  const [selectedTask, setSelectedTask] = useState("field_navigation");
+  const [log, setLog] = useState({ log_path: "", tail: "Select an operation to inspect its output." });
+  const [useRviz, setUseRviz] = useState(true);
+  const [receiveOnly, setReceiveOnly] = useState(true);
+  const [replayRate, setReplayRate] = useState(1.0);
+  const [maxSpeed, setMaxSpeed] = useState(0.5);
+  const mapIds = maps.map((item) => item.id).join("|");
+  const bagIds = bags.map((item) => item.id).join("|");
+
+  useEffect(() => {
+    if (maps.length && !maps.some((item) => item.id === selectedMap)) {
+      setSelectedMap((maps.find((item) => item.ready_nav2) || maps[0]).id);
+    }
+  }, [mapIds, selectedMap]);
+
+  useEffect(() => {
+    if (bags.length && !bags.some((item) => item.id === selectedBag)) {
+      setSelectedBag(bags[0].id);
+    }
+  }, [bagIds, selectedBag]);
+
+  useEffect(() => {
+    if (demo) {
+      setLog({ log_path: "/home/hyunseo/ROMO-B/data/local/logs/operator-demo.log", tail: "[INFO] Browser operation runner ready\n[INFO] Commands are allow-listed and logs stream here\n[INFO] Select a task and press Start / Run" });
+      return undefined;
+    }
+    let mounted = true;
+    const refresh = () => fetch(`/api/operations/${selectedTask}/log`)
+      .then((response) => response.json())
+      .then((data) => mounted && setLog(data))
+      .catch((error) => mounted && setLog({ log_path: "", tail: error.message }));
+    refresh();
+    const timer = window.setInterval(refresh, 1000);
+    return () => { mounted = false; window.clearInterval(timer); };
+  }, [selectedTask, demo]);
+
+  const primaryRunning = operations.tasks.find((task) => task.primary && task.running);
+  const action = (task, verb) => {
+    setSelectedTask(task.id);
+    if (demo) return onPost(`Demo: ${task.label} ${verb}`, true, true);
+    const payload = {
+      map_id: selectedMap,
+      bag_id: selectedBag,
+      use_rviz: useRviz,
+      receive_only: receiveOnly,
+      rate: replayRate,
+      max_speed_mps: maxSpeed,
+    };
+    postJson(`/api/operations/${task.id}/${verb}`, payload)
+      .then((result) => onPost(result.message, true, true))
+      .catch((error) => onPost(error.message, false, true));
+  };
+  const selectionMissing = (task) => (
+    (task.selection === "map" && !selectedMap)
+    || (task.selection === "map_bag" && (!selectedMap || !selectedBag))
+  );
+  const groups = ["Mapping", "Navigation", "Validation", "Build & data"];
+  const selectedMapInfo = maps.find((item) => item.id === selectedMap);
+  const selectedBagInfo = bags.find((item) => item.id === selectedBag);
+
+  return (
+    <div className="operations-layout">
+      <section className="panel operations-config">
+        <div className="panel-title"><div><span className="eyebrow">Browser workflow control</span><h2>Artifacts & launch settings</h2></div><MapTrifold size={30} weight="duotone" /></div>
+        <div className="artifact-selectors">
+          <label><span>Map run</span><select value={selectedMap} onChange={(event) => setSelectedMap(event.target.value)}><option value="">No map found</option>{maps.map((item) => <option value={item.id} key={item.id}>{item.id}{item.ready_nav2 ? " · Nav2 ready" : " · incomplete"}{item.has_autoware ? " · Autoware" : ""}</option>)}</select></label>
+          <label><span>Rosbag</span><select value={selectedBag} onChange={(event) => setSelectedBag(event.target.value)}><option value="">No bag found</option>{bags.map((item) => <option value={item.id} key={item.id}>{item.id}{item.has_metadata ? " · ready" : " · recording/incomplete"}</option>)}</select></label>
+        </div>
+        <div className="artifact-facts">
+          <span className={selectedMapInfo?.has_pcd ? "pass" : ""}>PCD {selectedMapInfo?.has_pcd ? "YES" : "NO"}</span>
+          <span className={selectedMapInfo?.has_pose_graph ? "pass" : ""}>POSE GRAPH {selectedMapInfo?.has_pose_graph ? "YES" : "NO"}</span>
+          <span className={selectedMapInfo?.has_nav2 ? "pass" : ""}>NAV2 {selectedMapInfo?.has_nav2 ? "YES" : "NO"}</span>
+          <span className={selectedMapInfo?.has_autoware ? "pass" : ""}>AUTOWARE {selectedMapInfo?.has_autoware ? "YES" : "NO"}</span>
+          <span className={selectedBagInfo?.has_metadata ? "pass" : ""}>BAG {selectedBagInfo?.has_metadata ? `${selectedBagInfo.db3_count || 0} DB3` : "NO"}</span>
+        </div>
+        <div className="launch-options">
+          <label><input type="checkbox" checked={useRviz} onChange={(event) => setUseRviz(event.target.checked)} /> Open RViz</label>
+          <label><input type="checkbox" checked={receiveOnly} onChange={(event) => setReceiveOnly(event.target.checked)} /> Autoware receive-only</label>
+          <label><span>Replay</span><input type="number" min="0.1" max="4" step="0.1" value={replayRate} onChange={(event) => setReplayRate(Number(event.target.value))} />×</label>
+          <label><span>Nav max</span><input type="number" min="0.05" max="1.5" step="0.05" value={maxSpeed} onChange={(event) => setMaxSpeed(Number(event.target.value))} />m/s</label>
+        </div>
+        {primaryRunning && <div className="primary-running"><StatusDot active /><div><span>Exclusive primary stack</span><strong>{primaryRunning.label}</strong></div><em>PID {primaryRunning.pid || "detecting"}</em></div>}
+      </section>
+
+      <section className="panel operation-log-panel">
+        <div className="panel-title"><div><span className="eyebrow">Live process output</span><h2>{operations.tasks.find((task) => task.id === selectedTask)?.label || "Operation log"}</h2></div><Pulse size={30} weight="duotone" /></div>
+        <div className="log-meta"><span>{log.log_path || "No log file yet"}</span><button type="button" onClick={() => setLog({ ...log })}>LIVE · 1 s</button></div>
+        <pre className="operation-log">{log.tail || "Waiting for output…"}</pre>
+      </section>
+
+      {groups.map((group) => (
+        <section className="panel operation-group" key={group}>
+          <div className="panel-title compact-title"><div><span className="eyebrow">Allow-listed repository tasks</span><h2>{group}</h2></div><Wrench size={27} weight="duotone" /></div>
+          <div className="operation-cards">
+            {operations.tasks.filter((task) => task.group === group).map((task) => {
+              const conflict = task.primary && primaryRunning && primaryRunning.id !== task.id;
+              const failed = task.exit_code !== null && task.exit_code !== undefined && task.exit_code !== 0;
+              const passed = task.exit_code === 0;
+              return (
+                <article className={`operation-card ${selectedTask === task.id ? "selected" : ""} ${task.running ? "running" : ""}`} key={task.id} onClick={() => setSelectedTask(task.id)}>
+                  <div className="operation-card-head"><div><strong>{task.label}</strong><span>{task.description}</span></div><em className={task.running ? "running" : failed ? "failed" : passed ? "passed" : "ready"}>{task.running ? "RUNNING" : failed ? `EXIT ${task.exit_code}` : passed ? "PASS" : "READY"}</em></div>
+                  {task.caution && <p><Warning weight="fill" />{task.caution}</p>}
+                  <div className="operation-card-foot">
+                    <span>{task.running ? `${format(task.elapsed_sec, 0)} s · PID ${task.pid || "…"}` : task.message || "Ready"}</span>
+                    {task.running ? (
+                      <button className="task-stop" type="button" onClick={(event) => { event.stopPropagation(); action(task, "stop"); }}><StopCircle weight="bold" />Stop</button>
+                    ) : (
+                      <button className="task-run" type="button" disabled={selectionMissing(task) || conflict} title={conflict ? `Stop ${primaryRunning.label} first` : ""} onClick={(event) => { event.stopPropagation(); action(task, "start"); }}><PlayCircle weight="bold" />{task.primary ? "Start" : "Run"}</button>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ))}
+
+      <section className="panel terminal-only-panel">
+        <div className="panel-title compact-title"><div><span className="eyebrow">Interactive administrator work</span><h2>Terminal confirmation required</h2></div><ShieldCheck size={27} weight="duotone" /></div>
+        <div className="terminal-only-list">{(operations.terminal_only || []).map((item) => <span key={item}><Warning weight="fill" />{item}</span>)}</div>
+      </section>
+    </div>
+  );
+}
+
 function DiagnosticsView({ state }) {
   return (
     <div className="diagnostics-layout">
@@ -877,6 +1044,7 @@ export function App() {
         {tab === "main" && <MainView state={state} onPost={notify} demo={demo} />}
         {tab === "algorithm" && <AlgorithmView />}
         {tab === "navigation" && <NavigationView state={state} onPost={notify} demo={demo} />}
+        {tab === "operations" && <OperationsView state={state} onPost={notify} demo={demo} />}
         {tab === "system" && <SystemView state={state} onPost={notify} demo={demo} />}
         {tab === "diagnostics" && <DiagnosticsView state={state} />}
       </main>

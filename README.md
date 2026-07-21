@@ -101,7 +101,11 @@ The persistent ROMO-B operator console at `http://127.0.0.1:8765/` can start
 or stop the complete field stack, request Arm/Manual, set initial pose and a
 Nav2 goal, run waypoint routes, and show dense PCU/ROS diagnostics. Its signed
 hold-to-run control supports 2WIS, 4WIS, and Pivot without bypassing the existing
-`twist_mux`, smoother, and Collision Monitor command chain.
+`twist_mux`, smoother, and Collision Monitor command chain. Its **Operations**
+tab also starts/stops live mapping, map save, rosbag recording, Nav2/Autoware,
+replay, diagnostics, validation, and builds while showing PID, exit status, and
+live logs. The selected steering mode is maintained at 20 Hz even after a
+forward/reverse hold is released.
 
 ## Autoware corridor runtime
 

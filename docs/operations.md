@@ -58,14 +58,20 @@ software arm request from PCU-confirmed Auto feedback. It shows every Auto-entry
 condition, all wheel speeds and steering angles, Alive counters, and signed
 forward/reverse deadman control for 2WIS, 4WIS, and Pivot. Motion is sent only
 while the on-screen button is held, at 20 Hz through `/cmd_vel_teleop`; releasing
-it sends zero. Selecting a steering mode first requests that mode at zero speed,
-so PCU feedback and all four steering readouts update before motion.
+it sends zero while the selected steering-mode request continues at 20 Hz.
+Selecting 4WIS or Pivot therefore stays selected across forward/reverse holds;
+if the browser control node disappears, the bridge timeout still returns to
+2WIS.
 **ZERO + MANUAL** is an explicit operator action. The UI never
 exposes or transmits a software E-stop command. The **Navigation** tab sets an
 initial map pose, submits/cancels a direct Nav2 goal, and manages waypoint routes.
 The **System control** tab starts/stops the full field stack and shows the command
 pipeline, sensors, node graph, and log path. **Diagnostics** includes all ROS
-diagnostic key/value pairs.
+diagnostic key/value pairs. **Operations** exposes allow-listed buttons for live
+mapping, map save, bag recording, Nav2/Autoware launch, localization replay,
+software checks, builds, and map preparation, with artifact selectors, conflict
+handling, PID, exit status, and live logs. Privileged host setup remains
+terminal-only.
 `source_env.sh` selects Cyclone DDS on configured hosts; set
 `ROMO_B_RMW_IMPLEMENTATION=rmw_fastrtps_cpp` only for an intentional fallback.
 

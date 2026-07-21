@@ -13,6 +13,7 @@ ExecStart=%h/ROMO-B/scripts/run_operator_ui.sh
 Restart=on-failure
 RestartSec=2
 TimeoutStopSec=5
+KillMode=process
 
 [Install]
 WantedBy=default.target

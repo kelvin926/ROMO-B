@@ -54,4 +54,4 @@ exec ros2 launch romo_b_bringup mapping_live.launch.py \
   save_dir:="$map_dir" \
   bag_path:="$bag_dir" \
   record_bag:=true \
-  use_rviz:=true
+  use_rviz:="${USE_RVIZ:-true}"

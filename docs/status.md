@@ -123,6 +123,10 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   command-pipeline telemetry, and all diagnostic key/value pairs. Manual
   deadman control and the serial bridge support signed 2WIS, counter-phase 4WIS,
   and Pivot; rear steering feedback is displayed for both all-wheel modes.
+- Browser steering-mode requests are now maintained independently at 20 Hz, so
+  4WIS/Pivot no longer revert to 2WIS when a forward/reverse hold is released.
+  The Operations tab covers mapping, recording, navigation, Autoware, replay,
+  validation, build, artifact selection, conflict handling, PID, and live logs.
 - The first live full-stack attempt exposed a duplicate bench bridge and raw
   Mid-360 acceleration integration. The launcher now refuses to start beside an
   existing bridge, EKF uses wheel odometry only until IMU bias/covariance are

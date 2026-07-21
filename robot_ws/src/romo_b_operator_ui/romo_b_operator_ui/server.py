@@ -35,6 +35,7 @@ from .model import (
     state_name,
     uint8_value,
 )
+from .operations import OperationManager
 
 
 def _yaw_from_quaternion(quaternion) -> float:
@@ -163,7 +164,7 @@ class FieldRuntime:
 class OperatorNode(Node):
     def __init__(self, repo_root: pathlib.Path):
         super().__init__("romo_b_operator_ui")
-        self._runtime = FieldRuntime(repo_root)
+        self._operations = OperationManager(repo_root)
         self._lock = threading.RLock()
         self._command_deadline = 0.0
         self._last_command_was_active = False
@@ -181,7 +182,7 @@ class OperatorNode(Node):
             "cmd_safe": deque(maxlen=40),
         }
         self._state = {
-            "version": "0.2.0",
+            "version": "0.3.0",
             "platform": {
                 "state": 0,
                 "state_name": "DISCONNECTED",
@@ -566,8 +567,13 @@ class OperatorNode(Node):
             self._state["command"]["active"] = active
             should_send_zero = self._last_command_was_active and not active
             self._last_command_was_active = active
+        # Steering mode is a maintained PCU command, not a one-shot event.  The
+        # bridge intentionally expires a missing mode request after 0.6 s, so
+        # keep the selected mode alive at this timer's 20 Hz even while the
+        # dead-man drive command is released.  If this UI process dies, the
+        # bridge timeout still returns the platform to its 2WIS fallback.
+        self._publish_mode(command["mode"])
         if active:
-            self._publish_mode(command["mode"])
             if command["mode"] == "pivot":
                 linear, angular = pivot_twist(command["pivot_rate_radps"])
             elif command["mode"] == "4wis":
@@ -580,7 +586,6 @@ class OperatorNode(Node):
                 )
             self._publish_twist(linear, angular)
         elif should_send_zero:
-            self._publish_mode(command["mode"])
             self._publish_twist(0.0, 0.0)
 
     def set_drive_command(self, payload: dict) -> dict:
@@ -616,6 +621,8 @@ class OperatorNode(Node):
             self._state["navigation"]["last_action_success"] = bool(success)
 
     def set_arm(self, armed: bool) -> dict:
+        if not armed:
+            self.stop_motion()
         if not self._arm_client.service_is_ready():
             self._set_operation("Arm service is unavailable", False)
             return {"accepted": False, "message": "Arm service is unavailable"}
@@ -761,16 +768,37 @@ class OperatorNode(Node):
         self._set_operation("Navigation goal cancel requested", True)
         return {"accepted": True, "message": "Navigation goal cancel requested"}
 
-    def runtime_action(self, action: str) -> dict:
+    def runtime_action(self, action: str, payload: dict | None = None) -> dict:
         if action == "start":
-            result = self._runtime.start()
+            result = self._operations.start("field_navigation", payload or {})
         elif action == "stop":
             self.stop_motion()
-            result = self._runtime.stop()
+            result = self._operations.stop("field_navigation")
         else:
             raise ValueError(f"Unknown runtime action: {action}")
         self._set_operation(result["message"], result["accepted"])
         return result
+
+    def operation_action(
+        self, operation_id: str, action: str, payload: dict | None = None
+    ) -> dict:
+        if action == "start":
+            result = self._operations.start(operation_id, payload or {})
+        elif action == "stop":
+            if operation_id in (
+                "field_navigation",
+                "autoware_field",
+                "autoware_planning_sim",
+            ):
+                self.stop_motion()
+            result = self._operations.stop(operation_id)
+        else:
+            raise ValueError(f"Unknown operation action: {action}")
+        self._set_operation(result["message"], result["accepted"])
+        return result
+
+    def operation_log(self, operation_id: str) -> dict:
+        return self._operations.log_tail(operation_id)
 
     def stop_motion(self) -> None:
         with self._lock:
@@ -778,6 +806,7 @@ class OperatorNode(Node):
             self._state["command"].update(
                 {
                     "active": False,
+                    "mode": "2wis",
                     "speed_mps": 0.0,
                     "steer_deg": 0.0,
                     "pivot_rate_radps": 0.0,
@@ -889,7 +918,19 @@ class OperatorNode(Node):
             and not platform["estop"],
             "checks": checks,
         }
-        state["runtime"] = self._runtime.status()
+        operations = self._operations.snapshot()
+        state["operations"] = operations
+        field = next(
+            task
+            for task in operations["tasks"]
+            if task["id"] == "field_navigation"
+        )
+        state["runtime"] = {
+            "field_running": field["running"],
+            "field_pids": field["pids"],
+            "owned_by_ui": field["owned_by_ui"],
+            "log_path": field["log_path"],
+        }
         return state
 
 
@@ -966,8 +1007,27 @@ def create_app(node: OperatorNode, web_root: pathlib.Path) -> Flask:
     @app.post("/api/runtime/field/<action>")
     def runtime_field(action: str):
         try:
-            result = node.runtime_action(action)
+            result = node.runtime_action(
+                action, request.get_json(silent=True) or {}
+            )
             return jsonify(result), 202 if result["accepted"] else 409
+        except ValueError as error:
+            return jsonify({"accepted": False, "message": str(error)}), 400
+
+    @app.post("/api/operations/<operation_id>/<action>")
+    def operation_action(operation_id: str, action: str):
+        try:
+            result = node.operation_action(
+                operation_id, action, request.get_json(silent=True) or {}
+            )
+            return jsonify(result), 202 if result["accepted"] else 409
+        except ValueError as error:
+            return jsonify({"accepted": False, "message": str(error)}), 400
+
+    @app.get("/api/operations/<operation_id>/log")
+    def operation_log(operation_id: str):
+        try:
+            return jsonify(node.operation_log(operation_id))
         except ValueError as error:
             return jsonify({"accepted": False, "message": str(error)}), 404
 
