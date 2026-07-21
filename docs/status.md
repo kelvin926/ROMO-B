@@ -73,6 +73,15 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   Mid-360 IMU and wheel odometry. Their yaw rates have 97.61% sign agreement
   and 0.974 correlation, so the current zero-yaw LiDAR mounting and odometry
   yaw sign are consistent and must not be inverted.
+- A repeat analysis on 2026-07-21 paired 1,799 moving samples from that same
+  physical bag: yaw correlation was 0.9741 and sign agreement was 97.78%.
+  `check_mapping_calibration.py` now repeats the live rate, time, stationary
+  bias, gravity, yaw sign/scale, and extrinsic checks without sending commands.
+- `run_live_mapping.sh` now provides receive-only live mapping while the
+  operator drives in RC Manual. It combines Mid-360 LiDAR+IMU in RKO-LIO,
+  records wheel odometry as an independent check, shows the live local map in
+  RViz, and records a raw recovery bag. `save_live_mapping.sh` optimizes and
+  saves both PCD/pose graph and the Nav2 occupancy map.
 - The first RC-Manual mapping bag (`mapping-20260717-195653`) passed SQLite and
   topic-count checks: 381.83 seconds, 3,818 clouds, 76,359 normalized IMU
   samples, and 7,448 wheel-odometry samples.

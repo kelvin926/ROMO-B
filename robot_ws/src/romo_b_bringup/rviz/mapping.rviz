@@ -55,6 +55,22 @@ Visualization Manager:
       Topic: /modified_map
       Unreliable: false
       Use Fixed Frame: true
+    - Alpha: 0.75
+      Class: rviz_default_plugins/PointCloud2
+      Color: 255; 210; 80
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: true
+      Name: Live local map
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: false
+      Size (Pixels): 2
+      Size (m): 0.025
+      Style: Flat Squares
+      Topic: /rko_lio/local_map
+      Unreliable: false
+      Use Fixed Frame: true
     - Alpha: 1
       Buffer Length: 1
       Class: rviz_default_plugins/Path

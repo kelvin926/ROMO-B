@@ -107,6 +107,52 @@ then call `/map_save`. A successful run must leave non-empty `map.pcd` and
 remain alive while draining its tail buffer after the final scan; once `/map_save`
 has succeeded and the two files are stable, stop the launch with Ctrl+C.
 
+For live mapping while an operator drives in RC Manual, connect both hardware
+links and run:
+
+```bash
+cd /home/hyunseo/ROMO-B
+./scripts/run_live_mapping.sh
+```
+
+Keep the robot motionless until `/rko_lio/odometry` starts. The launch opens the
+PCU in receive-only mode, starts the Mid-360, RKO-LIO, graph SLAM, RViz, and a
+raw recovery bag. It cannot arm the robot or send a motion command. The yellow
+`Live local map` in RViz updates during driving; the white optimized map is
+updated by graph optimization and final save.
+
+In a second terminal, validate the currently connected sensors. Keep still for
+phase 1, then make gentle left and right turns in RC Manual during phase 2:
+
+```bash
+cd /home/hyunseo/ROMO-B
+source scripts/source_env.sh
+python3 scripts/check_mapping_calibration.py --require-lio
+```
+
+This checks acquisition rates, frames, point timestamp support, LiDAR/IMU time
+alignment, stationary gyro bias and gravity scale, wheel zero speed, IMU/wheel
+yaw sign/correlation/scale, RKO-LIO output, and agreement between the measured
+hardware transform and the RKO-LIO transform. It only subscribes; it never
+publishes a command.
+
+Before stopping the mapping terminal, save and generate the Nav2 occupancy map:
+
+```bash
+./scripts/save_live_mapping.sh
+```
+
+The save helper selects the newest `data/local/maps/mapping-*` directory unless
+the exact path printed by `run_live_mapping.sh` is passed as its argument.
+
+Mapping does not indiscriminately mix all three motion estimates. RKO-LIO
+tightly combines the raw LiDAR and the Mid-360 IMU and owns `odom -> base_link`.
+Graph SLAM consumes that fused odometry plus deskewed clouds. Wheel odometry is
+recorded and used as an independent yaw/scale cross-check. The navigation EKF
+uses wheel odometry; raw Mid-360 acceleration remains excluded there because
+past direct integration caused odometry divergence. This separation prevents
+duplicate TF ownership and double-counting one motion estimate.
+
 The tracked mapping RViz profile uses `map` as its fixed frame and displays
 `/rko_lio/frame`, `/rko_lio/odometry`, `/modified_map`, and `/modified_path`.
 The identity `map -> odom` transform in that launch exists only for offline map
