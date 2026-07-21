@@ -24,6 +24,13 @@ for required in "$pcd_map" "$map_yaml" "$waypoint_file" "$hardware_config" "$liv
   fi
 done
 
+use_operator_ui="${USE_OPERATOR_UI:-true}"
+if [[ "$use_operator_ui" == "true" ]] && ros2 node list 2>/dev/null | grep -Fxq /romo_b_operator_ui; then
+  printf '%s\n' \
+    'An operator console is already running at http://127.0.0.1:8765/; reusing it.'
+  use_operator_ui=false
+fi
+
 exec ros2 launch romo_b_bringup field_navigation.launch.py \
   hardware_config:="$hardware_config" \
   livox_config:="$livox_config" \
@@ -31,6 +38,6 @@ exec ros2 launch romo_b_bringup field_navigation.launch.py \
   map:="$map_yaml" \
   waypoint_file:="$waypoint_file" \
   max_speed_mps:="${MAX_SPEED_MPS:-0.5}" \
-  use_operator_ui:="${USE_OPERATOR_UI:-true}" \
+  use_operator_ui:="$use_operator_ui" \
   open_operator_ui_browser:="${OPEN_OPERATOR_UI_BROWSER:-true}" \
   use_rviz:="${USE_RVIZ:-true}"

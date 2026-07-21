@@ -9,6 +9,7 @@ from romo_b_operator_ui.model import (
     mode_name,
     pivot_twist,
     state_name,
+    uint8_value,
 )
 
 
@@ -29,3 +30,9 @@ def test_pivot_and_labels():
     assert pivot_twist(2.0) == (0.0, MAX_PIVOT_RATE_RADPS)
     assert mode_name(2) == "PIVOT"
     assert state_name(2) == "ARMED_AUTO"
+
+
+def test_ros_uint8_accepts_integer_and_byte_representations():
+    assert uint8_value(2) == 2
+    assert uint8_value(b"\x00") == 0
+    assert uint8_value(bytearray([3])) == 3

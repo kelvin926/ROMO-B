@@ -8,6 +8,13 @@ MAX_STEER_DEG = 22.0
 MAX_PIVOT_RATE_RADPS = 0.75
 
 
+def uint8_value(value) -> int:
+    """Normalize ROS uint8 values exposed as either int or one-byte data."""
+    if isinstance(value, (bytes, bytearray, memoryview)):
+        return int(value[0]) if value else 0
+    return int(value)
+
+
 def clamp(value: float, lower: float, upper: float) -> float:
     return max(lower, min(upper, float(value)))
 

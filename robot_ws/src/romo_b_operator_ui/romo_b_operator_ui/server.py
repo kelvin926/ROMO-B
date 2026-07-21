@@ -21,7 +21,7 @@ from romo_b_msgs.msg import PlatformStatus
 from sensor_msgs.msg import PointCloud2
 from std_srvs.srv import SetBool, Trigger
 
-from .model import ackermann_twist, mode_name, pivot_twist, state_name
+from .model import ackermann_twist, mode_name, pivot_twist, state_name, uint8_value
 
 
 def _yaw_from_quaternion(quaternion) -> float:
@@ -171,7 +171,7 @@ class OperatorNode(Node):
             (
                 {
                     "name": status.name,
-                    "level": int(status.level),
+                    "level": uint8_value(status.level),
                     "message": status.message,
                 }
                 for status in message.status
@@ -435,7 +435,15 @@ def main(args=None):
 
     executor = MultiThreadedExecutor(num_threads=2)
     executor.add_node(node)
-    spin_thread = threading.Thread(target=executor.spin, daemon=True)
+
+    def spin_ros():
+        while rclpy.ok():
+            try:
+                executor.spin_once(timeout_sec=0.2)
+            except Exception as error:
+                node.get_logger().error(f"ROS callback failed but UI remains active: {error}")
+
+    spin_thread = threading.Thread(target=spin_ros, daemon=True)
     spin_thread.start()
     app = create_app(node, web_root)
     logging.getLogger("werkzeug").setLevel(logging.ERROR)
