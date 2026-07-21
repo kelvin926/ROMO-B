@@ -1,0 +1,29 @@
+schema_version: 1
+id: mapping-20260721-134953-bag
+type: rosbag
+created_at: '2026-07-21T05:06:42.769239+00:00'
+source_filename: mapping-20260721-134953_0.db3
+sensor:
+  model: Livox Mid-360
+  serial: pending
+  pointcloud_rate_hz: 10.0
+  imu_rate_hz: 200.0
+  transform_base_link_xyz_m: [0.27, 0.0, 0.258]
+  transform_base_link_rpy_rad: [0.0, 0.0, 0.0]
+frames:
+  fixed: map
+  sensor: livox_frame
+size_bytes: 1416769536
+sha256: b35068827502bbe3ed01ac87c43ee2dce6ac2f4868c78516ac79f9caca2d2c73
+uri: pending
+recording:
+  started_at: '2026-07-21T13:49:54.693345593+09:00'
+  duration_sec: 176.928598996
+  storage: sqlite3
+  message_count: 93320
+  pointcloud_count: 1741
+  normalized_imu_count: 34950
+  wheel_odometry_count: 3429
+  rko_lio_odometry_count: 1708
+validation:
+  note: RC-Manual live mapping run; database excluded from Git by size policy.

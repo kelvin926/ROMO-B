@@ -1,0 +1,203 @@
+diff --git a/include/lidar_localization/measurement_gate_policy.hpp b/include/lidar_localization/measurement_gate_policy.hpp
+index 48a0ff8..4ddc329 100644
+--- a/include/lidar_localization/measurement_gate_policy.hpp
++++ b/include/lidar_localization/measurement_gate_policy.hpp
+@@ -3,6 +3,7 @@
+ 
+ #include <cstddef>
+ #include <cstdint>
++#include <cmath>
+ #include <string>
+ 
+ namespace lidar_localization
+@@ -16,6 +17,10 @@ struct MeasurementGateParams
+   double score_threshold{2.0};
+   bool reject_above_score_threshold{true};
+ 
++  bool enable_correction_rejection_gate{false};
++  double correction_rejection_max_translation_m{2.0};
++  double correction_rejection_max_yaw_deg{20.0};
++
+   bool enable_consistency_recovery_gate{false};
+   int consistency_recovery_min_rejections{10};
+   double consistency_recovery_score_margin{2.0};
+@@ -57,6 +62,10 @@ struct MeasurementGateParamConfig
+   double score_threshold{2.0};
+   bool reject_above_score_threshold{true};
+ 
++  bool enable_correction_rejection_gate{false};
++  double correction_rejection_max_translation_m{2.0};
++  double correction_rejection_max_yaw_deg{20.0};
++
+   bool enable_consistency_recovery_gate{false};
+   int consistency_recovery_min_rejections{10};
+   double consistency_recovery_score_margin{2.0};
+@@ -98,6 +107,7 @@ struct MeasurementGateDecision
+   bool post_reject_strict_active{false};
+   bool open_loop_strict_active{false};
+   bool borderline_seed_gate_active{false};
++  bool correction_rejection_gate_active{false};
+   bool rejected_seed_update_applied{false};
+   double effective_score_threshold{0.0};
+ };
+@@ -108,6 +118,10 @@ inline MeasurementGateParams makeMeasurementGateParams(
+   MeasurementGateParams params;
+   params.score_threshold = config.score_threshold;
+   params.reject_above_score_threshold = config.reject_above_score_threshold;
++  params.enable_correction_rejection_gate = config.enable_correction_rejection_gate;
++  params.correction_rejection_max_translation_m =
++    config.correction_rejection_max_translation_m;
++  params.correction_rejection_max_yaw_deg = config.correction_rejection_max_yaw_deg;
+   params.enable_consistency_recovery_gate = config.enable_consistency_recovery_gate;
+   params.consistency_recovery_min_rejections =
+     config.consistency_recovery_min_rejections;
+@@ -220,14 +234,25 @@ inline MeasurementGateDecision evaluateMeasurementGate(
+   gate.open_loop_strict_active = threshold_decision.open_loop_strict_active;
+   gate.borderline_seed_gate_active =
+     isBorderlineSeedGateActive(params, input, gate.effective_score_threshold);
++  gate.correction_rejection_gate_active =
++    params.enable_correction_rejection_gate &&
++    ((std::isfinite(input.correction_translation_m) &&
++    input.correction_translation_m > params.correction_rejection_max_translation_m) ||
++    (std::isfinite(input.correction_yaw_deg) &&
++    input.correction_yaw_deg > params.correction_rejection_max_yaw_deg));
+ 
+   const bool threshold_exceeded = input.fitness_score > gate.effective_score_threshold;
+-  if (!threshold_exceeded && !gate.borderline_seed_gate_active) {
++  if (
++    !threshold_exceeded && !gate.borderline_seed_gate_active &&
++    !gate.correction_rejection_gate_active)
++  {
+     return gate;
+   }
+ 
+   gate.status_level = kMeasurementGateWarn;
+-  if (gate.borderline_seed_gate_active) {
++  if (gate.correction_rejection_gate_active) {
++    gate.status_message = "registration_correction_over_limit_rejected";
++  } else if (gate.borderline_seed_gate_active) {
+     gate.status_message = params.reject_above_score_threshold ?
+       "fitness_score_over_borderline_seed_gate_rejected" :
+       "fitness_score_over_borderline_seed_gate";
+@@ -247,7 +272,8 @@ inline MeasurementGateDecision evaluateMeasurementGate(
+       "fitness_score_over_threshold_rejected" :
+       "fitness_score_over_threshold";
+   }
+-  gate.reject_measurement = params.reject_above_score_threshold;
++  gate.reject_measurement =
++    gate.correction_rejection_gate_active || params.reject_above_score_threshold;
+ 
+   const bool recovery_candidate =
+     params.enable_consistency_recovery_gate &&
+diff --git a/src/lidar_localization_component.cpp b/src/lidar_localization_component.cpp
+--- a/src/lidar_localization_component.cpp
++++ b/src/lidar_localization_component.cpp
+@@ -146,6 +146,9 @@ PCLLocalization::PCLLocalization(const rclcpp::NodeOptions & options)
+     "registration_target_cloud_keep_alive_count",
+     static_cast<int>(lidar_localization::kDefaultRegistrationTargetCloudKeepAliveCount));
+   declare_parameter("reject_above_score_threshold", true);
++  declare_parameter("enable_correction_rejection_gate", false);
++  declare_parameter("correction_rejection_max_translation_m", 2.0);
++  declare_parameter("correction_rejection_max_yaw_deg", 20.0);
+   declare_parameter("enable_consistency_recovery_gate", false);
+   declare_parameter("consistency_recovery_min_rejections", 10);
+   declare_parameter("consistency_recovery_score_margin", 2.0);
+@@ -797,6 +800,15 @@ void PCLLocalization::initializeParameters()
+       registration_target_cloud_keep_alive_count_);
+   }
+   get_parameter("reject_above_score_threshold", measurement_gate_config_.reject_above_score_threshold);
++  get_parameter(
++    "enable_correction_rejection_gate",
++    measurement_gate_config_.enable_correction_rejection_gate);
++  get_parameter(
++    "correction_rejection_max_translation_m",
++    measurement_gate_config_.correction_rejection_max_translation_m);
++  get_parameter(
++    "correction_rejection_max_yaw_deg",
++    measurement_gate_config_.correction_rejection_max_yaw_deg);
+   get_parameter("enable_consistency_recovery_gate", measurement_gate_config_.enable_consistency_recovery_gate);
+   get_parameter("consistency_recovery_min_rejections", measurement_gate_config_.consistency_recovery_min_rejections);
+   get_parameter("consistency_recovery_score_margin", measurement_gate_config_.consistency_recovery_score_margin);
+@@ -995,6 +1007,15 @@ void PCLLocalization::initializeParameters()
+     get_logger(), "local_map_min_points: %zu", local_map_min_points_);
+   RCLCPP_INFO(
+     get_logger(), "reject_above_score_threshold: %d", measurement_gate_config_.reject_above_score_threshold);
++  RCLCPP_INFO(
++    get_logger(), "enable_correction_rejection_gate: %d",
++    measurement_gate_config_.enable_correction_rejection_gate);
++  RCLCPP_INFO(
++    get_logger(), "correction_rejection_max_translation_m: %lf",
++    measurement_gate_config_.correction_rejection_max_translation_m);
++  RCLCPP_INFO(
++    get_logger(), "correction_rejection_max_yaw_deg: %lf",
++    measurement_gate_config_.correction_rejection_max_yaw_deg);
+   RCLCPP_INFO(
+     get_logger(), "enable_consistency_recovery_gate: %d",
+     measurement_gate_config_.enable_consistency_recovery_gate);
+diff --git a/test/test_measurement_gate_policy.cpp b/test/test_measurement_gate_policy.cpp
+index 07bb494..e7aad82 100644
+--- a/test/test_measurement_gate_policy.cpp
++++ b/test/test_measurement_gate_policy.cpp
+@@ -24,6 +24,9 @@ void test_param_and_input_builders_map_fields()
+   ll::MeasurementGateParamConfig config;
+   config.score_threshold = 9.0;
+   config.reject_above_score_threshold = false;
++  config.enable_correction_rejection_gate = true;
++  config.correction_rejection_max_translation_m = 1.5;
++  config.correction_rejection_max_yaw_deg = 12.0;
+   config.enable_consistency_recovery_gate = true;
+   config.consistency_recovery_min_rejections = 4;
+   config.consistency_recovery_score_margin = 1.5;
+@@ -48,6 +51,9 @@ void test_param_and_input_builders_map_fields()
+   const auto params = ll::makeMeasurementGateParams(config);
+   assert(params.score_threshold == 9.0);
+   assert(!params.reject_above_score_threshold);
++  assert(params.enable_correction_rejection_gate);
++  assert(params.correction_rejection_max_translation_m == 1.5);
++  assert(params.correction_rejection_max_yaw_deg == 12.0);
+   assert(params.enable_consistency_recovery_gate);
+   assert(params.consistency_recovery_min_rejections == 4);
+   assert(params.consistency_recovery_score_margin == 1.5);
+@@ -196,6 +202,34 @@ void test_consistency_recovery_clears_rejection()
+   assert(gate.status_message == "fitness_score_over_threshold_consistency_recovered");
+ }
+ 
++void test_correction_gate_rejects_a_distant_corridor_match()
++{
++  auto params = default_params();
++  params.enable_correction_rejection_gate = true;
++  params.correction_rejection_max_translation_m = 1.5;
++  params.correction_rejection_max_yaw_deg = 15.0;
++
++  auto input = default_input();
++  input.fitness_score = 0.5;
++  input.correction_translation_m = 8.0;
++
++  auto gate = ll::evaluateMeasurementGate(params, input);
++  assert(gate.correction_rejection_gate_active);
++  assert(gate.reject_measurement);
++  assert(gate.status_message == "registration_correction_over_limit_rejected");
++
++  input.correction_translation_m = 0.2;
++  input.correction_yaw_deg = 18.0;
++  gate = ll::evaluateMeasurementGate(params, input);
++  assert(gate.correction_rejection_gate_active);
++  assert(gate.reject_measurement);
++
++  input.correction_yaw_deg = 5.0;
++  gate = ll::evaluateMeasurementGate(params, input);
++  assert(!gate.correction_rejection_gate_active);
++  assert(!gate.reject_measurement);
++}
++
+ void test_rejected_seed_update_marks_rejection_for_prediction_update()
+ {
+   auto params = default_params();
+@@ -226,6 +260,7 @@ int main()
+   test_open_loop_and_post_reject_messages();
+   test_borderline_seed_gate();
+   test_consistency_recovery_clears_rejection();
++  test_correction_gate_rejects_a_distant_corridor_match();
+   test_rejected_seed_update_marks_rejection_for_prediction_update();
+   return 0;
+ }

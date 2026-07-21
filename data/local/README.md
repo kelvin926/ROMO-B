@@ -11,3 +11,9 @@ Individual tracked files must remain at or below 10 MiB. Large rosbag and
 localization databases (`*.db3`, `*.mcap`, and `*.bag`) remain ignored and are
 described by the tracked files in `data/manifests/`. Put their external URI in
 the corresponding manifest before transferring the project to another host.
+
+The current default Nav2 field map is
+`maps/mapping-20260721-134953`. It contains the compact PCD, pose graph,
+grid-divided PCD cells, and 0.05 m raycast occupancy map. The corresponding
+1.4 GB recording database remains external; only its `metadata.yaml` and
+SHA-256 manifest are tracked.

@@ -9,7 +9,9 @@
     transform_epsilon: 0.01
     voxel_leaf_size: 0.15
     enable_scan_voxel_filter: true
-    scan_max_range: 30.0
+    # Indoor corridors are repetitive over long ranges. Keep registration
+    # local to the operator's RViz seed instead of matching another hallway.
+    scan_max_range: 12.0
     scan_min_range: 0.5
     scan_period: 0.1
     use_pcd_map: true
@@ -19,8 +21,19 @@
     use_twist_prediction: false
     use_imu: false
     use_imu_preintegration: false
-    predict_pose_from_previous_delta: true
+    # Wheel odometry already advances the current seed. Extrapolating the last
+    # NDT correction again amplifies corridor-axis ambiguity.
+    predict_pose_from_previous_delta: false
+    enable_local_map_crop: true
+    local_map_radius: 15.0
+    local_map_min_points: 200
     reject_above_score_threshold: true
+    # A visually similar corridor can have an excellent NDT score while being
+    # tens of metres away. Never accept a single-scan jump from the odom/click
+    # seed even when its score is below score_threshold.
+    enable_correction_rejection_gate: true
+    correction_rejection_max_translation_m: 1.5
+    correction_rejection_max_yaw_deg: 15.0
     enable_map_odom_tf: true
     global_frame_id: map
     odom_frame_id: odom

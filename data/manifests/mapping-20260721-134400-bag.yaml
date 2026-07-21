@@ -1,0 +1,14 @@
+schema_version: 1
+id: mapping-20260721-134400-bag
+type: rosbag
+created_at: '2026-07-21T05:07:29.027405+00:00'
+source_filename: mapping-20260721-134400_0.db3
+sensor:
+  model: Livox Mid-360
+  serial: pending
+frames:
+  fixed: map
+  sensor: livox_frame
+size_bytes: 263401472
+sha256: 5486c4df388752e7e5764f1d5bd9ae3e109c699b83242dd5258b6f388d145718
+uri: pending

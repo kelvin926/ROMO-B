@@ -2,4 +2,5 @@
 *.pgm binary
 *.png binary
 *.g2o whitespace=-trailing-space
+*.patch whitespace=-trailing-space
 data/local/**/*.log whitespace=-trailing-space

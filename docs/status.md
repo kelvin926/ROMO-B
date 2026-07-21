@@ -85,6 +85,12 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
 - The first RC-Manual mapping bag (`mapping-20260717-195653`) passed SQLite and
   topic-count checks: 381.83 seconds, 3,818 clouds, 76,359 normalized IMU
   samples, and 7,448 wheel-odometry samples.
+- The replacement RC-Manual map (`mapping-20260721-134953`) records 176.93 s,
+  1,741 raw clouds, 34,950 normalized IMU samples, 3,429 wheel-odometry
+  samples, and 1,708 RKO-LIO odometry frames. It produced a 13,470-point PCD,
+  a graph with 53 poses and 250 edges, and a 0.05 m Nav2 raycast map. Compact
+  products and manifests are tracked; the 1.4 GB bag database is excluded.
+  `run_field_navigation.sh` now selects this map by default.
 - Offline RKO-LIO plus graph SLAM produced a 77,365-point PCD and a graph with
   143 poses, 702 constraints, and two nonlocal loop edges. The optimized path
   is 235.87 m long and closes to 0.479 m. Top-down geometry review is coherent.
@@ -156,6 +162,12 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   around people while retaining filtered/rate-limited 2WIS steering and a
   120-second progress allowance. Rotation Shim now invokes the PCU Pivot mode
   for large initial-path heading errors and final goal yaw alignment.
+- Repetitive-corridor localization is now bounded to a 15 m target-map crop
+  using 12 m LiDAR returns. Previous-NDT-delta extrapolation is disabled in
+  favor of the wheel-odometry seed, and a vendor-patched correction gate rejects
+  a one-scan registration jump beyond 1.5 m or 15 degrees even if NDT reports a
+  good fitness score. This directly addresses RViz `2D Pose Estimate` snapping
+  to a visually similar but incorrect section of hallway.
 - The obstacle pipeline now rejects floor/near/far noise and small isolated
   groups. A transient local-costmap plugin rebuilds dynamic obstacles at 5 Hz
   from only the latest 0.35 seconds of Mid-360 data, so departed people do not

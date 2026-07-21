@@ -10,7 +10,7 @@ if ros2 node list 2>/dev/null | grep -Fxq /romo_b_serial_bridge; then
   exit 3
 fi
 
-map_run="${MAP_RUN:-$repo_root/data/local/maps/mapping-20260717-195653}"
+map_run="${MAP_RUN:-$repo_root/data/local/maps/mapping-20260721-134953}"
 pcd_map="${PCD_MAP:-$map_run/map.pcd}"
 map_yaml="${MAP_YAML:-$map_run/nav2-raycast/map.yaml}"
 waypoint_file="${WAYPOINT_FILE:-$repo_root/config/local/waypoints.yaml}"

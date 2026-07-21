@@ -46,6 +46,16 @@ goal or `Publish Point` plus the waypoint services for a continuous route.
 `source_env.sh` selects Cyclone DDS on configured hosts; set
 `ROMO_B_RMW_IMPLEMENTATION=rmw_fastrtps_cpp` only for an intentional fallback.
 
+The indoor localization profile deliberately matches only a 15 m map crop
+around the RViz seed and uses LiDAR returns within 12 m. It also rejects any
+single NDT correction larger than 1.5 m or 15 degrees, even when a repetitive
+corridor produces a deceptively good fitness score. Place `2D Pose Estimate`
+within roughly 1 m of the robot, drag its arrow in the actual forward direction,
+and keep the robot still for the first two or three scans. If localization does
+not settle, click again near a doorway, corner, pillar, or other asymmetric
+feature; the localizer will retain the clicked/odometry seed instead of jumping
+to a distant look-alike corridor.
+
 In RViz, set the initial pose, add points with `Publish Point`, save them, then
 execute only after the platform status is healthy:
 
