@@ -7,7 +7,7 @@ package_name = "romo_b_operator_ui"
 
 setup(
     name=package_name,
-    version="0.3.0",
+    version="0.4.0",
     packages=find_packages(),
     data_files=[
         ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
@@ -21,7 +21,7 @@ setup(
             glob(package_name + "/web_dist/assets/*"),
         ),
     ],
-    install_requires=["setuptools", "Flask"],
+    install_requires=["setuptools", "Flask", "PyYAML"],
     tests_require=["pytest"],
     zip_safe=True,
     maintainer="Jang HyunSeo",

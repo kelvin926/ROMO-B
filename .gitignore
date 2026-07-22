@@ -15,6 +15,7 @@
 *.bag
 *.db3
 *.mcap
+OpenArm_Portable_*.zip
 /data/local/logs/
 
 # Editor, Python and test caches

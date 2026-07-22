@@ -36,6 +36,7 @@ from .model import (
     uint8_value,
 )
 from .operations import OperationManager
+from .openarm_control import OpenArmController
 
 
 def _yaw_from_quaternion(quaternion) -> float:
@@ -165,6 +166,7 @@ class OperatorNode(Node):
     def __init__(self, repo_root: pathlib.Path):
         super().__init__("romo_b_operator_ui")
         self._operations = OperationManager(repo_root)
+        self._openarm = OpenArmController(repo_root)
         self._lock = threading.RLock()
         self._command_deadline = 0.0
         self._last_command_was_active = False
@@ -182,7 +184,7 @@ class OperatorNode(Node):
             "cmd_safe": deque(maxlen=40),
         }
         self._state = {
-            "version": "0.3.1",
+            "version": "0.4.0",
             "platform": {
                 "state": 0,
                 "state_name": "DISCONNECTED",
@@ -938,7 +940,14 @@ class OperatorNode(Node):
             "owned_by_ui": field["owned_by_ui"],
             "log_path": field["log_path"],
         }
+        state["openarm"] = self._openarm.snapshot()
         return state
+
+    def openarm_action(self, action: str, payload: dict) -> dict:
+        return self._openarm.action(action, payload)
+
+    def shutdown_openarm(self) -> None:
+        self._openarm.shutdown()
 
 
 def create_app(node: OperatorNode, web_root: pathlib.Path) -> Flask:
@@ -1031,6 +1040,18 @@ def create_app(node: OperatorNode, web_root: pathlib.Path) -> Flask:
         except ValueError as error:
             return jsonify({"accepted": False, "message": str(error)}), 400
 
+    @app.post("/api/openarm/<action>")
+    def openarm_action(action: str):
+        try:
+            result = node.openarm_action(
+                action, request.get_json(silent=True) or {}
+            )
+            return jsonify(result), 202 if result["accepted"] else 409
+        except ValueError as error:
+            return jsonify({"accepted": False, "message": str(error)}), 400
+        except (OSError, RuntimeError) as error:
+            return jsonify({"accepted": False, "message": str(error)}), 409
+
     @app.get("/api/operations/<operation_id>/log")
     def operation_log(operation_id: str):
         try:
@@ -1091,6 +1112,7 @@ def main(args=None):
         pass
     finally:
         node.stop_motion()
+        node.shutdown_openarm()
         executor.shutdown(timeout_sec=1.0)
         node.destroy_node()
         if rclpy.ok():

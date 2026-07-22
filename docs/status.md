@@ -135,6 +135,11 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   통일했다. 자율주행 기본 순항속도는 복도 튜닝값 0.5 m/s를 유지한다.
   직접제어에서는 짧은 FTDI/PCU 피드백 지터가 명령을 반복해서 0으로
   덮지 않도록 피드백 watchdog을 1.0초로 설정했다.
+- OpenArm-v1 양팔 전용 웹 탭과 내장 Classic SocketCAN 백엔드를 추가했다.
+  ExoArm·비전 없이 좌우 CAN 연결, 16축 telemetry, 피드백 기반 enable/hold,
+  개별·동시 자세 보간, 속도/gain, fault 해제, 자세 저장·복사와 확인형 영점
+  캘리브레이션을 제공한다. 연결만으로는 모터를 enable하지 않으며 종료 시
+  disable 후 소켓을 닫는다.
 - The first live full-stack attempt exposed a duplicate bench bridge and raw
   Mid-360 acceleration integration. The launcher now refuses to start beside an
   existing bridge, EKF uses wheel odometry only until IMU bias/covariance are

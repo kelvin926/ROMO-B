@@ -9,6 +9,11 @@ with Nav2 or Autoware Universe 1.8.0 local obstacle avoidance.
 The protocol source of truth is the tracked
 [verified manual extraction](ROMO-B_manual_verified_complete.md).
 
+The selected OpenArm-v1 bimanual CAN source is kept separately under
+[`openarm/`](openarm/README.md). It contains only the low-level SocketCAN
+library and arm-specific reference configuration; ExoArm, vision, and
+imitation-learning assets are not imported into this project.
+
 The supported host is **Ubuntu 22.04 x86_64 with ROS 2 Humble**. Nav2 remains
 forward-preferred 2WIS Ackermann while driving and uses the PCU's Pivot mode for
 path/goal-heading alignment. The browser's hold-to-run control additionally
@@ -107,6 +112,15 @@ replay, diagnostics, validation, and builds while showing PID, exit status, and
 live logs. The selected steering mode is maintained at 20 Hz even after a
 forward/reverse hold is released. **로봇만 연결** 작업은 LiDAR, 위치추정,
 Nav2와 RViz 없이 PCU 브리지와 웹 직접제어 경로만 실행합니다.
+
+The **OpenArm 양팔** tab controls the separately tracked OpenArm-v1 hardware
+without a terminal. It discovers and connects the left/right SocketCAN links,
+shows all 16 motor positions, velocities, torques, temperatures, faults and
+packet counters, and provides explicit motor enable/disable, hold, error clear,
+per-joint targets, synchronized bimanual poses, speed/gain limits, local pose
+presets, and guarded motor-zero calibration. Opening CAN sockets never enables
+or commands a motor; enable requires fresh feedback from all eight motors on
+the selected arm and begins by holding the measured pose.
 
 ## Autoware corridor runtime
 

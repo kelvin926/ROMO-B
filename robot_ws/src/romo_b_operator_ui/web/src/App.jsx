@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowCounterClockwise,
+  ArrowsClockwise,
   ArrowDown,
   ArrowLeft,
   ArrowRight,
@@ -13,6 +14,10 @@ import {
   FloppyDisk,
   Gauge,
   HandPalm,
+  Link,
+  LinkBreak,
+  LockKey,
+  LockKeyOpen,
   MapPin,
   MapTrifold,
   Path,
@@ -31,6 +36,8 @@ import {
   WifiSlash,
   Wrench,
   PlayCircle,
+  PlugsConnected,
+  SlidersHorizontal,
 } from "@phosphor-icons/react";
 
 const DEMO_TASKS = [
@@ -53,8 +60,71 @@ const DEMO_TASKS = [
   id, label, group, description, selection, primary, caution: "", running: id === "field_navigation", owned_by_ui: id === "field_navigation", pids: id === "field_navigation" ? [24831] : [], pid: id === "field_navigation" ? 24831 : null, elapsed_sec: id === "field_navigation" ? 128.4 : null, exit_code: null, log_path: id === "field_navigation" ? "/home/hyunseo/ROMO-B/data/local/logs/operator-field.log" : "", message: id === "field_navigation" ? "실행 중" : "실행 대기",
 }));
 
+const OPENARM_LIMITS = [
+  ["J1", "DM8009", -80, 200],
+  ["J2", "DM8009", -100, 100],
+  ["J3", "DM4340", -90, 90],
+  ["J4", "DM4340", 0, 140],
+  ["J5", "DM4310", -90, 90],
+  ["J6", "DM4310", -45, 45],
+  ["J7", "DM4310", -90, 90],
+  ["GRIP", "DM4310", -60, 0],
+];
+
+function demoOpenArmMotors(side) {
+  const positions = side === "left"
+    ? [15, -22, 30, 67, 10, -8, 18, -25]
+    : [-15, 22, -30, 67, -10, 8, -18, -25];
+  return OPENARM_LIMITS.map(([label, motorType, lower, upper], index) => ({
+    key: index === 7 ? "gripper" : `joint_${index + 1}`,
+    label,
+    motor_type: motorType,
+    send_id: index + 1,
+    receive_id: index + 17,
+    lower_deg: lower,
+    upper_deg: upper,
+    kp: index < 2 ? 20 : index < 4 ? 12 : 5,
+    kd: index < 2 ? 1 : index < 4 ? 0.8 : 0.3,
+    online: true,
+    age_sec: 0.012 + index * 0.001,
+    position_deg: positions[index],
+    target_deg: positions[index],
+    velocity_rad_s: index % 2 ? -0.008 : 0.006,
+    torque_nm: 0.18 + index * 0.03,
+    mos_temp_c: 31 + index,
+    rotor_temp_c: 29 + index,
+    status_byte: 0,
+    fault_code: 0,
+  }));
+}
+
+const DEMO_OPENARM = {
+  backend: "내장 Classic SocketCAN",
+  library_version: "openarm_can 1.2.9 protocol",
+  connected: true,
+  any_enabled: true,
+  all_enabled: true,
+  command_rate_hz: 30,
+  target_speed_deg_s: 15,
+  gain_scale: 1,
+  maximum_target_speed_deg_s: 90,
+  maximum_gain_scale: 1.5,
+  last_error: "",
+  last_calibration: "2026-07-22 14:30:08",
+  arms: {
+    left: { interface: "can1", connected: true, enabled: true, online_count: 8, all_online: true, rx_count: 18420, tx_count: 9034, motors: demoOpenArmMotors("left") },
+    right: { interface: "can0", connected: true, enabled: true, online_count: 8, all_online: true, rx_count: 18394, tx_count: 9034, motors: demoOpenArmMotors("right") },
+  },
+  interfaces: {
+    left: { name: "can1", exists: true, is_can: true, up: true, operstate: "unknown", statistics: { rx_packets: 18420, tx_packets: 9034, rx_errors: 0, tx_errors: 0 } },
+    right: { name: "can0", exists: true, is_can: true, up: true, operstate: "unknown", statistics: { rx_packets: 18394, tx_packets: 9034, rx_errors: 0, tx_errors: 0 } },
+  },
+  available_interfaces: [{ name: "can0", up: true }, { name: "can1", up: true }],
+  log: ["[14:30:08] 현재 자세 유지로 모터 enable: left, right", "[14:30:06] 모터 상태 갱신 요청: left, right", "[14:30:05] CAN 연결: 왼팔 can1, 오른팔 can0"],
+};
+
 const DEMO_STATE = {
-  version: "0.3.1",
+  version: "0.4.0",
   platform: {
     state: 2,
     state_name: "ARMED_AUTO",
@@ -174,6 +244,7 @@ const DEMO_STATE = {
   },
   graph: { node_count: 31, topic_count: 84, nodes: ["/romo_b_serial_bridge", "/controller_server", "/planner_server", "/lidar_localization_node", "/livox_lidar_publisher"] },
   host: { hostname: "hyunseo-2204", load_1m: 2.14, memory_used_gb: 9.8, memory_total_gb: 31.1, uptime_hours: 18.4, gpu: { available: true, name: "NVIDIA GPU", utilization_percent: 28, memory_used_mb: 1140, memory_total_mb: 4096, temperature_c: 51 } },
+  openarm: DEMO_OPENARM,
 };
 
 const EMPTY_STATE = {
@@ -214,6 +285,17 @@ const EMPTY_STATE = {
   readiness: { ...DEMO_STATE.readiness, bridge_armed: false, pcu_auto_confirmed: false, ready_to_arm: false, control_ready: false, checks: DEMO_STATE.readiness.checks.map((item) => ({ ...item, ok: false })) },
   runtime: { field_running: false, field_pids: [], owned_by_ui: false, log_path: "" },
   operations: { ...DEMO_STATE.operations, tasks: DEMO_TASKS.map((task) => ({ ...task, running: false, owned_by_ui: false, pids: [], pid: null, elapsed_sec: null, log_path: "", message: "실행 대기" })) },
+  openarm: {
+    ...DEMO_OPENARM,
+    connected: false,
+    any_enabled: false,
+    all_enabled: false,
+    arms: {
+      left: { ...DEMO_OPENARM.arms.left, connected: false, enabled: false, online_count: 0, all_online: false, rx_count: 0, tx_count: 0, motors: DEMO_OPENARM.arms.left.motors.map((motor) => ({ ...motor, online: false, age_sec: null, position_deg: null, target_deg: null, velocity_rad_s: null, torque_nm: null, mos_temp_c: null, rotor_temp_c: null })) },
+      right: { ...DEMO_OPENARM.arms.right, connected: false, enabled: false, online_count: 0, all_online: false, rx_count: 0, tx_count: 0, motors: DEMO_OPENARM.arms.right.motors.map((motor) => ({ ...motor, online: false, age_sec: null, position_deg: null, target_deg: null, velocity_rad_s: null, torque_nm: null, mos_temp_c: null, rotor_temp_c: null })) },
+    },
+    log: [],
+  },
   graph: { node_count: 1, topic_count: 0, nodes: ["/romo_b_operator_ui"] },
   host: { hostname: "hyunseo-2204", load_1m: 0, memory_used_gb: 0, memory_total_gb: 0, uptime_hours: 0, gpu: { available: false } },
 };
@@ -223,6 +305,7 @@ const TABS = [
   { id: "algorithm", label: "플랫폼 제어 알고리즘", icon: Wrench },
   { id: "navigation", label: "자율주행", icon: MapPin },
   { id: "operations", label: "실행 관리", icon: PlayCircle },
+  { id: "openarm", label: "OpenArm 양팔", icon: PlugsConnected },
   { id: "system", label: "시스템 상태", icon: ListChecks },
   { id: "diagnostics", label: "진단", icon: Pulse },
 ];
@@ -954,6 +1037,286 @@ function OperationsView({ state, onPost, demo }) {
   );
 }
 
+function OpenArmJointControl({ side, index, motor, value, disabled, onChange, onApply }) {
+  const hasFault = Number(motor.fault_code || 0) !== 0;
+  const lower = Number(motor.lower_deg);
+  const upper = Number(motor.upper_deg);
+  const bounded = Math.max(lower, Math.min(upper, Number(value) || 0));
+  const update = (next) => onChange(Math.max(lower, Math.min(upper, Number(next) || 0)));
+  return (
+    <article className={`openarm-joint ${motor.online ? "online" : "offline"} ${hasFault ? "fault" : ""}`} data-testid={`openarm-${side}-joint-${index + 1}`}>
+      <div className="openarm-joint-head">
+        <div>
+          <StatusDot active={motor.online} danger={hasFault} />
+          <strong>{motor.label}</strong>
+          <span>{motor.motor_type}</span>
+        </div>
+        <em>{hasFault ? `FAULT ${motor.fault_code}` : motor.online ? "ONLINE" : "대기"}</em>
+      </div>
+      <div className="openarm-joint-feedback">
+        <div><span>현재각</span><strong>{format(motor.position_deg, 1)}°</strong></div>
+        <div><span>속도</span><strong>{format(motor.velocity_rad_s, 2)} <small>rad/s</small></strong></div>
+        <div><span>토크</span><strong>{format(motor.torque_nm, 2)} <small>Nm</small></strong></div>
+        <div><span>온도</span><strong>{format(motor.mos_temp_c, 0)} / {format(motor.rotor_temp_c, 0)}°C</strong></div>
+      </div>
+      <label className="openarm-target-label">
+        <span>목표 각도</span>
+        <input
+          aria-label={`${side} ${motor.label} 목표 각도`}
+          type="number"
+          min={lower}
+          max={upper}
+          step="0.5"
+          value={bounded}
+          disabled={disabled}
+          onChange={(event) => update(event.target.value)}
+        />
+      </label>
+      <input
+        className="openarm-joint-slider"
+        aria-label={`${side} ${motor.label} 슬라이더`}
+        type="range"
+        min={lower}
+        max={upper}
+        step="0.5"
+        value={bounded}
+        disabled={disabled}
+        onChange={(event) => update(event.target.value)}
+      />
+      <div className="openarm-joint-actions">
+        <button disabled={disabled} onClick={() => update(bounded - 1)}>−1°</button>
+        <span>{format(lower, 0)}° … {format(upper, 0)}°</span>
+        <button disabled={disabled} onClick={() => update(bounded + 1)}>+1°</button>
+        <button className="apply" disabled={disabled} onClick={onApply}>이 관절 적용</button>
+      </div>
+    </article>
+  );
+}
+
+function OpenArmView({ state, onPost, demo }) {
+  const openarm = state.openarm || EMPTY_STATE.openarm;
+  const poseFromFeedback = (side) => (openarm.arms?.[side]?.motors || []).map((motor) => {
+    const fallback = Math.max(Number(motor.lower_deg || 0), Math.min(Number(motor.upper_deg || 0), 0));
+    return Number.isFinite(Number(motor.position_deg)) ? Number(motor.position_deg) : fallback;
+  });
+  const [interfaces, setInterfaces] = useState({
+    left: openarm.arms?.left?.interface || "can1",
+    right: openarm.arms?.right?.interface || "can0",
+  });
+  const [drafts, setDrafts] = useState({ left: poseFromFeedback("left"), right: poseFromFeedback("right") });
+  const [dirty, setDirty] = useState({ left: false, right: false });
+  const [speed, setSpeed] = useState(Number(openarm.target_speed_deg_s || 15));
+  const [gain, setGain] = useState(Number(openarm.gain_scale || 1));
+  const [calibrationSide, setCalibrationSide] = useState("both");
+  const [calibrationJoint, setCalibrationJoint] = useState("all");
+  const [calibrationText, setCalibrationText] = useState("");
+  const [poseName, setPoseName] = useState("기본 자세");
+  const [selectedPose, setSelectedPose] = useState("");
+  const [savedPoses, setSavedPoses] = useState(() => {
+    try {
+      return JSON.parse(window.localStorage.getItem("romo-b-openarm-poses") || "{}");
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    if (!openarm.connected) {
+      setInterfaces({
+        left: openarm.arms?.left?.interface || "can1",
+        right: openarm.arms?.right?.interface || "can0",
+      });
+    }
+  }, [openarm.connected, openarm.arms?.left?.interface, openarm.arms?.right?.interface]);
+
+  useEffect(() => {
+    setDrafts((current) => ({
+      left: dirty.left ? current.left : poseFromFeedback("left"),
+      right: dirty.right ? current.right : poseFromFeedback("right"),
+    }));
+  }, [openarm.arms?.left?.rx_count, openarm.arms?.right?.rx_count, dirty.left, dirty.right]);
+
+  const notifyResult = (message, success = true) => onPost(message, success, true);
+  const invoke = async (action, payload, demoMessage) => {
+    if (demo) {
+      notifyResult(`데모: ${demoMessage}`, true);
+      return { accepted: true };
+    }
+    try {
+      const result = await postJson(`/api/openarm/${action}`, payload);
+      notifyResult(result.message, true);
+      return result;
+    } catch (error) {
+      notifyResult(error.message, false);
+      return null;
+    }
+  };
+  const setJointDraft = (side, index, value) => {
+    setDrafts((current) => ({ ...current, [side]: current[side].map((item, itemIndex) => itemIndex === index ? value : item) }));
+    setDirty((current) => ({ ...current, [side]: true }));
+  };
+  const syncFeedback = (side = "both") => {
+    const sides = side === "both" ? ["left", "right"] : [side];
+    setDrafts((current) => {
+      const next = { ...current };
+      sides.forEach((selected) => { next[selected] = poseFromFeedback(selected); });
+      return next;
+    });
+    setDirty((current) => ({
+      ...current,
+      ...(sides.includes("left") ? { left: false } : {}),
+      ...(sides.includes("right") ? { right: false } : {}),
+    }));
+    notifyResult("현재 모터 피드백을 편집값으로 불러왔습니다", true);
+  };
+  const applyPose = async (side) => {
+    const sides = side === "both" ? ["left", "right"] : [side];
+    const targets = Object.fromEntries(sides.map((selected) => [selected, drafts[selected]]));
+    const result = await invoke("pose", { targets, speed_deg_s: speed, gain_scale: gain }, `${side === "both" ? "양팔" : side === "left" ? "왼팔" : "오른팔"} 자세 적용`);
+    if (result) setDirty((current) => ({ ...current, ...(sides.includes("left") ? { left: false } : {}), ...(sides.includes("right") ? { right: false } : {}) }));
+  };
+  const applyJoint = (side, index) => invoke("joint", { side, joint: index, target_deg: drafts[side][index], speed_deg_s: speed, gain_scale: gain }, `${side === "left" ? "왼팔" : "오른팔"} ${(openarm.arms?.[side]?.motors || [])[index]?.label} 적용`);
+  const enable = (side, enabled) => invoke("enable", { side, enabled }, `${side === "both" ? "양팔" : side === "left" ? "왼팔" : "오른팔"} 모터 ${enabled ? "활성화" : "비활성화"}`);
+  const copyPose = (from, to) => {
+    setDrafts((current) => ({ ...current, [to]: [...current[from]] }));
+    setDirty((current) => ({ ...current, [to]: true }));
+    notifyResult(`${from === "left" ? "왼팔" : "오른팔"} 편집값을 ${to === "left" ? "왼팔" : "오른팔"}에 복사했습니다`, true);
+  };
+  const savePose = () => {
+    const name = poseName.trim();
+    if (!name) return notifyResult("저장할 자세 이름을 입력하세요", false);
+    const next = { ...savedPoses, [name]: { left: drafts.left, right: drafts.right, saved_at: new Date().toISOString() } };
+    setSavedPoses(next);
+    setSelectedPose(name);
+    window.localStorage.setItem("romo-b-openarm-poses", JSON.stringify(next));
+    notifyResult(`브라우저에 '${name}' 자세를 저장했습니다`, true);
+  };
+  const loadPose = () => {
+    const pose = savedPoses[selectedPose];
+    if (!pose) return notifyResult("불러올 저장 자세를 선택하세요", false);
+    setDrafts({ left: [...pose.left], right: [...pose.right] });
+    setDirty({ left: true, right: true });
+    notifyResult(`'${selectedPose}' 자세를 편집값으로 불러왔습니다`, true);
+  };
+  const deletePose = () => {
+    if (!selectedPose) return notifyResult("삭제할 저장 자세를 선택하세요", false);
+    const next = { ...savedPoses };
+    delete next[selectedPose];
+    setSavedPoses(next);
+    window.localStorage.setItem("romo-b-openarm-poses", JSON.stringify(next));
+    notifyResult(`'${selectedPose}' 자세를 삭제했습니다`, true);
+    setSelectedPose("");
+  };
+  const calibrate = () => {
+    const payload = { side: calibrationSide, confirmation: calibrationText };
+    if (calibrationJoint !== "all") payload.joint = Number(calibrationJoint);
+    return invoke("calibrate-zero", payload, "현재 자세 영점 저장");
+  };
+  const calibrationDisabled = calibrationText !== "OPENARM ZERO"
+    || !openarm.connected
+    || (calibrationSide === "both" ? openarm.any_enabled : openarm.arms?.[calibrationSide]?.enabled);
+
+  return (
+    <div className="openarm-layout" data-testid="openarm-page">
+      <section className="panel openarm-connect-panel">
+        <div className="panel-title">
+          <div><span className="eyebrow">OPENARM-V1 · CLASSIC CAN 1 Mbps</span><h2>양팔 CAN 연결 및 전원 제어</h2></div>
+          <span className={`mode-chip ${openarm.connected ? "armed" : ""}`}>{openarm.connected ? "CAN 연결됨" : "연결 대기"}</span>
+        </div>
+        <div className="openarm-connection-grid">
+          {(["left", "right"]).map((side) => {
+            const arm = openarm.arms?.[side];
+            const iface = openarm.interfaces?.[side] || {};
+            return (
+              <div className="openarm-interface" key={side}>
+                <div><StatusDot active={arm?.connected && iface.up} /><strong>{side === "left" ? "왼팔" : "오른팔"}</strong><span>{arm?.online_count || 0}/8 모터</span></div>
+                <label><span>SocketCAN 인터페이스</span><input aria-label={`${side} CAN 인터페이스`} value={interfaces[side]} disabled={openarm.connected} onChange={(event) => setInterfaces((current) => ({ ...current, [side]: event.target.value }))} /></label>
+                <dl><dt>링크</dt><dd>{iface.exists ? iface.up ? "UP" : "DOWN" : "없음"}</dd><dt>RX / TX</dt><dd>{arm?.rx_count || 0} / {arm?.tx_count || 0}</dd><dt>모터 출력</dt><dd>{arm?.enabled ? "ENABLE" : "DISABLE"}</dd></dl>
+              </div>
+            );
+          })}
+        </div>
+        <div className="openarm-connect-actions">
+          <button data-testid="openarm-connect" className="service-button primary" disabled={openarm.connected} onClick={() => invoke("connect", { left_interface: interfaces.left, right_interface: interfaces.right }, "양팔 CAN 연결")}><Link weight="bold" />CAN 연결</button>
+          <button className="service-button danger" disabled={!openarm.connected} onClick={() => invoke("disconnect", {}, "모터 비활성화 후 CAN 연결 해제")}><LinkBreak weight="bold" />CAN 연결 해제</button>
+          <button className="service-button" disabled={!openarm.connected} onClick={() => invoke("refresh", { side: "both" }, "16개 모터 상태 갱신")}><ArrowsClockwise weight="bold" />전체 상태 갱신</button>
+          <button className="service-button" disabled={!openarm.connected || !openarm.arms?.left?.all_online || !openarm.arms?.right?.all_online || openarm.all_enabled} onClick={() => enable("both", true)}><LockKeyOpen weight="bold" />양팔 모터 활성화</button>
+          <button className="service-button danger" disabled={!openarm.connected || !openarm.any_enabled} onClick={() => enable("both", false)}><LockKey weight="bold" />양팔 모터 비활성화</button>
+          <button className="service-button" disabled={!openarm.connected} onClick={() => invoke("clear-errors", { side: "both" }, "양팔 모터 오류 해제")}><Wrench weight="bold" />오류 해제</button>
+        </div>
+        <p className="openarm-safety-note"><ShieldCheck weight="fill" />CAN 연결만으로 모터가 활성화되거나 움직이지 않습니다. 활성화 버튼은 16축 피드백을 확인한 뒤 현재 자세를 유지하며 시작합니다.</p>
+      </section>
+
+      <section className="panel openarm-settings-panel">
+        <div className="panel-title compact-title"><div><span className="eyebrow">동작 설정</span><h2>보간 속도와 MIT gain</h2></div><SlidersHorizontal size={25} weight="duotone" /></div>
+        <div className="openarm-setting-controls">
+          <label><span>목표 이동 속도 <strong>{format(speed, 0)}°/s</strong></span><input type="range" min="1" max={openarm.maximum_target_speed_deg_s || 90} step="1" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} /></label>
+          <label><span>gain 배율 <strong>{format(gain, 2)}×</strong></span><input type="range" min="0.05" max={openarm.maximum_gain_scale || 1.5} step="0.05" value={gain} onChange={(event) => setGain(Number(event.target.value))} /></label>
+        </div>
+        <div className="openarm-facts"><span>제어 주기 <b>{format(openarm.command_rate_hz, 0)} Hz</b></span><span>백엔드 <b>{openarm.backend}</b></span><span>프로토콜 <b>{openarm.library_version}</b></span><span>마지막 영점 <b>{openarm.last_calibration || "기록 없음"}</b></span></div>
+        {openarm.last_error && <div className="openarm-error"><Warning weight="fill" />{openarm.last_error}</div>}
+      </section>
+
+      {(["left", "right"]).map((side) => {
+        const arm = openarm.arms?.[side] || { motors: [] };
+        const disabled = !demo && (!arm.connected || !arm.enabled || !arm.all_online);
+        return (
+          <section className="panel openarm-arm-panel" key={side} data-testid={`openarm-${side}-arm`}>
+            <div className="panel-title">
+              <div><span className="eyebrow">{side === "left" ? "LEFT ARM · CAN1" : "RIGHT ARM · CAN0"}</span><h2>{side === "left" ? "왼팔 8축 제어" : "오른팔 8축 제어"}</h2></div>
+              <span className={`mode-chip ${arm.enabled ? "armed" : ""}`}>{arm.enabled ? "모터 활성" : arm.all_online ? "피드백 정상" : `${arm.online_count || 0}/8 대기`}</span>
+            </div>
+            <div className="openarm-arm-toolbar">
+              <button disabled={!arm.connected || !arm.all_online || arm.enabled} onClick={() => enable(side, true)}><Power weight="bold" />활성화</button>
+              <button disabled={!arm.connected || !arm.enabled} onClick={() => enable(side, false)}><StopCircle weight="bold" />비활성화</button>
+              <button disabled={disabled} onClick={() => invoke("hold", { side }, `${side === "left" ? "왼팔" : "오른팔"} 현재 자세 유지`)}><HandPalm weight="bold" />현재 자세 유지</button>
+              <button disabled={disabled} onClick={() => applyPose(side)}><Play weight="fill" />8축 편집값 적용</button>
+              <button disabled={!arm.all_online} onClick={() => syncFeedback(side)}><ArrowCounterClockwise weight="bold" />피드백 불러오기</button>
+            </div>
+            <div className="openarm-joints-grid">
+              {(arm.motors || []).map((motor, index) => <OpenArmJointControl key={motor.key} side={side} index={index} motor={motor} value={drafts[side]?.[index] ?? 0} disabled={disabled} onChange={(value) => setJointDraft(side, index, value)} onApply={() => applyJoint(side, index)} />)}
+            </div>
+          </section>
+        );
+      })}
+
+      <section className="panel openarm-pose-panel">
+        <div className="panel-title"><div><span className="eyebrow">양팔 자세 작업</span><h2>동시 적용 · 복사 · 브라우저 저장</h2></div><FloppyDisk size={27} weight="duotone" /></div>
+        <div className="openarm-pose-actions">
+          <button className="service-button primary" disabled={!demo && !openarm.all_enabled} onClick={() => applyPose("both")}><Play weight="fill" />양팔 동시 적용</button>
+          <button className="service-button" onClick={() => syncFeedback("both")}><ArrowCounterClockwise weight="bold" />양팔 피드백 불러오기</button>
+          <button className="service-button" onClick={() => copyPose("left", "right")}><ArrowRight weight="bold" />왼팔 → 오른팔 복사</button>
+          <button className="service-button" onClick={() => copyPose("right", "left")}><ArrowLeft weight="bold" />오른팔 → 왼팔 복사</button>
+          <button className="service-button" onClick={() => { setDrafts({ left: Array(8).fill(0), right: Array(8).fill(0) }); setDirty({ left: true, right: true }); }}><Crosshair weight="bold" />편집값 모두 0°</button>
+        </div>
+        <div className="openarm-preset-row">
+          <label><span>자세 이름</span><input value={poseName} onChange={(event) => setPoseName(event.target.value)} /></label>
+          <button onClick={savePose}><FloppyDisk weight="bold" />현재 편집값 저장</button>
+          <label><span>저장된 자세</span><select value={selectedPose} onChange={(event) => setSelectedPose(event.target.value)}><option value="">선택</option>{Object.keys(savedPoses).sort().map((name) => <option key={name} value={name}>{name}</option>)}</select></label>
+          <button disabled={!selectedPose} onClick={loadPose}><Play weight="bold" />불러오기</button>
+          <button className="danger" disabled={!selectedPose} onClick={deletePose}><Trash weight="bold" />삭제</button>
+        </div>
+      </section>
+
+      <section className="panel openarm-calibration-panel">
+        <div className="panel-title"><div><span className="eyebrow">모터 영점 캘리브레이션</span><h2>현재 기구 자세를 0°로 저장</h2></div><Crosshair size={27} weight="duotone" /></div>
+        <div className="openarm-calibration-form">
+          <label><span>대상 팔</span><select value={calibrationSide} onChange={(event) => setCalibrationSide(event.target.value)}><option value="both">양팔</option><option value="left">왼팔</option><option value="right">오른팔</option></select></label>
+          <label><span>대상 관절</span><select value={calibrationJoint} onChange={(event) => setCalibrationJoint(event.target.value)}><option value="all">전체 8축</option>{OPENARM_LIMITS.map(([label], index) => <option key={label} value={index}>{label}</option>)}</select></label>
+          <label className="calibration-confirm"><span>확인 문구: OPENARM ZERO</span><input value={calibrationText} placeholder="OPENARM ZERO" onChange={(event) => setCalibrationText(event.target.value)} /></label>
+          <button className="danger" disabled={calibrationDisabled} onClick={calibrate}><Warning weight="fill" />현재 자세를 영점으로 저장</button>
+        </div>
+        <p className="openarm-calibration-note">선택한 팔의 모터를 먼저 비활성화하고, 사람이 기구를 정확한 영점 자세로 지지한 상태에서만 실행하세요. 이 값은 모터에 영구 저장됩니다.</p>
+      </section>
+
+      <section className="panel openarm-log-panel">
+        <div className="panel-title compact-title"><div><span className="eyebrow">CAN 이벤트</span><h2>OpenArm 최근 로그</h2></div><Pulse size={24} weight="duotone" /></div>
+        <pre className="openarm-log">{(openarm.log || []).length ? openarm.log.join("\n") : "CAN 작업 기록이 없습니다."}</pre>
+      </section>
+    </div>
+  );
+}
+
 function DiagnosticsView({ state }) {
   return (
     <div className="diagnostics-layout">
@@ -1053,6 +1416,7 @@ export function App() {
         {tab === "algorithm" && <AlgorithmView />}
         {tab === "navigation" && <NavigationView state={state} onPost={notify} demo={demo} />}
         {tab === "operations" && <OperationsView state={state} onPost={notify} demo={demo} />}
+        {tab === "openarm" && <OpenArmView state={state} onPost={notify} demo={demo} />}
         {tab === "system" && <SystemView state={state} onPost={notify} demo={demo} />}
         {tab === "diagnostics" && <DiagnosticsView state={state} />}
       </main>

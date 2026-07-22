@@ -74,6 +74,14 @@ software checks, builds, and map preparation, with artifact selectors, conflict
 handling, PID, exit status, and live logs. Privileged host setup remains
 terminal-only.
 
+**OpenArm 양팔**은 ROMO-B 차량 스택과 독립적으로 항상 사용할 수 있습니다.
+왼팔/오른팔 SocketCAN 이름을 확인한 뒤 웹에서 연결하고, 각 팔의 8/8 모터
+피드백이 표시될 때만 모터를 활성화합니다. 탭은 16축 telemetry, 개별 및 동시
+자세 목표, 현재 자세 유지, 속도/gain, fault 해제, 로컬 자세 저장과 영점
+캘리브레이션을 제공합니다. 영점 저장은 해당 모터가 비활성 상태여야 하며
+확인 문구 `OPENARM ZERO`가 일치해야 합니다. CAN 연결만으로는 모터가
+활성화되지 않습니다.
+
 단순 원격조종만 필요하면 **실행 관리 → 로봇만 연결**을 사용합니다. 이
 작업은 `robot_control.launch.py`로 PCU 브리지와 `/cmd_vel_teleop` →
 `/cmd_vel_safe` 릴레이만 실행하므로 2D Pose Estimate가 필요하지 않고

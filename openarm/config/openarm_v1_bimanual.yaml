@@ -1,0 +1,65 @@
+schema_version: 1
+robot: openarm_v1_bimanual
+
+# This file documents the hardware snapshot imported from
+# OpenArm_Portable_Full_20260721.zip. The openarm_can library does not load
+# this YAML automatically.
+transport:
+  mode: classic_can
+  nominal_bitrate: 1000000
+  can_fd: false
+
+interfaces:
+  left:
+    name: can1
+    physical_assignment_must_be_confirmed_each_session: true
+  right:
+    name: can0
+    physical_assignment_must_be_confirmed_each_session: true
+
+# Both arms use the same IDs on separate SocketCAN interfaces.
+motors:
+  joint_1: {type: DM8009, send_id: 1, receive_id: 17}
+  joint_2: {type: DM8009, send_id: 2, receive_id: 18}
+  joint_3: {type: DM4340, send_id: 3, receive_id: 19}
+  joint_4: {type: DM4340, send_id: 4, receive_id: 20}
+  joint_5: {type: DM4310, send_id: 5, receive_id: 21}
+  joint_6: {type: DM4310, send_id: 6, receive_id: 22}
+  joint_7: {type: DM4310, send_id: 7, receive_id: 23}
+  gripper: {type: DM4310, send_id: 8, receive_id: 24}
+
+joint_order:
+  - joint_1
+  - joint_2
+  - joint_3
+  - joint_4
+  - joint_5
+  - joint_6
+  - joint_7
+  - gripper
+
+# Importing or building this folder must never transmit a frame by itself.
+startup_policy:
+  configure_interfaces_automatically: false
+  enable_motors_automatically: false
+  command_on_startup: false
+  zero_position_automatically: false
+
+# Conservative interactive-control values used by the browser console. These
+# are lower than the nominal gains in control_gains.yaml and match the existing
+# verified bimanual command path captured in the portable archive.
+operator_control:
+  command_rate_hz: 30.0
+  refresh_rate_hz: 5.0
+  default_target_speed_deg_s: 15.0
+  maximum_target_speed_deg_s: 90.0
+  maximum_gain_scale: 1.5
+  arm_kp: [20.0, 20.0, 12.0, 12.0, 5.0, 5.0, 4.0]
+  arm_kd: [1.0, 1.0, 0.8, 0.8, 0.3, 0.3, 0.3]
+  gripper_kp: 5.0
+  gripper_kd: 0.3
+  gripper_limit_deg: [-60.0, 0.0]
+
+references:
+  joint_limits: joint_limits.yaml
+  control_gains: control_gains.yaml
