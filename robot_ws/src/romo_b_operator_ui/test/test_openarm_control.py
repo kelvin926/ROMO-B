@@ -38,6 +38,23 @@ def make_repo(tmp_path: pathlib.Path) -> pathlib.Path:
         yaml.safe_dump(
             {
                 "interfaces": {"left": {"name": "can1"}, "right": {"name": "can0"}},
+                "operator_coordinates": {
+                    "convention": "openarm_v1_native_joint",
+                    "direction_signs": {
+                        "left": [1, 1, 1, 1, 1, 1, 1, 1],
+                        "right": [1, 1, 1, 1, 1, 1, 1, 1],
+                    },
+                    "hard_limits_deg": {
+                        "left": {
+                            "joint_1": [-120.0, 60.0],
+                            "joint_2": [-110.0, 10.0],
+                        },
+                        "right": {
+                            "joint_1": [-60.0, 120.0],
+                            "joint_2": [-10.0, 110.0],
+                        },
+                    },
+                },
                 "motors": {
                     **{
                         f"joint_{index}": {
@@ -70,7 +87,11 @@ def make_repo(tmp_path: pathlib.Path) -> pathlib.Path:
         yaml.safe_dump(
             {
                 f"joint{index}": {
-                    "limit": {"lower": -1.0, "upper": 1.0, "velocity": 2.0}
+                    "limit": {
+                        "lower": -1.0,
+                        "upper": 2.0 if index == 1 else 1.0,
+                        "velocity": 2.0,
+                    }
                 }
                 for index in range(1, 8)
             }
@@ -202,14 +223,14 @@ def test_per_arm_soft_limits_persist_and_do_not_start_motion(tmp_path):
     right_joint = state["arms"]["right"]["motors"][0]
     assert left_joint["lower_deg"] == pytest.approx(-20.0)
     assert left_joint["upper_deg"] == pytest.approx(35.0)
-    assert right_joint["lower_deg"] == pytest.approx(math.degrees(-1.0), abs=0.001)
+    assert right_joint["lower_deg"] == pytest.approx(-60.0, abs=0.001)
     assert controller._trajectories["left"] is None
     assert (tmp_path / "config/local/openarm_operator_joint_limits.yaml").is_file()
 
     with pytest.raises(ValueError, match="하드 한계"):
         controller.action(
             "limits",
-            {"side": "left", "joint": 0, "lower_deg": -90.0, "upper_deg": 35.0},
+            {"side": "left", "joint": 0, "lower_deg": -130.0, "upper_deg": 35.0},
         )
 
     restored = controller.action(
@@ -217,9 +238,64 @@ def test_per_arm_soft_limits_persist_and_do_not_start_motion(tmp_path):
     )
     assert restored["accepted"] is True
     state = controller.snapshot()
-    assert state["arms"]["left"]["motors"][0]["lower_deg"] == pytest.approx(
-        math.degrees(-1.0), abs=0.001
+    assert state["arms"]["left"]["motors"][0]["lower_deg"] == pytest.approx(-120.0)
+    controller.shutdown()
+
+
+def test_openarm_v1_native_coordinates_keep_sign_and_use_side_limits(tmp_path):
+    controller, _sockets, _now = make_controller(tmp_path)
+    controller.action("connect", {})
+    feed_all_motors(controller)
+
+    with controller._lock:
+        controller._motors["left"][0].update(
+            {"position_rad": 0.4, "velocity_rad_s": 0.2, "torque_nm": 0.3}
+        )
+        controller._motors["right"][0].update(
+            {"position_rad": 0.4, "velocity_rad_s": 0.2, "torque_nm": 0.3}
+        )
+        controller._motors["right"][7].update(
+            {"position_rad": -0.4, "velocity_rad_s": 0.2, "torque_nm": 0.3}
+        )
+
+    state = controller.snapshot()
+    left_j1 = state["arms"]["left"]["motors"][0]
+    right_j1 = state["arms"]["right"]["motors"][0]
+    right_gripper = state["arms"]["right"]["motors"][7]
+    assert left_j1["position_deg"] == pytest.approx(math.degrees(0.4), abs=0.001)
+    assert right_j1["position_deg"] == pytest.approx(math.degrees(0.4), abs=0.001)
+    assert right_j1["velocity_rad_s"] == pytest.approx(0.2)
+    assert right_j1["torque_nm"] == pytest.approx(0.3)
+    assert right_j1["direction_sign"] == 1
+    assert left_j1["hard_lower_deg"] == pytest.approx(-120.0)
+    assert left_j1["hard_upper_deg"] == pytest.approx(60.0)
+    assert right_j1["hard_lower_deg"] == pytest.approx(-60.0)
+    assert right_j1["hard_upper_deg"] == pytest.approx(120.0)
+    assert right_gripper["position_deg"] == pytest.approx(
+        -math.degrees(0.4), abs=0.001
     )
+    assert right_gripper["velocity_rad_s"] == pytest.approx(0.2)
+    assert right_gripper["torque_nm"] == pytest.approx(0.3)
+    assert right_gripper["direction_sign"] == 1
+
+    controller.action("enable", {"side": "right", "enabled": True})
+    controller.action(
+        "joint", {"side": "right", "joint": 0, "target_deg": 30.0}
+    )
+    assert math.degrees(controller._desired["right"][0]) == pytest.approx(30.0)
+    controller.action(
+        "joint", {"side": "right", "joint": 7, "target_deg": -30.0}
+    )
+    assert math.degrees(controller._desired["right"][7]) == pytest.approx(-30.0)
+    controller.action(
+        "pose",
+        {"targets": {"right": [10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, -20.0]}},
+    )
+    assert [math.degrees(value) for value in controller._desired["right"][:7]] == pytest.approx(
+        [10.0] * 7
+    )
+    assert math.degrees(controller._desired["right"][7]) == pytest.approx(-20.0)
+    assert state["operator_coordinates"]["direction_signs"]["right"] == [1] * 8
     controller.shutdown()
 
 

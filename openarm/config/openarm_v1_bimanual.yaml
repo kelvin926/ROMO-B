@@ -38,6 +38,39 @@ joint_order:
   - joint_7
   - gripper
 
+# OpenArm-v1 exposes native calibrated motor/joint coordinates without a
+# runtime sign transform. Its official bimanual URDF mirrors link geometry and
+# gives J1/J2 different side-specific limits because the automatic calibration
+# establishes different zero positions on the two arms.
+operator_coordinates:
+  convention: openarm_v1_native_joint
+  direction_signs:
+    left: [1, 1, 1, 1, 1, 1, 1, 1]
+    right: [1, 1, 1, 1, 1, 1, 1, 1]
+  hard_limits_deg:
+    left:
+      joint_1: [-200.0, 80.0]
+      joint_2: [-190.0, 10.0]
+      joint_3: [-90.0, 90.0]
+      joint_4: [0.0, 140.0]
+      joint_5: [-90.0, 90.0]
+      joint_6: [-45.0, 45.0]
+      joint_7: [-90.0, 90.0]
+      gripper: [-60.0, 0.0]
+    right:
+      joint_1: [-80.0, 200.0]
+      joint_2: [-10.0, 190.0]
+      joint_3: [-90.0, 90.0]
+      joint_4: [0.0, 140.0]
+      joint_5: [-90.0, 90.0]
+      joint_6: [-45.0, 45.0]
+      joint_7: [-90.0, 90.0]
+      gripper: [-60.0, 0.0]
+  source:
+    urdf: openarm_description/assets/robot/openarm_v1.0/urdf/arm/openarm_arm.xacro
+    expanded_urdf: openarm_description/output.urdf
+    calibration: openarm-can-zero-position-calibration
+
 # Importing or building this folder must never transmit a frame by itself.
 startup_policy:
   # The browser connect action may bring validated canN links up at the fixed

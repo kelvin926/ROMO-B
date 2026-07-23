@@ -2,51 +2,51 @@ schema_version: 1
 limits:
   left:
     joint_1:
-      lower_deg: -79.999977
-      upper_deg: 200.000028
+      lower_deg: -200.0
+      upper_deg: 80.0
     joint_2:
-      lower_deg: -99.999986
-      upper_deg: 99.999986
+      lower_deg: -190.0
+      upper_deg: 10.0
     joint_3:
-      lower_deg: -89.999981
-      upper_deg: 89.999981
+      lower_deg: -90.0
+      upper_deg: 90.0
     joint_4:
       lower_deg: 0.0
-      upper_deg: 140.000003
+      upper_deg: 140.0
     joint_5:
-      lower_deg: -89.999981
-      upper_deg: 89.999981
+      lower_deg: -90.0
+      upper_deg: 90.0
     joint_6:
-      lower_deg: -44.999991
-      upper_deg: 44.999991
+      lower_deg: -45.0
+      upper_deg: 45.0
     joint_7:
-      lower_deg: -89.999981
-      upper_deg: 89.999981
+      lower_deg: -90.0
+      upper_deg: 90.0
     gripper:
       lower_deg: -60.0
       upper_deg: 0.0
   right:
     joint_1:
-      lower_deg: -79.999977
-      upper_deg: 200.000028
+      lower_deg: -80.0
+      upper_deg: 200.0
     joint_2:
-      lower_deg: -99.999986
-      upper_deg: 99.999986
+      lower_deg: -10.0
+      upper_deg: 190.0
     joint_3:
-      lower_deg: -89.999981
-      upper_deg: 89.999981
+      lower_deg: -90.0
+      upper_deg: 90.0
     joint_4:
       lower_deg: 0.0
-      upper_deg: 140.000003
+      upper_deg: 140.0
     joint_5:
-      lower_deg: -89.999981
-      upper_deg: 89.999981
+      lower_deg: -90.0
+      upper_deg: 90.0
     joint_6:
-      lower_deg: -44.999991
-      upper_deg: 44.999991
+      lower_deg: -45.0
+      upper_deg: 45.0
     joint_7:
-      lower_deg: -89.999981
-      upper_deg: 89.999981
+      lower_deg: -90.0
+      upper_deg: 90.0
     gripper:
       lower_deg: -60.0
       upper_deg: 0.0

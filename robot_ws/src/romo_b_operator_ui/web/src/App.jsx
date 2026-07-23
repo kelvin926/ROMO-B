@@ -72,9 +72,31 @@ const OPENARM_LIMITS = [
   ["GRIP", "DM4310", -60, 0],
 ];
 const OPENARM_VELOCITY_LIMITS_DEG_S = [960, 960, 312, 312, 1200, 1200, 1200, 1718.87];
+const OPENARM_SIDE_LIMITS = {
+  left: [[-200, 80], [-190, 10], [-90, 90], [0, 140], [-90, 90], [-45, 45], [-90, 90], [-60, 0]],
+  right: [[-80, 200], [-10, 190], [-90, 90], [0, 140], [-90, 90], [-45, 45], [-90, 90], [-60, 0]],
+};
+const OPENARM_POSE_STORAGE_KEY = "romo-b-openarm-poses-v3";
+const OPENARM_INVERTED_POSE_STORAGE_KEY = "romo-b-openarm-poses-v2";
+const OPENARM_LEGACY_POSE_STORAGE_KEY = "romo-b-openarm-poses";
+
+function openArmDirectionSign() {
+  return 1;
+}
+
+function openArmOperatorLimits(side, index) {
+  return OPENARM_SIDE_LIMITS[side][index];
+}
 
 function normalizeOpenArmPoseArchive(raw) {
-  const source = raw?.schema_version === 1 && raw?.poses ? raw.poses : raw;
+  const schemaVersion = raw?.schema_version;
+  if (schemaVersion !== undefined && ![1, 2, 3].includes(Number(schemaVersion))) {
+    throw new Error(`지원하지 않는 OpenArm 자세 schema_version ${schemaVersion}입니다`);
+  }
+  const source = raw?.poses && [1, 2, 3].includes(Number(schemaVersion)) ? raw.poses : raw;
+  // Schema v2 briefly exposed an incorrect right-arm sign inversion. Restore
+  // those saved values to the native OpenArm-v1 motor/joint coordinates.
+  const invertedRightCoordinates = Number(schemaVersion) === 2;
   if (!source || typeof source !== "object" || Array.isArray(source)) {
     throw new Error("자세 JSON 형식이 올바르지 않습니다");
   }
@@ -89,16 +111,16 @@ function normalizeOpenArmPoseArchive(raw) {
     if (!pose || !Array.isArray(pose.left) || !Array.isArray(pose.right) || pose.left.length !== 8 || pose.right.length !== 8) {
       throw new Error(`'${name}' 자세에는 왼팔·오른팔 각 8개 각도가 필요합니다`);
     }
-    const clampSide = (values) => values.map((rawValue, index) => {
-      const value = Number(rawValue);
+    const clampSide = (side, values) => values.map((rawValue, index) => {
+      let value = Number(rawValue);
       if (!Number.isFinite(value)) throw new Error(`'${name}' 자세에 숫자가 아닌 각도가 있습니다`);
-      const lower = OPENARM_LIMITS[index][2];
-      const upper = OPENARM_LIMITS[index][3];
+      if (invertedRightCoordinates && side === "right" && index < 7) value *= -1;
+      const [lower, upper] = openArmOperatorLimits(side, index);
       return Math.max(lower, Math.min(upper, value));
     });
     normalized[name] = {
-      left: clampSide(pose.left),
-      right: clampSide(pose.right),
+      left: clampSide("left", pose.left),
+      right: clampSide("right", pose.right),
       saved_at: typeof pose.saved_at === "string" ? pose.saved_at : new Date().toISOString(),
     };
   });
@@ -109,30 +131,34 @@ function demoOpenArmMotors(side) {
   const positions = side === "left"
     ? [15, -22, 30, 67, 10, -8, 18, -25]
     : [-15, 22, -30, 67, -10, 8, -18, -25];
-  return OPENARM_LIMITS.map(([label, motorType, lower, upper], index) => ({
-    key: index === 7 ? "gripper" : `joint_${index + 1}`,
-    label,
-    motor_type: motorType,
-    send_id: index + 1,
-    receive_id: index + 17,
-    lower_deg: lower,
-    upper_deg: upper,
-    hard_lower_deg: lower,
-    hard_upper_deg: upper,
-    velocity_limit_deg_s: OPENARM_VELOCITY_LIMITS_DEG_S[index],
-    kp: index < 2 ? 20 : index < 4 ? 12 : 5,
-    kd: index < 2 ? 1 : index < 4 ? 0.8 : 0.3,
-    online: true,
-    age_sec: 0.012 + index * 0.001,
-    position_deg: positions[index],
-    target_deg: positions[index],
-    velocity_rad_s: index % 2 ? -0.008 : 0.006,
-    torque_nm: 0.18 + index * 0.03,
-    mos_temp_c: 31 + index,
-    rotor_temp_c: 29 + index,
-    status_byte: 0,
-    fault_code: 0,
-  }));
+  return OPENARM_LIMITS.map(([label, motorType], index) => {
+    const [lower, upper] = openArmOperatorLimits(side, index);
+    return {
+      key: index === 7 ? "gripper" : `joint_${index + 1}`,
+      label,
+      motor_type: motorType,
+      send_id: index + 1,
+      receive_id: index + 17,
+      lower_deg: lower,
+      upper_deg: upper,
+      hard_lower_deg: lower,
+      hard_upper_deg: upper,
+      direction_sign: openArmDirectionSign(side, index),
+      velocity_limit_deg_s: OPENARM_VELOCITY_LIMITS_DEG_S[index],
+      kp: index < 2 ? 20 : index < 4 ? 12 : 5,
+      kd: index < 2 ? 1 : index < 4 ? 0.8 : 0.3,
+      online: true,
+      age_sec: 0.012 + index * 0.001,
+      position_deg: positions[index],
+      target_deg: positions[index],
+      velocity_rad_s: index % 2 ? -0.008 : 0.006,
+      torque_nm: 0.18 + index * 0.03,
+      mos_temp_c: 31 + index,
+      rotor_temp_c: 29 + index,
+      status_byte: 0,
+      fault_code: 0,
+    };
+  });
 }
 
 const DEMO_OPENARM = {
@@ -143,6 +169,11 @@ const DEMO_OPENARM = {
   all_enabled: true,
   command_rate_hz: 100,
   trajectory_profile: "quintic_s_curve",
+  operator_coordinates: {
+    convention: "openarm_v1_native_joint",
+    description: "OpenArm-v1 원본 관절 좌표 · 명령/피드백 부호 변환 없음 · J1/J2 좌우별 영점·범위 적용",
+    direction_signs: { left: [1, 1, 1, 1, 1, 1, 1, 1], right: [1, 1, 1, 1, 1, 1, 1, 1] },
+  },
   target_speed_deg_s: 30,
   gain_scale: 1,
   maximum_target_speed_deg_s: 1718.87,
@@ -1327,7 +1358,7 @@ function OpenArmJointControl({ side, index, motor, value, disabled, onChange, on
         <button className="apply" disabled={disabled} onClick={onApply}>이 관절 적용</button>
       </div>
       <div className="openarm-limit-editor">
-        <div><strong>운용 각도 범위</strong><small>하드 한계 {format(hardLower, 1)}° … {format(hardUpper, 1)}° · 축 최고 {format(motor.velocity_limit_deg_s, 0)}°/s</small></div>
+        <div><strong>운용 각도 범위</strong><small>하드 한계 {format(hardLower, 1)}° … {format(hardUpper, 1)}° · 축 최고 {format(motor.velocity_limit_deg_s, 0)}°/s · 좌표 {Number(motor.direction_sign || 1) < 0 ? "반전 ×−1" : "정방향 ×+1"}</small></div>
         <label><span>하한</span><input aria-label={`${side} ${motor.label} 운용 하한`} type="number" min={hardLower} max={hardUpper} step="0.5" value={limitDraft.lower} onChange={(event) => setLimitDraft((current) => ({ ...current, lower: event.target.value }))} /></label>
         <label><span>상한</span><input aria-label={`${side} ${motor.label} 운용 상한`} type="number" min={hardLower} max={hardUpper} step="0.5" value={limitDraft.upper} onChange={(event) => setLimitDraft((current) => ({ ...current, upper: event.target.value }))} /></label>
         <button onClick={() => onLimitsApply(Number(limitDraft.lower), Number(limitDraft.upper), false)}>범위 저장</button>
@@ -1368,7 +1399,19 @@ function OpenArmView({ state, onPost, demo }) {
   const poseImportRef = useRef(null);
   const [savedPoses, setSavedPoses] = useState(() => {
     try {
-      return JSON.parse(window.localStorage.getItem("romo-b-openarm-poses") || "{}");
+      const current = window.localStorage.getItem(OPENARM_POSE_STORAGE_KEY);
+      if (current) return normalizeOpenArmPoseArchive(JSON.parse(current));
+      const inverted = window.localStorage.getItem(OPENARM_INVERTED_POSE_STORAGE_KEY);
+      if (inverted) {
+        const migrated = normalizeOpenArmPoseArchive({ schema_version: 2, poses: JSON.parse(inverted) });
+        window.localStorage.setItem(OPENARM_POSE_STORAGE_KEY, JSON.stringify(migrated));
+        return migrated;
+      }
+      const legacy = window.localStorage.getItem(OPENARM_LEGACY_POSE_STORAGE_KEY);
+      if (!legacy) return {};
+      const migrated = normalizeOpenArmPoseArchive({ schema_version: 1, poses: JSON.parse(legacy) });
+      window.localStorage.setItem(OPENARM_POSE_STORAGE_KEY, JSON.stringify(migrated));
+      return migrated;
     } catch {
       return {};
     }
@@ -1463,7 +1506,7 @@ function OpenArmView({ state, onPost, demo }) {
     const next = { ...savedPoses, [name]: { left: drafts.left, right: drafts.right, saved_at: new Date().toISOString() } };
     setSavedPoses(next);
     setSelectedPose(name);
-    window.localStorage.setItem("romo-b-openarm-poses", JSON.stringify(next));
+    window.localStorage.setItem(OPENARM_POSE_STORAGE_KEY, JSON.stringify(next));
     notifyResult(`브라우저에 '${name}' 자세를 저장했습니다`, true);
   };
   const loadPose = () => {
@@ -1478,14 +1521,15 @@ function OpenArmView({ state, onPost, demo }) {
     const next = { ...savedPoses };
     delete next[selectedPose];
     setSavedPoses(next);
-    window.localStorage.setItem("romo-b-openarm-poses", JSON.stringify(next));
+    window.localStorage.setItem(OPENARM_POSE_STORAGE_KEY, JSON.stringify(next));
     notifyResult(`'${selectedPose}' 자세를 삭제했습니다`, true);
     setSelectedPose("");
   };
   const exportPoses = () => {
     const archive = {
-      schema_version: 1,
+      schema_version: 3,
       type: "romo_b_openarm_poses",
+      coordinate_convention: "openarm_v1_native_joint",
       exported_at: new Date().toISOString(),
       poses: savedPoses,
     };
@@ -1509,7 +1553,7 @@ function OpenArmView({ state, onPost, demo }) {
       const imported = normalizeOpenArmPoseArchive(JSON.parse(await file.text()));
       const next = { ...savedPoses, ...imported };
       setSavedPoses(next);
-      window.localStorage.setItem("romo-b-openarm-poses", JSON.stringify(next));
+      window.localStorage.setItem(OPENARM_POSE_STORAGE_KEY, JSON.stringify(next));
       notifyResult(`OpenArm 자세 ${Object.keys(imported).length}개를 가져왔습니다`, true);
     } catch (error) {
       notifyResult(error.message || "자세 JSON을 가져오지 못했습니다", false);
@@ -1695,6 +1739,7 @@ function OpenArmView({ state, onPost, demo }) {
           <label><span>gain 배율 <strong>{format(gain, 2)}×</strong></span><input type="range" min="0.05" max={openarm.maximum_gain_scale || 1.5} step="0.05" value={gain} onChange={(event) => setGain(Number(event.target.value))} /></label>
         </div>
         <div className="openarm-facts"><span>제어 주기 <b>{format(openarm.command_rate_hz, 0)} Hz</b></span><span>궤적 <b>{openarm.trajectory_profile === "quintic_s_curve" ? "5차 S-curve" : openarm.trajectory_profile || "확인 중"}</b></span><span>프로토콜 <b>{openarm.library_version}</b></span><span>마지막 영점 <b>{openarm.last_calibration || "기록 없음"}</b></span><span>전체 상태 <b>{healthLabel}</b></span><span>확인 항목 <b>{(openarm.issues || []).length}건</b></span></div>
+        <p className="openarm-coordinate-note"><ArrowsClockwise weight="bold" />{openarm.operator_coordinates?.description || "OpenArm-v1 원본 관절 좌표 · 명령/피드백 부호 변환 없음 · J1/J2 좌우별 영점·범위 적용"}</p>
         {openarm.last_error && <div className="openarm-error"><Warning weight="fill" />{openarm.last_error}</div>}
       </section>
 
@@ -1708,6 +1753,7 @@ function OpenArmView({ state, onPost, demo }) {
               <div><span className="eyebrow">{side === "left" ? "LEFT ARM · CAN1" : "RIGHT ARM · CAN0"}</span><h2>{side === "left" ? "왼팔 8축 제어" : "오른팔 8축 제어"}</h2></div>
               <span className={`mode-chip ${arm.control_ready ? "armed" : arm.command_interlocked || arm.fault_count ? "fault" : ""}`}>{arm.command_interlocked ? "명령 차단" : arm.enabled ? arm.control_ready ? "모터 활성" : "상태 확인" : arm.all_online ? "피드백 정상" : `${arm.online_count || 0}/8 대기`}</span>
             </div>
+            <p className="openarm-arm-coordinate">{side === "left" ? "원본 왼팔 좌표 · J1 −200°…80° · J2 −190°…10°" : "원본 오른팔 좌표 · J1 −80°…200° · J2 −10°…190°"}</p>
             <div className="openarm-arm-toolbar">
               <button disabled={!arm.connected || !arm.all_online || arm.fault_count > 0 || arm.enabled} onClick={() => enable(side, true)}><Power weight="bold" />활성화</button>
               <button disabled={!arm.connected || !arm.enabled} onClick={() => enable(side, false)}><StopCircle weight="bold" />비활성화</button>

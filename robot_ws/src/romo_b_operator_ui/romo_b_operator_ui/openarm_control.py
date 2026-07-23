@@ -182,6 +182,8 @@ class OpenArmController:
             self.repo_root / "openarm" / "config" / "joint_limits.yaml"
         )
         self._specs = self._make_specs()
+        self._direction_signs = self._make_operator_direction_signs()
+        self._side_hard_limits = self._make_operator_hard_limits()
         self._interfaces = {
             side: str(self._config["interfaces"][side]["name"]) for side in SIDES
         }
@@ -223,7 +225,10 @@ class OpenArmController:
             self.repo_root / "config" / "local" / "openarm_operator_joint_limits.yaml"
         )
         self._soft_limits = {
-            side: [[spec.lower_rad, spec.upper_rad] for spec in self._specs]
+            side: [
+                list(self._operator_hard_bounds(side, index))
+                for index in range(len(self._specs))
+            ]
             for side in SIDES
         }
         self._load_operator_limits()
@@ -310,6 +315,98 @@ class OpenArmController:
         )
         return specs
 
+    def _make_operator_direction_signs(self) -> dict[str, list[float]]:
+        """Load motor-to-operator axis signs for the mirrored bimanual mount."""
+        coordinates = self._config.get("operator_coordinates", {})
+        configured = (
+            coordinates.get("direction_signs", {})
+            if isinstance(coordinates, dict)
+            else {}
+        )
+        result = {}
+        for side in SIDES:
+            raw_values = configured.get(side, [1] * len(self._specs))
+            if not isinstance(raw_values, list) or len(raw_values) != len(self._specs):
+                raise RuntimeError(
+                    f"operator_coordinates.direction_signs.{side}는 8개의 +1/-1 배열이어야 합니다"
+                )
+            values = []
+            for raw_value in raw_values:
+                try:
+                    value = float(raw_value)
+                except (TypeError, ValueError) as error:
+                    raise RuntimeError(
+                        f"operator_coordinates.direction_signs.{side}에는 +1 또는 -1만 사용할 수 있습니다"
+                    ) from error
+                if value not in (-1.0, 1.0):
+                    raise RuntimeError(
+                        f"operator_coordinates.direction_signs.{side}에는 +1 또는 -1만 사용할 수 있습니다"
+                    )
+                values.append(value)
+            result[side] = values
+        return result
+
+    def _direction_sign(self, side: str, index: int) -> float:
+        return self._direction_signs[side][index]
+
+    def _motor_to_operator(self, side: str, index: int, value: float) -> float:
+        return self._direction_sign(side, index) * float(value)
+
+    def _operator_to_motor(self, side: str, index: int, value: float) -> float:
+        # A direction sign is its own inverse because it is always +1 or -1.
+        return self._direction_sign(side, index) * float(value)
+
+    def _make_operator_hard_limits(self) -> dict[str, list[tuple[float, float]]]:
+        """Load calibrated side-specific hard limits in operator coordinates."""
+        coordinates = self._config.get("operator_coordinates", {})
+        configured = (
+            coordinates.get("hard_limits_deg", {})
+            if isinstance(coordinates, dict)
+            else {}
+        )
+        result = {}
+        for side in SIDES:
+            side_limits = configured.get(side, {})
+            if not isinstance(side_limits, dict):
+                raise RuntimeError(
+                    f"operator_coordinates.hard_limits_deg.{side}는 관절별 범위여야 합니다"
+                )
+            result[side] = []
+            for index, spec in enumerate(self._specs):
+                entry = side_limits.get(spec.key)
+                if entry is None:
+                    converted = (
+                        self._motor_to_operator(side, index, spec.lower_rad),
+                        self._motor_to_operator(side, index, spec.upper_rad),
+                    )
+                    bounds = (min(converted), max(converted))
+                else:
+                    if not isinstance(entry, list) or len(entry) != 2:
+                        raise RuntimeError(
+                            f"operator_coordinates.hard_limits_deg.{side}.{spec.key}는 "
+                            "[하한, 상한] 배열이어야 합니다"
+                        )
+                    try:
+                        bounds = tuple(math.radians(float(value)) for value in entry)
+                    except (TypeError, ValueError) as error:
+                        raise RuntimeError(
+                            f"operator_coordinates.hard_limits_deg.{side}.{spec.key}는 "
+                            "숫자 범위여야 합니다"
+                        ) from error
+                    if (
+                        not all(math.isfinite(value) for value in bounds)
+                        or bounds[0] >= bounds[1]
+                    ):
+                        raise RuntimeError(
+                            f"operator_coordinates.hard_limits_deg.{side}.{spec.key}의 "
+                            "하한은 상한보다 작은 유한값이어야 합니다"
+                        )
+                result[side].append((float(bounds[0]), float(bounds[1])))
+        return result
+
+    def _operator_hard_bounds(self, side: str, index: int) -> tuple[float, float]:
+        return self._side_hard_limits[side][index]
+
     @staticmethod
     def _empty_motor(spec: JointSpec) -> dict:
         return {
@@ -358,10 +455,11 @@ class OpenArmController:
                     upper = math.radians(float(entry["upper_deg"]))
                 except (KeyError, TypeError, ValueError):
                     continue
+                hard_lower, hard_upper = self._operator_hard_bounds(side, index)
                 if (
                     math.isfinite(lower)
                     and math.isfinite(upper)
-                    and spec.lower_rad <= lower < upper <= spec.upper_rad
+                    and hard_lower <= lower < upper <= hard_upper
                 ):
                     self._soft_limits[side][index] = [lower, upper]
 
@@ -761,10 +859,13 @@ class OpenArmController:
                 self._desired[side] = self._current_positions_locked(side)
             spec = self._specs[index]
             lower, upper = self._soft_bounds_locked(side, index)
-            target_rad = _clamp(math.radians(target_deg), lower, upper)
-            self._desired[side][index] = target_rad
+            operator_target = _clamp(math.radians(target_deg), lower, upper)
+            motor_target = self._operator_to_motor(side, index, operator_target)
+            self._desired[side][index] = motor_target
             self._plan_trajectory_locked(side, self._desired[side])
-            self._log_event(f"{side} {spec.label} 목표 {math.degrees(target_rad):.2f}°")
+            self._log_event(
+                f"{side} {spec.label} 조작자 목표 {math.degrees(operator_target):.2f}°"
+            )
         return {
             "accepted": True,
             "message": f"{side} {self._specs[index].label} 목표를 적용했습니다",
@@ -800,7 +901,10 @@ class OpenArmController:
                 prepared = []
                 for index, value in enumerate(values):
                     lower, upper = self._soft_bounds_locked(side, index)
-                    prepared.append(_clamp(math.radians(value), lower, upper))
+                    operator_target = _clamp(math.radians(value), lower, upper)
+                    prepared.append(
+                        self._operator_to_motor(side, index, operator_target)
+                    )
                 self._desired[side] = prepared
                 if self._commanded[side] is None:
                     self._commanded[side] = self._current_positions_locked(side)
@@ -815,9 +919,8 @@ class OpenArmController:
             raise ValueError("joint 번호는 0..7 범위여야 합니다")
         spec = self._specs[index]
         reset = bool(payload.get("reset", False))
-        if reset:
-            lower, upper = spec.lower_rad, spec.upper_rad
-        else:
+        requested_bounds = None
+        if not reset:
             try:
                 lower = math.radians(float(payload["lower_deg"]))
                 upper = math.radians(float(payload["upper_deg"]))
@@ -827,16 +930,27 @@ class OpenArmController:
                 raise ValueError("운용 하한과 상한은 유한한 숫자여야 합니다")
             if lower >= upper:
                 raise ValueError("운용 하한은 상한보다 작아야 합니다")
-            tolerance = math.radians(0.001)
-            if lower < spec.lower_rad - tolerance or upper > spec.upper_rad + tolerance:
-                raise ValueError(
-                    f"{spec.label} 운용 범위는 하드 한계 "
-                    f"{spec.lower_deg:.1f}°..{spec.upper_deg:.1f}° 안이어야 합니다"
-                )
-            lower = max(lower, spec.lower_rad)
-            upper = min(upper, spec.upper_rad)
+            requested_bounds = (lower, upper)
         with self._lock:
+            saved_bounds = {}
             for side in sides:
+                hard_lower, hard_upper = self._operator_hard_bounds(side, index)
+                if reset:
+                    lower, upper = hard_lower, hard_upper
+                else:
+                    lower, upper = requested_bounds
+                    tolerance = math.radians(0.001)
+                    if lower < hard_lower - tolerance or upper > hard_upper + tolerance:
+                        side_label = "왼팔" if side == "left" else "오른팔"
+                        raise ValueError(
+                            f"{side_label} {spec.label} 운용 범위는 조작자 좌표 하드 한계 "
+                            f"{math.degrees(hard_lower):.1f}°.."
+                            f"{math.degrees(hard_upper):.1f}° 안이어야 합니다"
+                        )
+                    lower = max(lower, hard_lower)
+                    upper = min(upper, hard_upper)
+                saved_bounds[side] = (lower, upper)
+            for side, (lower, upper) in saved_bounds.items():
                 self._soft_limits[side][index] = [lower, upper]
                 # Editing a limit never starts a move.  If a trajectory was in
                 # progress, hold its latest commanded position and apply the new
@@ -846,15 +960,21 @@ class OpenArmController:
                 self._trajectories[side] = None
             self._save_operator_limits_locked()
             verb = "원본 하드 한계로 복원" if reset else "운용 범위 저장"
-            self._log_event(
-                f"{','.join(sides)} {spec.label} {verb}: "
-                f"{math.degrees(lower):.1f}°..{math.degrees(upper):.1f}°"
+            descriptions = ", ".join(
+                f"{side} {math.degrees(bounds[0]):.1f}°..{math.degrees(bounds[1]):.1f}°"
+                for side, bounds in saved_bounds.items()
             )
+            self._log_event(f"{spec.label} {verb}: {descriptions}")
+        descriptions = ", ".join(
+            f"{'왼팔' if side == 'left' else '오른팔'} "
+            f"{math.degrees(bounds[0]):.1f}°..{math.degrees(bounds[1]):.1f}°"
+            for side, bounds in saved_bounds.items()
+        )
         return {
             "accepted": True,
             "message": (
-                f"{spec.label} 운용 범위를 {math.degrees(lower):.1f}°.."
-                f"{math.degrees(upper):.1f}°로 저장했습니다 · 팔은 움직이지 않았습니다"
+                f"{spec.label} 운용 범위를 저장했습니다 ({descriptions}) · "
+                "팔은 움직이지 않았습니다"
             ),
         }
 
@@ -895,10 +1015,20 @@ class OpenArmController:
                         "position_deg": (
                             None
                             if position is None
-                            else round(math.degrees(float(position)), 3)
+                            else round(
+                                math.degrees(
+                                    self._motor_to_operator(side, index, float(position))
+                                ),
+                                3,
+                            )
                         ),
                         "velocity_rad_s": (
-                            None if velocity is None else round(float(velocity), 4)
+                            None
+                            if velocity is None
+                            else round(
+                                self._motor_to_operator(side, index, float(velocity)),
+                                4,
+                            )
                         ),
                         "fault_code": int(motor.get("fault_code") or 0),
                         "online": self._motor_is_online(motor, now, 1.5),
@@ -1387,10 +1517,13 @@ class OpenArmController:
                     item = dict(motor)
                     spec = self._specs[index]
                     soft_lower, soft_upper = self._soft_bounds_locked(side, index)
+                    hard_lower, hard_upper = self._operator_hard_bounds(side, index)
+                    direction_sign = self._direction_sign(side, index)
+                    item["direction_sign"] = int(direction_sign)
                     item["lower_deg"] = round(math.degrees(soft_lower), 3)
                     item["upper_deg"] = round(math.degrees(soft_upper), 3)
-                    item["hard_lower_deg"] = round(spec.lower_deg, 3)
-                    item["hard_upper_deg"] = round(spec.upper_deg, 3)
+                    item["hard_lower_deg"] = round(math.degrees(hard_lower), 3)
+                    item["hard_upper_deg"] = round(math.degrees(hard_upper), 3)
                     item["velocity_limit_deg_s"] = round(
                         math.degrees(spec.velocity_limit_rad_s), 3
                     )
@@ -1410,18 +1543,37 @@ class OpenArmController:
                     item["position_deg"] = (
                         None
                         if item["position_rad"] is None
-                        else round(math.degrees(float(item["position_rad"])), 3)
+                        else round(
+                            math.degrees(
+                                self._motor_to_operator(
+                                    side, index, float(item["position_rad"])
+                                )
+                            ),
+                            3,
+                        )
                     )
                     item["target_deg"] = (
                         None
                         if item["target_rad"] is None
-                        else round(math.degrees(float(item["target_rad"])), 3)
+                        else round(
+                            math.degrees(
+                                self._motor_to_operator(
+                                    side, index, float(item["target_rad"])
+                                )
+                            ),
+                            3,
+                        )
                     )
                     item.pop("position_rad", None)
                     item.pop("target_rad", None)
                     for key in ("velocity_rad_s", "torque_nm"):
                         if item[key] is not None:
-                            item[key] = round(float(item[key]), 4)
+                            item[key] = round(
+                                self._motor_to_operator(
+                                    side, index, float(item[key])
+                                ),
+                                4,
+                            )
                     motors.append(item)
                 connected = side in self._sockets
                 enabled = self._enabled[side]
@@ -1472,6 +1624,17 @@ class OpenArmController:
                 "all_enabled": all(self._enabled.values()),
                 "command_rate_hz": self._command_rate_hz,
                 "trajectory_profile": "quintic_s_curve",
+                "operator_coordinates": {
+                    "convention": "openarm_v1_native_joint",
+                    "description": (
+                        "OpenArm-v1 원본 관절 좌표 · 명령/피드백 부호 변환 없음 · "
+                        "J1/J2는 좌우 캘리브레이션 영점과 하드 범위가 다름"
+                    ),
+                    "direction_signs": {
+                        side: [int(value) for value in self._direction_signs[side]]
+                        for side in SIDES
+                    },
+                },
                 "minimum_trajectory_duration_sec": self._minimum_trajectory_duration,
                 "target_speed_deg_s": self._speed_deg_s,
                 "gain_scale": self._gain_scale,
