@@ -56,6 +56,7 @@ const DEMO_TASKS = [
   ["autoware_validation", "Autoware 전체 점검", "점검", "격리된 Autoware 시험 전체를 실행합니다.", "map", false],
   ["build_project", "ROMO-B 워크스페이스 빌드", "빌드 및 데이터", "저장소 ROS 2 패키지를 빌드합니다.", "none", false],
   ["prepare_autoware_map", "Autoware 지도 준비", "빌드 및 데이터", "Lanelet2와 PCD 지도 묶음을 생성합니다.", "map", false],
+  ["openarm_auto_calibration", "OpenArm 자동 영점 보정", "OpenArm", "원본 OpenArm-v1 기계 한계 캘리브레이션을 한쪽 팔에서 실행합니다.", "none", true],
 ].map(([id, label, group, description, selection, primary]) => ({
   id, label, group, description, selection, primary, caution: "", running: id === "field_navigation", owned_by_ui: id === "field_navigation", pids: id === "field_navigation" ? [24831] : [], pid: id === "field_navigation" ? 24831 : null, elapsed_sec: id === "field_navigation" ? 128.4 : null, exit_code: null, log_path: id === "field_navigation" ? "/home/hyunseo/ROMO-B/data/local/logs/operator-field.log" : "", message: id === "field_navigation" ? "실행 중" : "실행 대기",
 }));
@@ -70,6 +71,39 @@ const OPENARM_LIMITS = [
   ["J7", "DM4310", -90, 90],
   ["GRIP", "DM4310", -60, 0],
 ];
+const OPENARM_VELOCITY_LIMITS_DEG_S = [960, 960, 312, 312, 1200, 1200, 1200, 1718.87];
+
+function normalizeOpenArmPoseArchive(raw) {
+  const source = raw?.schema_version === 1 && raw?.poses ? raw.poses : raw;
+  if (!source || typeof source !== "object" || Array.isArray(source)) {
+    throw new Error("자세 JSON 형식이 올바르지 않습니다");
+  }
+  const entries = Object.entries(source);
+  if (entries.length > 200) throw new Error("한 번에 최대 200개 자세만 가져올 수 있습니다");
+  const normalized = {};
+  entries.forEach(([rawName, pose]) => {
+    const name = String(rawName).trim();
+    if (!name || name.length > 80 || ["__proto__", "prototype", "constructor"].includes(name)) {
+      throw new Error("자세 이름은 1~80자의 일반 문자열이어야 합니다");
+    }
+    if (!pose || !Array.isArray(pose.left) || !Array.isArray(pose.right) || pose.left.length !== 8 || pose.right.length !== 8) {
+      throw new Error(`'${name}' 자세에는 왼팔·오른팔 각 8개 각도가 필요합니다`);
+    }
+    const clampSide = (values) => values.map((rawValue, index) => {
+      const value = Number(rawValue);
+      if (!Number.isFinite(value)) throw new Error(`'${name}' 자세에 숫자가 아닌 각도가 있습니다`);
+      const lower = OPENARM_LIMITS[index][2];
+      const upper = OPENARM_LIMITS[index][3];
+      return Math.max(lower, Math.min(upper, value));
+    });
+    normalized[name] = {
+      left: clampSide(pose.left),
+      right: clampSide(pose.right),
+      saved_at: typeof pose.saved_at === "string" ? pose.saved_at : new Date().toISOString(),
+    };
+  });
+  return normalized;
+}
 
 function demoOpenArmMotors(side) {
   const positions = side === "left"
@@ -83,6 +117,9 @@ function demoOpenArmMotors(side) {
     receive_id: index + 17,
     lower_deg: lower,
     upper_deg: upper,
+    hard_lower_deg: lower,
+    hard_upper_deg: upper,
+    velocity_limit_deg_s: OPENARM_VELOCITY_LIMITS_DEG_S[index],
     kp: index < 2 ? 20 : index < 4 ? 12 : 5,
     kd: index < 2 ? 1 : index < 4 ? 0.8 : 0.3,
     online: true,
@@ -104,16 +141,37 @@ const DEMO_OPENARM = {
   connected: true,
   any_enabled: true,
   all_enabled: true,
-  command_rate_hz: 30,
-  target_speed_deg_s: 15,
+  command_rate_hz: 100,
+  trajectory_profile: "quintic_s_curve",
+  target_speed_deg_s: 30,
   gain_scale: 1,
-  maximum_target_speed_deg_s: 90,
+  maximum_target_speed_deg_s: 1718.87,
   maximum_gain_scale: 1.5,
+  health_level: "READY",
+  all_control_ready: true,
+  issues: [],
   last_error: "",
   last_calibration: "2026-07-22 14:30:08",
+  calibration: {
+    status: "verified",
+    message: "선택한 관절의 0점 검증을 통과했습니다",
+    ready: false,
+    verified: true,
+    selection_key: "left,right:0,1,2,3,4,5,6,7",
+    target_sides: ["left", "right"],
+    target_joints: ["J1", "J2", "J3", "J4", "J5", "J6", "J7", "GRIP"],
+    checked_at: "2026-07-22 14:29:58",
+    written_at: "2026-07-22 14:30:06",
+    verified_at: "2026-07-22 14:30:08",
+    preflight: [],
+    results: [],
+    tolerance_deg: 2,
+    max_velocity_rad_s: 0.05,
+    automatic_tool: { available: true, enabled: true, version: "v1", reason: "원본 OpenArm 기계 한계 자동 보정 도구가 준비되었습니다" },
+  },
   arms: {
-    left: { interface: "can1", connected: true, enabled: true, online_count: 8, all_online: true, rx_count: 18420, tx_count: 9034, motors: demoOpenArmMotors("left") },
-    right: { interface: "can0", connected: true, enabled: true, online_count: 8, all_online: true, rx_count: 18394, tx_count: 9034, motors: demoOpenArmMotors("right") },
+    left: { interface: "can1", connected: true, enabled: true, online_count: 8, all_online: true, stale_count: 0, fault_count: 0, max_temp_c: 38, oldest_feedback_age_sec: 0.019, command_interlocked: false, interlock_reason: "", control_ready: true, can_error_count: 0, rx_count: 18420, tx_count: 9034, motors: demoOpenArmMotors("left") },
+    right: { interface: "can0", connected: true, enabled: true, online_count: 8, all_online: true, stale_count: 0, fault_count: 0, max_temp_c: 38, oldest_feedback_age_sec: 0.019, command_interlocked: false, interlock_reason: "", control_ready: true, can_error_count: 0, rx_count: 18394, tx_count: 9034, motors: demoOpenArmMotors("right") },
   },
   interfaces: {
     left: { name: "can1", exists: true, is_can: true, up: true, operstate: "unknown", statistics: { rx_packets: 18420, tx_packets: 9034, rx_errors: 0, tx_errors: 0 } },
@@ -124,7 +182,7 @@ const DEMO_OPENARM = {
 };
 
 const DEMO_STATE = {
-  version: "0.4.0",
+  version: "0.7.1",
   platform: {
     state: 2,
     state_name: "ARMED_AUTO",
@@ -290,9 +348,12 @@ const EMPTY_STATE = {
     connected: false,
     any_enabled: false,
     all_enabled: false,
+    health_level: "DISCONNECTED",
+    all_control_ready: false,
+    issues: [],
     arms: {
-      left: { ...DEMO_OPENARM.arms.left, connected: false, enabled: false, online_count: 0, all_online: false, rx_count: 0, tx_count: 0, motors: DEMO_OPENARM.arms.left.motors.map((motor) => ({ ...motor, online: false, age_sec: null, position_deg: null, target_deg: null, velocity_rad_s: null, torque_nm: null, mos_temp_c: null, rotor_temp_c: null })) },
-      right: { ...DEMO_OPENARM.arms.right, connected: false, enabled: false, online_count: 0, all_online: false, rx_count: 0, tx_count: 0, motors: DEMO_OPENARM.arms.right.motors.map((motor) => ({ ...motor, online: false, age_sec: null, position_deg: null, target_deg: null, velocity_rad_s: null, torque_nm: null, mos_temp_c: null, rotor_temp_c: null })) },
+      left: { ...DEMO_OPENARM.arms.left, connected: false, enabled: false, online_count: 0, all_online: false, stale_count: 8, max_temp_c: null, oldest_feedback_age_sec: null, control_ready: false, rx_count: 0, tx_count: 0, motors: DEMO_OPENARM.arms.left.motors.map((motor) => ({ ...motor, online: false, age_sec: null, position_deg: null, target_deg: null, velocity_rad_s: null, torque_nm: null, mos_temp_c: null, rotor_temp_c: null })) },
+      right: { ...DEMO_OPENARM.arms.right, connected: false, enabled: false, online_count: 0, all_online: false, stale_count: 8, max_temp_c: null, oldest_feedback_age_sec: null, control_ready: false, rx_count: 0, tx_count: 0, motors: DEMO_OPENARM.arms.right.motors.map((motor) => ({ ...motor, online: false, age_sec: null, position_deg: null, target_deg: null, velocity_rad_s: null, torque_nm: null, mos_temp_c: null, rotor_temp_c: null })) },
     },
     log: [],
   },
@@ -301,11 +362,12 @@ const EMPTY_STATE = {
 };
 
 const TABS = [
-  { id: "main", label: "메인 제어", icon: Gauge },
+  { id: "unified", label: "통합 운용", icon: Robot },
+  { id: "main", label: "차량 상세", icon: Gauge },
   { id: "algorithm", label: "플랫폼 제어 알고리즘", icon: Wrench },
   { id: "navigation", label: "자율주행", icon: MapPin },
   { id: "operations", label: "실행 관리", icon: PlayCircle },
-  { id: "openarm", label: "OpenArm 양팔", icon: PlugsConnected },
+  { id: "openarm", label: "양팔 상세", icon: PlugsConnected },
   { id: "system", label: "시스템 상태", icon: ListChecks },
   { id: "diagnostics", label: "진단", icon: Pulse },
 ];
@@ -638,6 +700,175 @@ function AutoReadiness({ state }) {
         <span>RC/본체 스위치로 PCU 조건을 맞춘 뒤 웹의 HLV Arm을 누르면 Auto 전환을 요청합니다. PCU 피드백 AUTO와 브리지 ARMED가 모두 확인되어야 주행 준비 완료로 표시됩니다.</span>
       </div>
     </section>
+  );
+}
+
+function UnifiedArmRow({ side, arm }) {
+  const label = side === "left" ? "왼팔" : "오른팔";
+  const feedbackReady = Boolean(arm?.all_online);
+  const faulted = Number(arm?.fault_count || 0) > 0 || Boolean(arm?.command_interlocked);
+  return (
+    <div className={`unified-arm-row ${faulted ? "fault" : feedbackReady ? "ready" : "waiting"}`}>
+      <div className="unified-arm-name">
+        <StatusDot active={feedbackReady} danger={faulted} />
+        <div><strong>{label}</strong><span>{arm?.interface || (side === "left" ? "can1" : "can0")}</span></div>
+      </div>
+      <div><span>피드백</span><strong>{arm?.online_count || 0}/8</strong></div>
+      <div><span>모터</span><strong>{arm?.enabled ? "ENABLE" : "DISABLE"}</strong></div>
+      <div><span>최고 온도</span><strong>{arm?.max_temp_c === null || arm?.max_temp_c === undefined ? "—" : `${format(arm.max_temp_c, 0)}°C`}</strong></div>
+      <em>{faulted ? "확인 필요" : arm?.control_ready ? "제어 가능" : feedbackReady ? "활성 대기" : "연결 대기"}</em>
+    </div>
+  );
+}
+
+function UnifiedView({ state, onPost, demo, onNavigate }) {
+  const openarm = state.openarm || EMPTY_STATE.openarm;
+  const leftArm = openarm.arms?.left || {};
+  const rightArm = openarm.arms?.right || {};
+  const bridgeArmed = state.platform?.state === 2;
+  const platformOnline = Boolean(state.platform?.connected && state.health?.platform?.online);
+  const openarmOnlineCount = Number(leftArm.online_count || 0) + Number(rightArm.online_count || 0);
+  const openarmAllOnline = Boolean(leftArm.all_online && rightArm.all_online);
+  const openarmFaults = Number(leftArm.fault_count || 0) + Number(rightArm.fault_count || 0);
+  const tasks = state.operations?.tasks || [];
+  const primaryTask = tasks.find((task) => task.primary && task.running);
+  const fieldTask = tasks.find((task) => task.id === "field_navigation");
+  const mappingTask = tasks.find((task) => task.id === "live_mapping");
+  const robotTask = tasks.find((task) => task.id === "robot_control");
+  const [busyAction, setBusyAction] = useState("");
+
+  const invokeOpenArm = async (action, payload, label) => {
+    if (busyAction) return;
+    if (demo) return onPost(`데모: ${label}`, true, true);
+    setBusyAction(action);
+    try {
+      const result = await postJson(`/api/openarm/${action}`, payload);
+      onPost(result.message, true, true);
+    } catch (error) {
+      onPost(error.message, false, true);
+    } finally {
+      setBusyAction("");
+    }
+  };
+
+  const blockers = [
+    ...(state.readiness?.checks || []).filter((item) => !item.ok).map((item) => ({
+      source: "ROMO-B",
+      title: item.label,
+      detail: item.detail,
+    })),
+    ...(openarm.issues || []).map((issue) => ({ source: "OpenArm", title: issue, detail: "양팔 상세 화면에서 CAN 및 모터 상태를 확인하세요." })),
+  ];
+  if (!state.health?.lidar?.online) blockers.push({ source: "센서", title: "Mid-360 데이터 대기", detail: "LiDAR 연결 및 실행 상태를 확인하세요." });
+  if (!state.health?.localization?.online) blockers.push({ source: "자율주행", title: "위치추정 대기", detail: "지도와 초기 위치를 확인하세요." });
+
+  const unifiedLabel = platformOnline && openarm.connected
+    ? "차량·양팔 연결됨"
+    : platformOnline || openarm.connected
+      ? "일부 하드웨어 연결됨"
+      : "하드웨어 연결 대기";
+  const overallHealthy = platformOnline && !state.platform.estop && openarm.connected && openarmFaults === 0;
+
+  return (
+    <div className="unified-layout" data-testid="unified-page">
+      <section className="panel unified-command-center">
+        <div className="panel-title unified-title">
+          <div><span className="eyebrow">ROMO-B + OPENARM OPERATOR STATION</span><h2>통합 로봇 운용</h2><p>이동 플랫폼과 양팔의 연결·상태·핵심 제어를 한 화면에서 확인합니다.</p></div>
+          <span className={`mode-chip ${overallHealthy ? "armed" : blockers.length ? "fault" : ""}`}>{unifiedLabel}</span>
+        </div>
+
+        <div className="unified-overview-strip">
+          <div><StatusDot active={platformOnline} /><span>차량 통신</span><strong>{platformOnline ? "PCU 정상" : "연결 대기"}</strong><small>{format(state.health?.platform?.rate_hz, 1)} Hz</small></div>
+          <div><StatusDot active={state.readiness?.control_ready} danger={state.platform?.estop} /><span>차량 제어</span><strong>{state.platform?.estop ? "E-STOP" : state.readiness?.control_ready ? "주행 준비" : bridgeArmed ? "AUTO 전환 중" : "수동"}</strong><small>{state.platform?.steer_mode_name || "2WIS"}</small></div>
+          <div><StatusDot active={openarm.connected} /><span>양팔 CAN</span><strong>{openarm.connected ? `${openarmOnlineCount}/16 수신` : "연결 대기"}</strong><small>{leftArm.interface || "can1"} · {rightArm.interface || "can0"}</small></div>
+          <div><StatusDot active={openarm.all_control_ready} danger={openarmFaults > 0} /><span>양팔 제어</span><strong>{openarmFaults ? `${openarmFaults}축 오류` : openarm.all_enabled ? "16축 활성" : openarmAllOnline ? "활성 대기" : "피드백 대기"}</strong><small>{openarm.health_level || "DISCONNECTED"}</small></div>
+          <div><StatusDot active={state.health?.lidar?.online} /><span>센서·위치</span><strong>{state.health?.localization?.online ? "지도 추적 중" : "위치추정 대기"}</strong><small>LiDAR {format(state.health?.lidar?.rate_hz, 1)} Hz</small></div>
+          <div><StatusDot active={Boolean(primaryTask)} /><span>실행 스택</span><strong>{primaryTask?.label || "정지"}</strong><small>{primaryTask?.running ? `PID ${primaryTask.pid || "확인 중"}` : "실행 관리에서 시작"}</small></div>
+        </div>
+
+        <div className="unified-control-grid">
+          <article className="unified-subsystem vehicle-subsystem">
+            <div className="unified-subsystem-head">
+              <span className="unified-icon"><CarProfile weight="duotone" /></span>
+              <div><span>이동 플랫폼</span><h3>ROMO-B</h3></div>
+              <span className={`mode-chip ${state.readiness?.control_ready ? "armed" : state.platform?.estop ? "fault" : ""}`}>{state.platform?.state_name || "DISCONNECTED"}</span>
+            </div>
+            <div className="unified-metrics">
+              <Metric label="최종 속도 명령" value={format(state.commands?.safe?.linear_mps ?? state.command?.safe_linear_mps, 2)} unit="m/s" accent />
+              <Metric label="실측 주행 속도" value={format(state.motion?.wheel_odom_speed_mps, 2)} unit="m/s" />
+              <Metric label="조향 모드" value={state.platform?.steer_mode_name || "2WIS"} />
+              <Metric label="PCU / HLV Alive" value={`${state.platform?.pcu_alive ?? 0} / ${state.platform?.hlv_alive ?? 0}`} />
+            </div>
+            <div className="unified-wheel-line">
+              {(["FL", "FR", "RL", "RR"]).map((name, index) => <span key={name}><b>{name}</b>{format(state.platform?.wheel_speed_mps?.[index], 2)} m/s <em>{format(state.platform?.wheel_steer_deg?.[index], 1)}°</em></span>)}
+            </div>
+            <div className="unified-actions">
+              <button className={bridgeArmed ? "danger" : "primary"} disabled={!demo && !state.services?.arm} onClick={() => onPost("arm", !bridgeArmed)}>{bridgeArmed ? <LockKey weight="bold" /> : <Power weight="bold" />}{bridgeArmed ? "차량 수동 전환" : "차량 Auto / Arm"}</button>
+              <button onClick={() => onNavigate("main")}><SteeringWheel weight="bold" />직접 제어 열기</button>
+              <button onClick={() => onNavigate("navigation")}><MapPin weight="bold" />목표·경로 열기</button>
+            </div>
+          </article>
+
+          <article className="unified-subsystem openarm-subsystem">
+            <div className="unified-subsystem-head">
+              <span className="unified-icon"><PlugsConnected weight="duotone" /></span>
+              <div><span>양팔 매니퓰레이터</span><h3>OpenArm-v1</h3></div>
+              <span className={`mode-chip ${openarm.health_level === "READY" ? "armed" : openarmFaults ? "fault" : ""}`}>{openarm.health_level || "DISCONNECTED"}</span>
+            </div>
+            <div className="unified-arm-list">
+              <UnifiedArmRow side="left" arm={leftArm} />
+              <UnifiedArmRow side="right" arm={rightArm} />
+            </div>
+            <div className="unified-arm-facts">
+              <span><b>{format(openarm.command_rate_hz, 0)} Hz</b> 제어 주기</span>
+              <span><b>{openarmFaults}축</b> Motor fault</span>
+              <span><b>{openarm.last_calibration || "기록 없음"}</b> 마지막 영점</span>
+            </div>
+            <div className="unified-actions openarm-quick-actions">
+              {!openarm.connected ? (
+                <button className="primary" disabled={Boolean(busyAction)} onClick={() => invokeOpenArm("connect", { left_interface: leftArm.interface || "can1", right_interface: rightArm.interface || "can0" }, "양팔 CAN 연결")}><Link weight="bold" />양팔 CAN 연결</button>
+              ) : (
+                <button className="danger" disabled={Boolean(busyAction)} onClick={() => invokeOpenArm("disconnect", {}, "모터 비활성화 후 CAN 연결 해제")}><LinkBreak weight="bold" />CAN 연결 해제</button>
+              )}
+              {!openarm.all_enabled ? (
+                <button disabled={Boolean(busyAction) || !openarm.connected || !openarmAllOnline || openarmFaults > 0} onClick={() => invokeOpenArm("enable", { side: "both", enabled: true }, "현재 자세 유지로 양팔 모터 활성화")}><LockKeyOpen weight="bold" />양팔 활성화</button>
+              ) : (
+                <button className="danger" disabled={Boolean(busyAction)} onClick={() => invokeOpenArm("enable", { side: "both", enabled: false }, "양팔 모터 비활성화")}><LockKey weight="bold" />양팔 비활성화</button>
+              )}
+              <button disabled={Boolean(busyAction) || !openarm.connected || !openarm.any_enabled || !openarmAllOnline || openarmFaults > 0} onClick={() => invokeOpenArm("hold", { side: "both" }, "양팔 현재 자세 유지")}><HandPalm weight="bold" />현재 자세 유지</button>
+              <button onClick={() => onNavigate("openarm")}><SlidersHorizontal weight="bold" />16축 상세 제어</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section className="panel unified-mission-panel">
+        <div className="panel-title compact-title"><div><span className="eyebrow">MISSION & RUNTIME</span><h2>자율주행·매핑 실행 상태</h2></div><PlayCircle size={27} weight="duotone" /></div>
+        <div className="unified-mission-body">
+          <div className="unified-mission-primary">
+            <StatusDot active={Boolean(primaryTask)} />
+            <div><span>현재 주 실행</span><strong>{primaryTask?.label || "실행 중인 주 스택 없음"}</strong><small>{primaryTask?.message || "실행 관리에서 로봇 연결, 매핑 또는 자율주행을 시작할 수 있습니다."}</small></div>
+            <button onClick={() => onNavigate("operations")}>실행 관리 <ArrowRight weight="bold" /></button>
+          </div>
+          <div className="unified-task-grid">
+            <div className={robotTask?.running ? "running" : ""}><Robot weight="duotone" /><span>로봇만 연결</span><strong>{robotTask?.running ? "실행 중" : "대기"}</strong></div>
+            <div className={mappingTask?.running ? "running" : ""}><MapTrifold weight="duotone" /><span>실시간 매핑</span><strong>{mappingTask?.running ? "실행 중" : "대기"}</strong></div>
+            <div className={fieldTask?.running ? "running" : ""}><Path weight="duotone" /><span>Nav2 실주행</span><strong>{fieldTask?.running ? "실행 중" : "대기"}</strong></div>
+            <div className={state.navigation?.goal_state === "ACTIVE" ? "running" : ""}><MapPin weight="duotone" /><span>주행 목표</span><strong>{state.navigation?.goal_state || "없음"}</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="panel unified-attention-panel">
+        <div className="panel-title compact-title"><div><span className="eyebrow">OPERATOR ATTENTION</span><h2>확인할 항목</h2></div><span className={`mode-chip ${blockers.length === 0 ? "armed" : "fault"}`}>{blockers.length ? `${blockers.length}건` : "모두 정상"}</span></div>
+        <div className="unified-attention-list">
+          {blockers.length ? blockers.slice(0, 5).map((item, index) => (
+            <div key={`${item.source}-${item.title}-${index}`}><Warning weight="fill" /><span>{item.source}</span><div><strong>{item.title}</strong><small>{item.detail}</small></div></div>
+          )) : <div className="unified-all-clear"><CheckCircle weight="fill" /><div><strong>즉시 확인할 문제가 없습니다</strong><small>차량, 양팔, LiDAR와 위치추정의 현재 상태가 정상입니다.</small></div></div>}
+        </div>
+        <button className="unified-diagnostics-link" onClick={() => onNavigate("diagnostics")}><Pulse weight="bold" />전체 진단 보기 <ArrowRight weight="bold" /></button>
+      </section>
+    </div>
   );
 }
 
@@ -1037,10 +1268,14 @@ function OperationsView({ state, onPost, demo }) {
   );
 }
 
-function OpenArmJointControl({ side, index, motor, value, disabled, onChange, onApply }) {
+function OpenArmJointControl({ side, index, motor, value, disabled, onChange, onApply, onLimitsApply }) {
   const hasFault = Number(motor.fault_code || 0) !== 0;
   const lower = Number(motor.lower_deg);
   const upper = Number(motor.upper_deg);
+  const hardLower = Number(motor.hard_lower_deg ?? lower);
+  const hardUpper = Number(motor.hard_upper_deg ?? upper);
+  const [limitDraft, setLimitDraft] = useState({ lower, upper });
+  useEffect(() => setLimitDraft({ lower, upper }), [lower, upper]);
   const bounded = Math.max(lower, Math.min(upper, Number(value) || 0));
   const update = (next) => onChange(Math.max(lower, Math.min(upper, Number(next) || 0)));
   return (
@@ -1058,6 +1293,8 @@ function OpenArmJointControl({ side, index, motor, value, disabled, onChange, on
         <div><span>속도</span><strong>{format(motor.velocity_rad_s, 2)} <small>rad/s</small></strong></div>
         <div><span>토크</span><strong>{format(motor.torque_nm, 2)} <small>Nm</small></strong></div>
         <div><span>온도</span><strong>{format(motor.mos_temp_c, 0)} / {format(motor.rotor_temp_c, 0)}°C</strong></div>
+        <div><span>피드백 지연</span><strong>{motor.age_sec === null || motor.age_sec === undefined ? "—" : `${format(Number(motor.age_sec) * 1000, 0)} ms`}</strong></div>
+        <div><span>Fault code</span><strong>{motor.fault_code === null || motor.fault_code === undefined ? "—" : motor.fault_code}</strong></div>
       </div>
       <label className="openarm-target-label">
         <span>목표 각도</span>
@@ -1089,12 +1326,21 @@ function OpenArmJointControl({ side, index, motor, value, disabled, onChange, on
         <button disabled={disabled} onClick={() => update(bounded + 1)}>+1°</button>
         <button className="apply" disabled={disabled} onClick={onApply}>이 관절 적용</button>
       </div>
+      <div className="openarm-limit-editor">
+        <div><strong>운용 각도 범위</strong><small>하드 한계 {format(hardLower, 1)}° … {format(hardUpper, 1)}° · 축 최고 {format(motor.velocity_limit_deg_s, 0)}°/s</small></div>
+        <label><span>하한</span><input aria-label={`${side} ${motor.label} 운용 하한`} type="number" min={hardLower} max={hardUpper} step="0.5" value={limitDraft.lower} onChange={(event) => setLimitDraft((current) => ({ ...current, lower: event.target.value }))} /></label>
+        <label><span>상한</span><input aria-label={`${side} ${motor.label} 운용 상한`} type="number" min={hardLower} max={hardUpper} step="0.5" value={limitDraft.upper} onChange={(event) => setLimitDraft((current) => ({ ...current, upper: event.target.value }))} /></label>
+        <button onClick={() => onLimitsApply(Number(limitDraft.lower), Number(limitDraft.upper), false)}>범위 저장</button>
+        <button onClick={() => onLimitsApply(hardLower, hardUpper, true)}>원본 복원</button>
+      </div>
     </article>
   );
 }
 
 function OpenArmView({ state, onPost, demo }) {
   const openarm = state.openarm || EMPTY_STATE.openarm;
+  const automaticTool = openarm.calibration?.automatic_tool || { available: false, enabled: false, version: "v1", reason: "자동 캘리브레이션 도구 상태를 확인 중입니다" };
+  const automaticTask = (state.operations?.tasks || []).find((task) => task.id === "openarm_auto_calibration") || {};
   const poseFromFeedback = (side) => (openarm.arms?.[side]?.motors || []).map((motor) => {
     const fallback = Math.max(Number(motor.lower_deg || 0), Math.min(Number(motor.upper_deg || 0), 0));
     return Number.isFinite(Number(motor.position_deg)) ? Number(motor.position_deg) : fallback;
@@ -1110,8 +1356,16 @@ function OpenArmView({ state, onPost, demo }) {
   const [calibrationSide, setCalibrationSide] = useState("both");
   const [calibrationJoint, setCalibrationJoint] = useState("all");
   const [calibrationText, setCalibrationText] = useState("");
+  const [calibrationAcknowledged, setCalibrationAcknowledged] = useState(false);
+  const [calibrationReport, setCalibrationReport] = useState(openarm.calibration || null);
+  const [automaticSide, setAutomaticSide] = useState("right");
+  const [automaticText, setAutomaticText] = useState("");
+  const [automaticAcknowledged, setAutomaticAcknowledged] = useState(false);
+  const [automaticLog, setAutomaticLog] = useState("아직 자동 캘리브레이션 실행 로그가 없습니다.");
+  const [demoAutomaticRunning, setDemoAutomaticRunning] = useState(false);
   const [poseName, setPoseName] = useState("기본 자세");
   const [selectedPose, setSelectedPose] = useState("");
+  const poseImportRef = useRef(null);
   const [savedPoses, setSavedPoses] = useState(() => {
     try {
       return JSON.parse(window.localStorage.getItem("romo-b-openarm-poses") || "{}");
@@ -1135,6 +1389,22 @@ function OpenArmView({ state, onPost, demo }) {
       right: dirty.right ? current.right : poseFromFeedback("right"),
     }));
   }, [openarm.arms?.left?.rx_count, openarm.arms?.right?.rx_count, dirty.left, dirty.right]);
+
+  useEffect(() => {
+    if (openarm.calibration) setCalibrationReport(openarm.calibration);
+  }, [openarm.calibration]);
+
+  useEffect(() => {
+    if (demo) return undefined;
+    let mounted = true;
+    const refresh = () => fetch("/api/operations/openarm_auto_calibration/log")
+      .then((response) => response.json())
+      .then((data) => mounted && setAutomaticLog(data.tail || "출력 대기 중…"))
+      .catch((error) => mounted && setAutomaticLog(error.message));
+    refresh();
+    const timer = window.setInterval(refresh, 1000);
+    return () => { mounted = false; window.clearInterval(timer); };
+  }, [demo]);
 
   const notifyResult = (message, success = true) => onPost(message, success, true);
   const invoke = async (action, payload, demoMessage) => {
@@ -1176,6 +1446,11 @@ function OpenArmView({ state, onPost, demo }) {
     if (result) setDirty((current) => ({ ...current, ...(sides.includes("left") ? { left: false } : {}), ...(sides.includes("right") ? { right: false } : {}) }));
   };
   const applyJoint = (side, index) => invoke("joint", { side, joint: index, target_deg: drafts[side][index], speed_deg_s: speed, gain_scale: gain }, `${side === "left" ? "왼팔" : "오른팔"} ${(openarm.arms?.[side]?.motors || [])[index]?.label} 적용`);
+  const applyJointLimits = (side, index, lowerDeg, upperDeg, reset = false) => invoke(
+    "limits",
+    { side, joint: index, lower_deg: lowerDeg, upper_deg: upperDeg, reset },
+    `${side === "left" ? "왼팔" : "오른팔"} ${(openarm.arms?.[side]?.motors || [])[index]?.label} ${reset ? "원본 범위 복원" : "운용 범위 저장"}`,
+  );
   const enable = (side, enabled) => invoke("enable", { side, enabled }, `${side === "both" ? "양팔" : side === "left" ? "왼팔" : "오른팔"} 모터 ${enabled ? "활성화" : "비활성화"}`);
   const copyPose = (from, to) => {
     setDrafts((current) => ({ ...current, [to]: [...current[from]] }));
@@ -1207,14 +1482,152 @@ function OpenArmView({ state, onPost, demo }) {
     notifyResult(`'${selectedPose}' 자세를 삭제했습니다`, true);
     setSelectedPose("");
   };
-  const calibrate = () => {
-    const payload = { side: calibrationSide, confirmation: calibrationText };
-    if (calibrationJoint !== "all") payload.joint = Number(calibrationJoint);
-    return invoke("calibrate-zero", payload, "현재 자세 영점 저장");
+  const exportPoses = () => {
+    const archive = {
+      schema_version: 1,
+      type: "romo_b_openarm_poses",
+      exported_at: new Date().toISOString(),
+      poses: savedPoses,
+    };
+    const blob = new Blob([`${JSON.stringify(archive, null, 2)}\n`], { type: "application/json" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `romo-b-openarm-poses-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => window.URL.revokeObjectURL(url), 0);
+    notifyResult(`OpenArm 자세 ${Object.keys(savedPoses).length}개를 JSON으로 내보냈습니다`, true);
   };
+  const importPoses = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    if (file.size > 1024 * 1024) return notifyResult("자세 JSON은 1 MB 이하여야 합니다", false);
+    try {
+      const imported = normalizeOpenArmPoseArchive(JSON.parse(await file.text()));
+      const next = { ...savedPoses, ...imported };
+      setSavedPoses(next);
+      window.localStorage.setItem("romo-b-openarm-poses", JSON.stringify(next));
+      notifyResult(`OpenArm 자세 ${Object.keys(imported).length}개를 가져왔습니다`, true);
+    } catch (error) {
+      notifyResult(error.message || "자세 JSON을 가져오지 못했습니다", false);
+    }
+  };
+  const calibrationPayload = (includeConfirmation = false) => {
+    const payload = { side: calibrationSide };
+    if (calibrationJoint !== "all") payload.joint = Number(calibrationJoint);
+    if (includeConfirmation) payload.confirmation = calibrationText;
+    return payload;
+  };
+  const calibrationSelectionKey = `${calibrationSide === "both" ? "left,right" : calibrationSide}:${calibrationJoint === "all" ? "0,1,2,3,4,5,6,7" : calibrationJoint}`;
+  const selectedCalibrationEnabled = calibrationSide === "both" ? openarm.any_enabled : openarm.arms?.[calibrationSide]?.enabled;
+  const checkCalibration = async () => {
+    if (demo) {
+      const report = {
+        ...DEMO_OPENARM.calibration,
+        status: "ready",
+        message: "영점 저장 준비가 완료되었습니다",
+        ready: true,
+        verified: false,
+        selection_key: calibrationSelectionKey,
+        target_sides: calibrationSide === "both" ? ["left", "right"] : [calibrationSide],
+        target_joints: calibrationJoint === "all" ? OPENARM_LIMITS.map(([label]) => label) : [OPENARM_LIMITS[Number(calibrationJoint)][0]],
+        preflight: [],
+        results: [],
+      };
+      setCalibrationReport(report);
+      notifyResult("데모: 영점 저장 준비 점검을 통과했습니다", true);
+      return report;
+    }
+    const result = await invoke("calibration-check", calibrationPayload(), "영점 저장 준비 점검");
+    if (result?.calibration) setCalibrationReport(result.calibration);
+    return result;
+  };
+  const verifyCalibration = async () => {
+    if (demo) {
+      const report = { ...calibrationReport, status: "verified", message: "선택한 관절의 0점 검증을 통과했습니다", ready: false, verified: true, verified_at: new Date().toLocaleString("ko-KR") };
+      setCalibrationReport(report);
+      notifyResult("데모: 선택한 관절의 0점 검증을 통과했습니다", true);
+      return report;
+    }
+    const result = await invoke("verify-zero", calibrationPayload(), "영점 사후 검증");
+    if (result?.calibration) setCalibrationReport(result.calibration);
+    return result;
+  };
+  const calibrate = async () => {
+    if (demo) {
+      const report = { ...calibrationReport, status: "awaiting_verification", message: "영점 저장 완료 · 새 피드백으로 0점을 검증하세요", ready: false, verified: false, written_at: new Date().toLocaleString("ko-KR") };
+      setCalibrationReport(report);
+      notifyResult("데모: 공식 Disable → Set Zero → Disable 프레임을 전송했습니다", true);
+      window.setTimeout(verifyCalibration, 250);
+      return report;
+    }
+    const result = await invoke("calibrate-zero", calibrationPayload(true), "공식 3단계 영점 저장");
+    if (!result) return null;
+    if (result.calibration) setCalibrationReport(result.calibration);
+    await invoke("refresh", { side: calibrationSide }, "영점 저장 후 모터 피드백 갱신");
+    await new Promise((resolve) => window.setTimeout(resolve, 400));
+    return verifyCalibration();
+  };
+  const startAutomaticCalibration = async () => {
+    const running = demo ? demoAutomaticRunning : automaticTask.running;
+    if (running) return;
+    if (demo) {
+      setDemoAutomaticRunning(true);
+      setAutomaticLog(`[데모] ${automaticSide === "left" ? "왼팔" : "오른팔"} OpenArm-v1 자동 캘리브레이션 시작\n[데모] 기계 한계 검색과 영점 저장 출력이 여기에 실시간 표시됩니다.`);
+      notifyResult("데모: OpenArm 원본 자동 캘리브레이션을 시작했습니다", true);
+      return;
+    }
+    try {
+      const result = await postJson("/api/operations/openarm_auto_calibration/start", {
+        side: automaticSide,
+        interface: interfaces[automaticSide],
+        confirmation: automaticText,
+      });
+      notifyResult(result.message, result.accepted !== false);
+    } catch (error) {
+      notifyResult(error.message, false);
+    }
+  };
+  const stopAutomaticCalibration = async () => {
+    if (demo) {
+      setDemoAutomaticRunning(false);
+      setAutomaticLog((current) => `${current}\n[데모] SIGINT 요청 → 모터 disable 후 종료`);
+      notifyResult("데모: 자동 캘리브레이션 종료를 요청했습니다", true);
+      return;
+    }
+    try {
+      const result = await postJson("/api/operations/openarm_auto_calibration/stop", {});
+      notifyResult(result.message, true);
+    } catch (error) {
+      notifyResult(error.message, false);
+    }
+  };
+  const calibrationReadyForWrite = calibrationReport?.ready
+    && calibrationReport?.selection_key === calibrationSelectionKey;
   const calibrationDisabled = calibrationText !== "OPENARM ZERO"
-    || !openarm.connected
-    || (calibrationSide === "both" ? openarm.any_enabled : openarm.arms?.[calibrationSide]?.enabled);
+    || !calibrationAcknowledged
+    || !calibrationReadyForWrite
+    || (!demo && (!openarm.connected || selectedCalibrationEnabled));
+  const automaticRunning = demo ? demoAutomaticRunning : Boolean(automaticTask.running);
+  const automaticInterface = openarm.interfaces?.[automaticSide] || {};
+  const automaticInterfaceReady = demo || (automaticInterface.exists && automaticInterface.is_can && automaticInterface.up);
+  const automaticStartDisabled = (!demo && (!automaticTool.available || !automaticInterfaceReady || openarm.connected || openarm.any_enabled))
+    || automaticRunning
+    || !automaticAcknowledged
+    || automaticText !== "OPENARM AUTO CAL";
+  const healthLabels = {
+    DISCONNECTED: "CAN 연결 안 됨",
+    STANDBY: "정상 · 모터 비활성",
+    READY: "정상 · 제어 가능",
+    WARNING: "일부 축 확인 필요",
+    BLOCKED: "명령 차단",
+  };
+  const healthLabel = healthLabels[openarm.health_level] || "상태 확인 중";
+  const maximumSpeed = Math.max(1, Number(openarm.maximum_target_speed_deg_s || 1718.87));
+  const updateSpeed = (value) => setSpeed(Math.max(1, Math.min(maximumSpeed, Number(value) || 1)));
 
   return (
     <div className="openarm-layout" data-testid="openarm-page">
@@ -1240,41 +1653,70 @@ function OpenArmView({ state, onPost, demo }) {
           <button data-testid="openarm-connect" className="service-button primary" disabled={openarm.connected} onClick={() => invoke("connect", { left_interface: interfaces.left, right_interface: interfaces.right }, "양팔 CAN 연결")}><Link weight="bold" />CAN 연결</button>
           <button className="service-button danger" disabled={!openarm.connected} onClick={() => invoke("disconnect", {}, "모터 비활성화 후 CAN 연결 해제")}><LinkBreak weight="bold" />CAN 연결 해제</button>
           <button className="service-button" disabled={!openarm.connected} onClick={() => invoke("refresh", { side: "both" }, "16개 모터 상태 갱신")}><ArrowsClockwise weight="bold" />전체 상태 갱신</button>
-          <button className="service-button" disabled={!openarm.connected || !openarm.arms?.left?.all_online || !openarm.arms?.right?.all_online || openarm.all_enabled} onClick={() => enable("both", true)}><LockKeyOpen weight="bold" />양팔 모터 활성화</button>
+          <button className="service-button" disabled={!openarm.connected || !openarm.arms?.left?.all_online || !openarm.arms?.right?.all_online || openarm.arms?.left?.fault_count > 0 || openarm.arms?.right?.fault_count > 0 || openarm.all_enabled} onClick={() => enable("both", true)}><LockKeyOpen weight="bold" />양팔 모터 활성화</button>
           <button className="service-button danger" disabled={!openarm.connected || !openarm.any_enabled} onClick={() => enable("both", false)}><LockKey weight="bold" />양팔 모터 비활성화</button>
           <button className="service-button" disabled={!openarm.connected} onClick={() => invoke("clear-errors", { side: "both" }, "양팔 모터 오류 해제")}><Wrench weight="bold" />오류 해제</button>
         </div>
         <p className="openarm-safety-note"><ShieldCheck weight="fill" />CAN 연결만으로 모터가 활성화되거나 움직이지 않습니다. 활성화 버튼은 16축 피드백을 확인한 뒤 현재 자세를 유지하며 시작합니다.</p>
       </section>
 
+      <section className="panel openarm-health-panel">
+        <div className="panel-title compact-title">
+          <div><span className="eyebrow">실시간 CAN 피드백 · 명령 허용 상태</span><h2>양팔 연결·제어 상태</h2></div>
+          <span className={`mode-chip ${openarm.health_level === "READY" ? "armed" : openarm.health_level === "BLOCKED" || openarm.health_level === "WARNING" ? "fault" : ""}`}>{healthLabel}</span>
+        </div>
+        <div className="openarm-health-grid">
+          {(["left", "right"]).map((side) => {
+            const arm = openarm.arms?.[side] || {};
+            return (
+              <article className={`openarm-health-card ${arm.control_ready ? "ready" : arm.command_interlocked || arm.fault_count ? "blocked" : ""}`} key={side}>
+                <div className="openarm-health-head"><span><StatusDot active={arm.all_online} danger={arm.command_interlocked || arm.fault_count > 0} /><strong>{side === "left" ? "왼팔" : "오른팔"}</strong></span><em>{arm.control_ready ? "정상 · 제어 중" : arm.command_interlocked ? "명령 차단" : arm.enabled ? "피드백 확인 중" : arm.all_online ? "정상 · 비활성" : "피드백 대기"}</em></div>
+                <dl>
+                  <div><dt>피드백</dt><dd>{arm.online_count || 0}/8 · stale {arm.stale_count ?? 8}</dd></div>
+                  <div><dt>최장 지연</dt><dd>{arm.oldest_feedback_age_sec === null || arm.oldest_feedback_age_sec === undefined ? "—" : `${format(Number(arm.oldest_feedback_age_sec) * 1000, 0)} ms`}</dd></div>
+                  <div><dt>Motor fault</dt><dd>{arm.fault_count || 0}축</dd></div>
+                  <div><dt>최고 온도</dt><dd>{arm.max_temp_c === null || arm.max_temp_c === undefined ? "—" : `${format(arm.max_temp_c, 0)}°C`}</dd></div>
+                  <div><dt>CAN error</dt><dd>{arm.can_error_count || 0}건</dd></div>
+                  <div><dt>명령 상태</dt><dd>{arm.command_interlocked ? "차단됨" : arm.enabled ? "제어 프레임 전송" : "모터 비활성"}</dd></div>
+                </dl>
+                {arm.interlock_reason && <p><Warning weight="fill" />{arm.interlock_reason}</p>}
+              </article>
+            );
+          })}
+        </div>
+        {(openarm.issues || []).length > 0 && <div className="openarm-issue-list">{openarm.issues.map((issue) => <span key={issue}><Warning weight="fill" />{issue}</span>)}</div>}
+        <p className="openarm-health-note">피드백이 끊기거나 motor fault가 확인되면 해당 팔의 새 자세 명령과 주기 전송을 차단합니다. 상태가 정상으로 돌아온 뒤 <b>현재 자세 유지</b>를 눌러야 명령이 다시 시작됩니다.</p>
+      </section>
+
       <section className="panel openarm-settings-panel">
-        <div className="panel-title compact-title"><div><span className="eyebrow">동작 설정</span><h2>보간 속도와 MIT gain</h2></div><SlidersHorizontal size={25} weight="duotone" /></div>
+        <div className="panel-title compact-title"><div><span className="eyebrow">동작 설정</span><h2>100 Hz S-curve 속도와 MIT gain</h2></div><SlidersHorizontal size={25} weight="duotone" /></div>
         <div className="openarm-setting-controls">
-          <label><span>목표 이동 속도 <strong>{format(speed, 0)}°/s</strong></span><input type="range" min="1" max={openarm.maximum_target_speed_deg_s || 90} step="1" value={speed} onChange={(event) => setSpeed(Number(event.target.value))} /></label>
+          <label className="openarm-speed-control"><span>관절 최대 속도 <strong>{format(speed, 0)}°/s</strong></span><div><input aria-label="OpenArm 최대 속도 슬라이더" type="range" min="1" max={maximumSpeed} step="1" value={speed} onChange={(event) => updateSpeed(event.target.value)} /><input aria-label="OpenArm 최대 속도" type="number" min="1" max={maximumSpeed} step="1" value={speed} onChange={(event) => updateSpeed(event.target.value)} /></div><small>각 축은 원본 속도 상한으로 다시 제한됩니다. J3/J4 312 · J1/J2 960 · J5~J7 1200 · gripper 1719°/s</small></label>
           <label><span>gain 배율 <strong>{format(gain, 2)}×</strong></span><input type="range" min="0.05" max={openarm.maximum_gain_scale || 1.5} step="0.05" value={gain} onChange={(event) => setGain(Number(event.target.value))} /></label>
         </div>
-        <div className="openarm-facts"><span>제어 주기 <b>{format(openarm.command_rate_hz, 0)} Hz</b></span><span>백엔드 <b>{openarm.backend}</b></span><span>프로토콜 <b>{openarm.library_version}</b></span><span>마지막 영점 <b>{openarm.last_calibration || "기록 없음"}</b></span></div>
+        <div className="openarm-facts"><span>제어 주기 <b>{format(openarm.command_rate_hz, 0)} Hz</b></span><span>궤적 <b>{openarm.trajectory_profile === "quintic_s_curve" ? "5차 S-curve" : openarm.trajectory_profile || "확인 중"}</b></span><span>프로토콜 <b>{openarm.library_version}</b></span><span>마지막 영점 <b>{openarm.last_calibration || "기록 없음"}</b></span><span>전체 상태 <b>{healthLabel}</b></span><span>확인 항목 <b>{(openarm.issues || []).length}건</b></span></div>
         {openarm.last_error && <div className="openarm-error"><Warning weight="fill" />{openarm.last_error}</div>}
       </section>
 
       {(["left", "right"]).map((side) => {
         const arm = openarm.arms?.[side] || { motors: [] };
-        const disabled = !demo && (!arm.connected || !arm.enabled || !arm.all_online);
+        const disabled = !demo && !arm.control_ready;
+        const holdDisabled = !demo && (!arm.connected || !arm.enabled || !arm.all_online || arm.fault_count > 0);
         return (
           <section className="panel openarm-arm-panel" key={side} data-testid={`openarm-${side}-arm`}>
             <div className="panel-title">
               <div><span className="eyebrow">{side === "left" ? "LEFT ARM · CAN1" : "RIGHT ARM · CAN0"}</span><h2>{side === "left" ? "왼팔 8축 제어" : "오른팔 8축 제어"}</h2></div>
-              <span className={`mode-chip ${arm.enabled ? "armed" : ""}`}>{arm.enabled ? "모터 활성" : arm.all_online ? "피드백 정상" : `${arm.online_count || 0}/8 대기`}</span>
+              <span className={`mode-chip ${arm.control_ready ? "armed" : arm.command_interlocked || arm.fault_count ? "fault" : ""}`}>{arm.command_interlocked ? "명령 차단" : arm.enabled ? arm.control_ready ? "모터 활성" : "상태 확인" : arm.all_online ? "피드백 정상" : `${arm.online_count || 0}/8 대기`}</span>
             </div>
             <div className="openarm-arm-toolbar">
-              <button disabled={!arm.connected || !arm.all_online || arm.enabled} onClick={() => enable(side, true)}><Power weight="bold" />활성화</button>
+              <button disabled={!arm.connected || !arm.all_online || arm.fault_count > 0 || arm.enabled} onClick={() => enable(side, true)}><Power weight="bold" />활성화</button>
               <button disabled={!arm.connected || !arm.enabled} onClick={() => enable(side, false)}><StopCircle weight="bold" />비활성화</button>
-              <button disabled={disabled} onClick={() => invoke("hold", { side }, `${side === "left" ? "왼팔" : "오른팔"} 현재 자세 유지`)}><HandPalm weight="bold" />현재 자세 유지</button>
+              <button disabled={holdDisabled} onClick={() => invoke("hold", { side }, `${side === "left" ? "왼팔" : "오른팔"} 현재 자세 유지`)}><HandPalm weight="bold" />{arm.command_interlocked ? "인터록 해제 + 자세 유지" : "현재 자세 유지"}</button>
               <button disabled={disabled} onClick={() => applyPose(side)}><Play weight="fill" />8축 편집값 적용</button>
               <button disabled={!arm.all_online} onClick={() => syncFeedback(side)}><ArrowCounterClockwise weight="bold" />피드백 불러오기</button>
             </div>
             <div className="openarm-joints-grid">
-              {(arm.motors || []).map((motor, index) => <OpenArmJointControl key={motor.key} side={side} index={index} motor={motor} value={drafts[side]?.[index] ?? 0} disabled={disabled} onChange={(value) => setJointDraft(side, index, value)} onApply={() => applyJoint(side, index)} />)}
+              {(arm.motors || []).map((motor, index) => <OpenArmJointControl key={motor.key} side={side} index={index} motor={motor} value={drafts[side]?.[index] ?? 0} disabled={disabled} onChange={(value) => setJointDraft(side, index, value)} onApply={() => applyJoint(side, index)} onLimitsApply={(lowerDeg, upperDeg, reset) => applyJointLimits(side, index, lowerDeg, upperDeg, reset)} />)}
             </div>
           </section>
         );
@@ -1296,17 +1738,75 @@ function OpenArmView({ state, onPost, demo }) {
           <button disabled={!selectedPose} onClick={loadPose}><Play weight="bold" />불러오기</button>
           <button className="danger" disabled={!selectedPose} onClick={deletePose}><Trash weight="bold" />삭제</button>
         </div>
+        <div className="openarm-preset-tools">
+          <div><strong>{Object.keys(savedPoses).length}개</strong><span>이 브라우저에 저장된 자세</span></div>
+          <button disabled={!Object.keys(savedPoses).length} onClick={exportPoses}><ArrowDown weight="bold" />자세 JSON 내보내기</button>
+          <button onClick={() => poseImportRef.current?.click()}><ArrowUp weight="bold" />자세 JSON 가져오기</button>
+          <input ref={poseImportRef} type="file" accept="application/json,.json" hidden aria-label="OpenArm 자세 JSON 파일" onChange={importPoses} />
+          <p>다른 노트북이나 연구원에게 전달할 때 JSON 파일을 사용하세요. 같은 이름을 가져오면 기존 자세를 덮어씁니다.</p>
+        </div>
       </section>
 
       <section className="panel openarm-calibration-panel">
-        <div className="panel-title"><div><span className="eyebrow">모터 영점 캘리브레이션</span><h2>현재 기구 자세를 0°로 저장</h2></div><Crosshair size={27} weight="duotone" /></div>
+        <div className="panel-title"><div><span className="eyebrow">단계형 수동 영점 캘리브레이션</span><h2>현재 기구 자세를 0°로 저장하고 피드백 검증</h2></div><Crosshair size={27} weight="duotone" /></div>
+        <div className="calibration-steps" aria-label="수동 캘리브레이션 단계">
+          <span className={calibrationReport?.status === "ready" ? "active" : ""}><b>1</b>정지·피드백 준비점검</span>
+          <span className={calibrationReport?.status === "awaiting_verification" ? "active" : ""}><b>2</b>Disable → Zero → Disable</span>
+          <span className={calibrationReport?.status === "verified" ? "passed" : calibrationReport?.status === "failed" ? "failed" : ""}><b>3</b>새 피드백 0점 확인</span>
+        </div>
         <div className="openarm-calibration-form">
           <label><span>대상 팔</span><select value={calibrationSide} onChange={(event) => setCalibrationSide(event.target.value)}><option value="both">양팔</option><option value="left">왼팔</option><option value="right">오른팔</option></select></label>
           <label><span>대상 관절</span><select value={calibrationJoint} onChange={(event) => setCalibrationJoint(event.target.value)}><option value="all">전체 8축</option>{OPENARM_LIMITS.map(([label], index) => <option key={label} value={index}>{label}</option>)}</select></label>
           <label className="calibration-confirm"><span>확인 문구: OPENARM ZERO</span><input value={calibrationText} placeholder="OPENARM ZERO" onChange={(event) => setCalibrationText(event.target.value)} /></label>
-          <button className="danger" disabled={calibrationDisabled} onClick={calibrate}><Warning weight="fill" />현재 자세를 영점으로 저장</button>
+          <button onClick={checkCalibration}><ListChecks weight="bold" />1 준비 상태 확인</button>
         </div>
-        <p className="openarm-calibration-note">선택한 팔의 모터를 먼저 비활성화하고, 사람이 기구를 정확한 영점 자세로 지지한 상태에서만 실행하세요. 이 값은 모터에 영구 저장됩니다.</p>
+        <label className="calibration-acknowledgement"><input type="checkbox" checked={calibrationAcknowledged} onChange={(event) => setCalibrationAcknowledged(event.target.checked)} /><span>선택한 팔을 정확한 0° 자세로 직접 지지했고, 모터가 비활성·정지 상태임을 확인했습니다.</span></label>
+        <div className="calibration-actions">
+          <button className="danger" disabled={calibrationDisabled} onClick={calibrate}><Warning weight="fill" />2 영점 저장 + 자동 검증</button>
+          <button disabled={!demo && (!openarm.connected || selectedCalibrationEnabled)} onClick={verifyCalibration}><CheckCircle weight="bold" />3 다시 검증</button>
+          <span className={`calibration-status ${calibrationReport?.status || "idle"}`}><StatusDot active={calibrationReport?.status === "ready" || calibrationReport?.status === "verified"} danger={calibrationReport?.status === "blocked" || calibrationReport?.status === "failed"} /><b>{calibrationReport?.message || "준비 점검 전입니다"}</b></span>
+        </div>
+        {(calibrationReport?.preflight?.length > 0 || calibrationReport?.results?.length > 0) && (
+          <div className="calibration-results">
+            <div className="calibration-result-head"><span>팔 / 축</span><span>현재각</span><span>속도</span><span>피드백</span><span>Fault</span><span>판정</span></div>
+            {(calibrationReport.results?.length ? calibrationReport.results : calibrationReport.preflight).map((item) => (
+              <div className="calibration-result-row" key={`${item.side}-${item.joint}`}>
+                <strong>{item.side === "left" ? "왼팔" : "오른팔"} {item.label}</strong>
+                <span>{item.position_deg === null ? "—" : `${format(item.position_deg, 2)}°`}</span>
+                <span>{item.velocity_rad_s === null ? "—" : `${format(item.velocity_rad_s, 3)} rad/s`}</span>
+                <span>{item.online ? `${format(item.age_sec, 3)}초` : "오프라인"}</span>
+                <span>{item.fault_code || 0}</span>
+                <em className={item.passed === true ? "pass" : item.passed === false ? "fail" : item.online ? "ready" : "fail"}>{item.passed === true ? "통과" : item.passed === false ? item.reason || "실패" : item.online ? "확인됨" : "대기"}</em>
+              </div>
+            ))}
+          </div>
+        )}
+        <p className="openarm-calibration-note"><Warning weight="fill" />이 수동 방식은 사람이 잡아 둔 현재 자세를 모터 0°로 영구 저장합니다. 준비점검을 다시 하면 저장 버튼이 잠기며, 저장 뒤에는 반드시 새 피드백의 각도·속도·Fault를 검증합니다.</p>
+      </section>
+
+      <section className="panel openarm-auto-calibration-panel" data-testid="openarm-auto-calibration">
+        <div className="panel-title"><div><span className="eyebrow">OPENARM 원본 코드 · ROBOT VERSION V1</span><h2>기계 한계 자동 캘리브레이션</h2></div><span className={`mode-chip ${automaticTool.available ? "armed" : "fault"}`}>{automaticTool.available ? "도구 준비됨" : "도구 미준비"}</span></div>
+        <div className="automatic-calibration-warning">
+          <Warning size={24} weight="fill" />
+          <div><strong>선택한 한쪽 팔이 여러 기계 한계까지 자동으로 움직입니다.</strong><span>팔을 지지하고 작업 반경을 완전히 비우세요. 웹 CAN 연결을 해제한 뒤 원본 <code>openarm-can-zero-position-calibration</code>을 독립 실행하며, 종료 요청 시 SIGINT 후 원본 정리 코드가 전체 모터를 비활성화합니다.</span></div>
+        </div>
+        <div className="automatic-calibration-grid">
+          <label><span>자동 보정할 팔</span><select value={automaticSide} disabled={automaticRunning} onChange={(event) => setAutomaticSide(event.target.value)}><option value="left">왼팔</option><option value="right">오른팔</option></select></label>
+          <label><span>SocketCAN 인터페이스</span><input value={interfaces[automaticSide]} disabled readOnly /></label>
+          <label><span>고정된 로봇 버전</span><input value={`OpenArm ${automaticTool.version || "v1"}`} disabled readOnly /></label>
+          <label><span>확인 문구: OPENARM AUTO CAL</span><input value={automaticText} disabled={automaticRunning} placeholder="OPENARM AUTO CAL" onChange={(event) => setAutomaticText(event.target.value)} /></label>
+        </div>
+        <label className="calibration-acknowledgement automatic"><input type="checkbox" checked={automaticAcknowledged} disabled={automaticRunning} onChange={(event) => setAutomaticAcknowledged(event.target.checked)} /><span>팔을 사람이 지지하고 주변을 비웠으며, 선택한 CAN 배정과 OpenArm-v1 하드웨어를 확인했습니다.</span></label>
+        <div className="automatic-calibration-actions">
+          <button className="danger" disabled={automaticStartDisabled} onClick={startAutomaticCalibration}><PlayCircle weight="fill" />원본 자동 캘리브레이션 시작</button>
+          <button disabled={!automaticRunning} onClick={stopAutomaticCalibration}><StopCircle weight="fill" />자동 보정 종료 요청</button>
+          <div><span>실행 상태</span><strong>{automaticRunning ? `실행 중 · PID ${automaticTask.pid || (demo ? "DEMO" : "확인 중")}` : automaticTask.exit_code === 0 ? "최근 작업 완료" : automaticTask.exit_code ? `최근 종료 코드 ${automaticTask.exit_code}` : "대기"}</strong></div>
+          <div><span>도구 상태</span><strong>{automaticTool.reason}</strong></div>
+        </div>
+        {openarm.connected && !demo && <p className="automatic-calibration-blocked"><LinkBreak weight="bold" />현재 웹 CAN이 연결되어 있습니다. 위의 <b>CAN 연결 해제</b>를 먼저 누르세요.</p>}
+        {!openarm.connected && !automaticInterfaceReady && !demo && <p className="automatic-calibration-blocked"><Warning weight="bold" /><b>{interfaces[automaticSide]}</b> SocketCAN 인터페이스가 없거나 UP 상태가 아닙니다. USB-CAN 연결과 인터페이스 배정을 확인하세요.</p>}
+        <div className="automatic-log-meta"><span>{automaticTask.log_path || "자동 캘리브레이션 로그 경로 대기"}</span><em>1초마다 갱신</em></div>
+        <pre className="automatic-calibration-log">{automaticLog}</pre>
       </section>
 
       <section className="panel openarm-log-panel">
@@ -1346,7 +1846,7 @@ function DiagnosticsView({ state }) {
 export function App() {
   const demo = new URLSearchParams(window.location.search).get("demo") === "1";
   const [state, streamOnline] = useRobotState(demo);
-  const [tab, setTab] = useState("main");
+  const [tab, setTab] = useState("unified");
   const [toast, setToast] = useState(null);
   const [clock, setClock] = useState(new Date());
 
@@ -1371,9 +1871,9 @@ export function App() {
   };
 
   const programStop = () => {
-    if (demo) return notify("데모: 속도 0 및 수동 전환 요청", true, true);
+    if (demo) return notify("데모: 차량 정지·수동 전환 및 OpenArm 양팔 비활성화 요청", true, true);
     postJson("/api/program-stop")
-      .then(() => notify("속도 0 및 수동 전환을 요청했습니다", true, true))
+      .then((result) => notify(`차량 정지·수동 전환 및 OpenArm 비활성화를 요청했습니다 · ${result.openarm?.message || "OpenArm 상태 확인"}`, true, true))
       .catch((error) => notify(error.message, false, true));
   };
 
@@ -1385,15 +1885,19 @@ export function App() {
       <header className="app-header">
         <div className="brand-block">
           <div className="brand-mark"><Robot weight="duotone" /></div>
-          <div><span>ROMO-B</span><strong>통합 제어 콘솔</strong></div>
+          <div><span>ROMO-B + OPENARM</span><strong>통합 로봇 운용 콘솔</strong></div>
         </div>
         <div className="header-status">
           <span className={`connection-pill ${connected ? "online" : "offline"}`}>
             {connected ? <WifiHigh weight="bold" /> : <WifiSlash weight="bold" />}
             {connected ? "/dev/romo_b_pcu 연결됨" : "PCU 연결 대기 중"}
           </span>
+          <span className={`connection-pill openarm-connection-pill ${state.openarm?.connected ? "online" : "offline"}`}>
+            {state.openarm?.connected ? <PlugsConnected weight="bold" /> : <LinkBreak weight="bold" />}
+            {state.openarm?.connected ? `OpenArm ${Number(state.openarm?.arms?.left?.online_count || 0) + Number(state.openarm?.arms?.right?.online_count || 0)}/16` : "OpenArm CAN 대기"}
+          </span>
           <div className="clock"><strong>{clock.toLocaleTimeString("ko-KR", { hour12: false })}</strong><span>{clock.toLocaleDateString("ko-KR")}</span></div>
-          <button className="program-stop" title="속도 0 명령을 보내고 PCU 수동 전환을 요청합니다" onClick={programStop}><Stop weight="fill" /><span>정지 + 수동</span></button>
+          <button className="program-stop" title="차량 속도 0·PCU 수동 전환·OpenArm 양팔 비활성화를 함께 요청합니다" onClick={programStop}><Stop weight="fill" /><span>전체 정지</span></button>
         </div>
       </header>
 
@@ -1411,7 +1915,10 @@ export function App() {
           <div><StatusDot active={connected} danger={connected && state.platform.estop} /><span>물리 비상정지</span><strong>{!connected ? "확인 불가" : state.platform.estop ? "작동 중" : "해제"}</strong></div>
           <div><StatusDot active={state.health.lidar?.online} /><span>Mid-360</span><strong>{format(state.health.lidar?.rate_hz, 1)} Hz</strong></div>
           <div><StatusDot active={state.health.localization?.online} /><span>위치추정</span><strong>{state.health.localization?.online ? "추적 중" : "대기 중"}</strong></div>
+          <div><StatusDot active={state.openarm?.connected} /><span>OpenArm CAN</span><strong>{state.openarm?.connected ? "연결됨" : "대기 중"}</strong></div>
+          <div><StatusDot active={state.openarm?.all_control_ready} danger={(state.openarm?.arms?.left?.fault_count || 0) + (state.openarm?.arms?.right?.fault_count || 0) > 0} /><span>양팔 피드백</span><strong>{Number(state.openarm?.arms?.left?.online_count || 0) + Number(state.openarm?.arms?.right?.online_count || 0)}/16</strong></div>
         </div>
+        {tab === "unified" && <UnifiedView state={state} onPost={notify} demo={demo} onNavigate={setTab} />}
         {tab === "main" && <MainView state={state} onPost={notify} demo={demo} />}
         {tab === "algorithm" && <AlgorithmView />}
         {tab === "navigation" && <NavigationView state={state} onPost={notify} demo={demo} />}

@@ -82,6 +82,19 @@ endfunction()
 ocp_ensure_nanobind()
 
 function(ocp_ensure_openarm_can)
+  # The ROMO-B repository vendors the matching C++ source one directory up.
+  # Prefer it over downloading another copy so the calibration tool and Python
+  # bindings are always built from the same locked source snapshot.
+  get_filename_component(OCP_LOCAL_OPENARM_CAN "${CMAKE_CURRENT_SOURCE_DIR}/.."
+                         ABSOLUTE)
+  if(EXISTS "${OCP_LOCAL_OPENARM_CAN}/CMakeLists.txt")
+    set(OPENARM_CAN_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
+    add_subdirectory("${OCP_LOCAL_OPENARM_CAN}"
+                     "${CMAKE_CURRENT_BINARY_DIR}/openarm_can" EXCLUDE_FROM_ALL)
+    add_library(OpenArmCAN::openarm_can ALIAS openarm_can)
+    return()
+  endif()
+
   # We can use FIND_PACKAGE_ARGS in fetchcontent_declare() instead of
   # explicit find_package() when we require CMake 3.24 or later.
   find_package(OpenArmCAN ${openarm_can_python_VERSION})

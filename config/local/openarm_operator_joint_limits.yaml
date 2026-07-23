@@ -1,0 +1,52 @@
+schema_version: 1
+limits:
+  left:
+    joint_1:
+      lower_deg: -79.999977
+      upper_deg: 200.000028
+    joint_2:
+      lower_deg: -99.999986
+      upper_deg: 99.999986
+    joint_3:
+      lower_deg: -89.999981
+      upper_deg: 89.999981
+    joint_4:
+      lower_deg: 0.0
+      upper_deg: 140.000003
+    joint_5:
+      lower_deg: -89.999981
+      upper_deg: 89.999981
+    joint_6:
+      lower_deg: -44.999991
+      upper_deg: 44.999991
+    joint_7:
+      lower_deg: -89.999981
+      upper_deg: 89.999981
+    gripper:
+      lower_deg: -60.0
+      upper_deg: 0.0
+  right:
+    joint_1:
+      lower_deg: -79.999977
+      upper_deg: 200.000028
+    joint_2:
+      lower_deg: -99.999986
+      upper_deg: 99.999986
+    joint_3:
+      lower_deg: -89.999981
+      upper_deg: 89.999981
+    joint_4:
+      lower_deg: 0.0
+      upper_deg: 140.000003
+    joint_5:
+      lower_deg: -89.999981
+      upper_deg: 89.999981
+    joint_6:
+      lower_deg: -44.999991
+      upper_deg: 44.999991
+    joint_7:
+      lower_deg: -89.999981
+      upper_deg: 89.999981
+    gripper:
+      lower_deg: -60.0
+      upper_deg: 0.0

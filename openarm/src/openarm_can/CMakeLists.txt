@@ -28,6 +28,8 @@ include(CTest)
 
 include(GNUInstallDirs)
 
+option(OPENARM_CAN_BUILD_TOOLS "Build OpenArm CAN CLI and setup utilities" ON)
+
 # Create the main library
 add_library(
   openarm_can
@@ -113,10 +115,11 @@ configure_file(openarm-can.pc.in ${CMAKE_CURRENT_BINARY_DIR}/openarm-can.pc
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openarm-can.pc
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
-add_executable(openarm-can-motor-sampling-check setup/motor_sampling_check.cpp)
-target_link_libraries(openarm-can-motor-sampling-check openarm_can)
-install(TARGETS openarm-can-motor-sampling-check
-        DESTINATION ${CMAKE_INSTALL_BINDIR})
+if(OPENARM_CAN_BUILD_TOOLS)
+  add_executable(openarm-can-motor-sampling-check setup/motor_sampling_check.cpp)
+  target_link_libraries(openarm-can-motor-sampling-check openarm_can)
+  install(TARGETS openarm-can-motor-sampling-check
+          DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Add motor control example executable
 add_executable(openarm-can-demo examples/demo.cpp)
@@ -151,10 +154,11 @@ install(PROGRAMS setup/openarm-can-configure-socketcan-4-arms
         DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # Install bash completion
-install(
-  FILES setup/openarm-can-cli.bash
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/bash-completion/completions
-  RENAME openarm-can-cli)
+  install(
+    FILES setup/openarm-can-cli.bash
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/bash-completion/completions
+    RENAME openarm-can-cli)
+endif()
 
 # Add tests
 if(BUILD_TESTING)

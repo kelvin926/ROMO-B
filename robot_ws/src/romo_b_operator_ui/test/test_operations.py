@@ -80,3 +80,37 @@ def test_allowlisted_process_records_exit_code_and_log(tmp_path):
 
     assert task["exit_code"] == 0
     assert "tracked-size-check PASS" in manager.log_tail("tracked_sizes")["tail"]
+
+
+def test_openarm_auto_calibration_command_is_allowlisted_and_guarded(tmp_path):
+    manager = make_manager(tmp_path)
+    script = tmp_path / "scripts" / "run_openarm_auto_calibration.sh"
+    script.write_text("#!/bin/sh\n")
+    script.chmod(0o755)
+
+    command, environment = manager._command(
+        "openarm_auto_calibration",
+        {
+            "side": "left",
+            "interface": "can1",
+            "confirmation": "OPENARM AUTO CAL",
+        },
+    )
+
+    assert command == [str(script), "left", "can1"]
+    assert environment["PYTHONUNBUFFERED"] == "1"
+
+    with pytest.raises(ValueError, match="확인 문구"):
+        manager._command(
+            "openarm_auto_calibration",
+            {"side": "left", "interface": "can1", "confirmation": "no"},
+        )
+    with pytest.raises(ValueError, match="인터페이스"):
+        manager._command(
+            "openarm_auto_calibration",
+            {
+                "side": "right",
+                "interface": "can0;touch",
+                "confirmation": "OPENARM AUTO CAL",
+            },
+        )

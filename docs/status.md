@@ -123,6 +123,14 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   command-pipeline telemetry, and all diagnostic key/value pairs. Manual
   deadman control and the serial bridge support signed 2WIS, counter-phase 4WIS,
   and Pivot; rear steering feedback is displayed for both all-wheel modes.
+- 기본 화면을 ROMO-B와 OpenArm-v1 통합 운용 화면으로 개편했다. PCU/HLV,
+  네 바퀴, 양팔 16축, LiDAR·위치추정, 현재 실행 스택을 한 번에 표시하고,
+  차량 Arm/수동 전환과 양팔 CAN·enable·hold를 같은 화면에서 수행한다.
+  차량 직접제어와 16축 관절 제어는 각각 상세 탭에 그대로 유지한다.
+- OpenArm CAN 연결 버튼이 DOWN 상태의 PCAN-USB 링크를 고정 1 Mbps로
+  자동 준비하도록 제한된 권한의 시스템 도우미를 추가했다. 링크 설정은 CAN
+  프레임을 보내거나 모터를 enable하지 않으며, 이후 기존 연결 절차가 16축
+  상태 조회 프레임만 전송한다.
 - Browser steering-mode requests are now maintained independently at 20 Hz, so
   4WIS/Pivot no longer revert to 2WIS when a forward/reverse hold is released.
   The Operations tab covers mapping, recording, navigation, Autoware, replay,
@@ -140,6 +148,11 @@ Protocol source: `ROMO-B_manual_verified_complete.md`, SHA-256
   개별·동시 자세 보간, 속도/gain, fault 해제, 자세 저장·복사와 확인형 영점
   캘리브레이션을 제공한다. 연결만으로는 모터를 enable하지 않으며 종료 시
   disable 후 소켓을 닫는다.
+- OpenArm 캘리브레이션을 단계형 수동 방식과 원본 기계 한계 자동 방식으로
+  확장했다. 수동 방식은 disable/정지/8축 피드백 준비점검, 공식
+  Disable-Zero-Disable 프레임, 저장 후 새 0점 피드백 검증을 제공한다. 자동
+  방식은 고정된 OpenArm-v1 원본 도구를 좌우 한쪽씩 독점 실행하며 웹에서
+  확인 문구, 실시간 로그와 SIGINT 종료를 제공한다.
 - The first live full-stack attempt exposed a duplicate bench bridge and raw
   Mid-360 acceleration integration. The launcher now refuses to start beside an
   existing bridge, EKF uses wheel odometry only until IMU bias/covariance are

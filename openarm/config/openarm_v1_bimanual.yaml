@@ -40,7 +40,10 @@ joint_order:
 
 # Importing or building this folder must never transmit a frame by itself.
 startup_policy:
-  configure_interfaces_automatically: false
+  # The browser connect action may bring validated canN links up at the fixed
+  # 1 Mbps bitrate through the installed least-privilege helper. This only
+  # configures the network link; it does not transmit CAN frames or enable motors.
+  configure_interfaces_automatically: true
   enable_motors_automatically: false
   command_on_startup: false
   zero_position_automatically: false
@@ -49,16 +52,28 @@ startup_policy:
 # are lower than the nominal gains in control_gains.yaml and match the existing
 # verified bimanual command path captured in the portable archive.
 operator_control:
-  command_rate_hz: 30.0
+  # A 100 Hz command stream keeps adjacent position setpoints close enough for
+  # smooth motion while staying well below the capacity of each independent
+  # 1 Mbps Classic-CAN bus (8 motors per bus).
+  command_rate_hz: 100.0
   refresh_rate_hz: 5.0
-  default_target_speed_deg_s: 15.0
-  maximum_target_speed_deg_s: 90.0
+  default_target_speed_deg_s: 30.0
+  # Global UI ceiling.  Commands are additionally clamped per joint using
+  # joint_limits.yaml; the gripper uses the DM4310 protocol limit (30 rad/s).
+  maximum_target_speed_deg_s: 1718.873385
+  gripper_velocity_limit_rad_s: 30.0
+  minimum_trajectory_duration_sec: 0.12
   maximum_gain_scale: 1.5
   arm_kp: [20.0, 20.0, 12.0, 12.0, 5.0, 5.0, 4.0]
   arm_kd: [1.0, 1.0, 0.8, 0.8, 0.3, 0.3, 0.3]
   gripper_kp: 5.0
   gripper_kd: 0.3
   gripper_limit_deg: [-60.0, 0.0]
+  # Manual zero-write gate used by the operator console. The official
+  # mechanical-limit calibration below runs in its own exclusive process.
+  calibration_max_velocity_rad_s: 0.05
+  calibration_zero_tolerance_deg: 2.0
+  calibration_step_delay_sec: 0.1
 
 references:
   joint_limits: joint_limits.yaml

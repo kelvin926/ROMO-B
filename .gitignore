@@ -8,6 +8,7 @@
 # Reproducible third-party workspaces
 /vendor_ws/
 /autoware/
+/openarm/.venv/
 
 # Hardware settings, compact maps, screenshots, and validation evidence are
 # tracked for lab handoff. Large recording/database payloads stay external and

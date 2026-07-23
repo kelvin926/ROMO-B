@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>romo_b_operator_ui</name>
-  <version>0.4.0</version>
-  <description>Browser-based ROS 2 operator console for ROMO-B.</description>
+  <version>0.7.1</version>
+  <description>Unified browser-based ROS 2 operator console for ROMO-B and OpenArm.</description>
   <maintainer email="futile-nutmegs0d@icloud.com">Jang HyunSeo</maintainer>
   <license>Proprietary</license>
 

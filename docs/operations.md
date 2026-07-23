@@ -54,7 +54,13 @@ that login-time service with:
 ./scripts/install_operator_ui_service.sh
 ```
 
-The **Main** tab mirrors the manual's HLV test program while separating the HLV
+The default **통합 운용** screen places ROMO-B and OpenArm-v1 status in one
+operator view. It includes PCU/HLV, four-wheel feedback, OpenArm 16-axis
+feedback, active field process, LiDAR/localization health, vehicle Arm/Manual,
+OpenArm CAN connect/disconnect, bimanual enable/disable, and pose hold. Detailed
+controls remain available from the same screen without starting another app.
+
+The **차량 상세** tab mirrors the manual's HLV test program while separating the HLV
 software arm request from PCU-confirmed Auto feedback. It shows every Auto-entry
 condition, all wheel speeds and steering angles, Alive counters, and signed
 forward/reverse deadman control for 2WIS, 4WIS, and Pivot. Motion is sent only
@@ -74,13 +80,20 @@ software checks, builds, and map preparation, with artifact selectors, conflict
 handling, PID, exit status, and live logs. Privileged host setup remains
 terminal-only.
 
-**OpenArm 양팔**은 ROMO-B 차량 스택과 독립적으로 항상 사용할 수 있습니다.
+**양팔 상세** 탭은 ROMO-B 차량 스택과 독립적으로 항상 사용할 수 있습니다.
 왼팔/오른팔 SocketCAN 이름을 확인한 뒤 웹에서 연결하고, 각 팔의 8/8 모터
 피드백이 표시될 때만 모터를 활성화합니다. 탭은 16축 telemetry, 개별 및 동시
 자세 목표, 현재 자세 유지, 속도/gain, fault 해제, 로컬 자세 저장과 영점
 캘리브레이션을 제공합니다. 영점 저장은 해당 모터가 비활성 상태여야 하며
 확인 문구 `OPENARM ZERO`가 일치해야 합니다. CAN 연결만으로는 모터가
 활성화되지 않습니다.
+
+영점 캘리브레이션 화면에는 두 경로가 있습니다. **단계형 수동 영점**은
+정지·피드백 점검, 공식 3프레임 영점 저장, 새 피드백 검증 순으로 진행합니다.
+**기계 한계 자동 캘리브레이션**은 OpenArm 원본 v1 코드를 선택한 한쪽 팔에서
+독립 실행합니다. 자동 방식은 팔이 실제로 움직이므로 일반 웹 CAN 연결을 먼저
+해제하고 팔 지지·작업 반경 확보·CAN 배정을 확인한 뒤 전용 확인 문구를
+입력해야 합니다. 진행 출력과 종료 버튼은 같은 화면에 표시됩니다.
 
 단순 원격조종만 필요하면 **실행 관리 → 로봇만 연결**을 사용합니다. 이
 작업은 `robot_control.launch.py`로 PCU 브리지와 `/cmd_vel_teleop` →

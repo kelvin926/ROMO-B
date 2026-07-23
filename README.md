@@ -102,7 +102,10 @@ ros2 launch romo_b_navigation navigation.launch.py \
 
 The operator must separately select PCU Auto, verify diagnostics, disable
 `receive_only`, and explicitly request HLV Arm. No launch file arms motion.
-The persistent ROMO-B operator console at `http://127.0.0.1:8765/` can start
+The persistent ROMO-B + OpenArm operator console at `http://127.0.0.1:8765/`
+opens on a unified operations screen. It shows vehicle, bimanual CAN, sensor,
+localization, and active-stack status together and provides the most-used
+vehicle Arm/Manual and OpenArm connect/enable/hold controls in one place. It can start
 or stop the complete field stack, request Arm/Manual, set initial pose and a
 Nav2 goal, run waypoint routes, and show dense PCU/ROS diagnostics. Its signed
 hold-to-run control supports 2WIS, 4WIS, and Pivot without bypassing the existing
@@ -113,14 +116,20 @@ live logs. The selected steering mode is maintained at 20 Hz even after a
 forward/reverse hold is released. **로봇만 연결** 작업은 LiDAR, 위치추정,
 Nav2와 RViz 없이 PCU 브리지와 웹 직접제어 경로만 실행합니다.
 
-The **OpenArm 양팔** tab controls the separately tracked OpenArm-v1 hardware
+The **양팔 상세** tab controls the separately tracked OpenArm-v1 hardware
 without a terminal. It discovers and connects the left/right SocketCAN links,
 shows all 16 motor positions, velocities, torques, temperatures, faults and
 packet counters, and provides explicit motor enable/disable, hold, error clear,
 per-joint targets, synchronized bimanual poses, speed/gain limits, local pose
-presets, and guarded motor-zero calibration. Opening CAN sockets never enables
-or commands a motor; enable requires fresh feedback from all eight motors on
-the selected arm and begins by holding the measured pose.
+presets, and two guarded calibration paths. The staged manual path checks that
+the selected motors are disabled, online and stopped, transmits the official
+`Disable -> Set Zero -> Disable` sequence, then verifies fresh zero-angle
+feedback. The original OpenArm-v1 mechanical-limit calibration is also
+available per arm with confirmation, live log and SIGINT stop directly in the
+page. It runs in an exclusive process, so the page requires its normal CAN
+connection to be disconnected first. Opening CAN sockets never enables or
+commands a motor; enable requires fresh feedback from all eight motors on the
+selected arm and begins by holding the measured pose.
 
 ## Autoware corridor runtime
 

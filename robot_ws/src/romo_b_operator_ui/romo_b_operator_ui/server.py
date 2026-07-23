@@ -26,6 +26,7 @@ from romo_b_msgs.msg import PlatformStatus
 from sensor_msgs.msg import Imu, PointCloud2
 from std_msgs.msg import UInt8
 from std_srvs.srv import SetBool, Trigger
+from werkzeug.serving import make_server
 
 from .model import (
     ackermann_twist,
@@ -184,7 +185,7 @@ class OperatorNode(Node):
             "cmd_safe": deque(maxlen=40),
         }
         self._state = {
-            "version": "0.4.0",
+            "version": "0.7.1",
             "platform": {
                 "state": 0,
                 "state_name": "DISCONNECTED",
@@ -785,6 +786,12 @@ class OperatorNode(Node):
         self, operation_id: str, action: str, payload: dict | None = None
     ) -> dict:
         if action == "start":
+            if operation_id == "openarm_auto_calibration":
+                openarm_state = self._openarm.snapshot()
+                if openarm_state["connected"] or openarm_state["any_enabled"]:
+                    raise ValueError(
+                        "웹 OpenArm CAN 연결을 먼저 해제한 뒤 자동 캘리브레이션을 시작하세요"
+                    )
             result = self._operations.start(operation_id, payload or {})
         elif action == "stop":
             if operation_id in (
@@ -821,8 +828,17 @@ class OperatorNode(Node):
     def program_stop(self) -> dict:
         self.stop_motion()
         arm_result = self.set_arm(False)
-        self._set_operation("Program stop: zero command and Manual requested", True)
-        return {"accepted": True, "arm_request": arm_result}
+        openarm_result = self._openarm.stop()
+        accepted = bool(openarm_result.get("accepted", False))
+        self._set_operation(
+            "Program stop: vehicle zero, PCU Manual, OpenArm disable requested",
+            accepted,
+        )
+        return {
+            "accepted": accepted,
+            "arm_request": arm_result,
+            "openarm": openarm_result,
+        }
 
     def snapshot(self) -> dict:
         with self._lock:
@@ -1090,12 +1106,15 @@ def main(args=None):
 
     executor = MultiThreadedExecutor(num_threads=2)
     executor.add_node(node)
+    ros_spin_stop = threading.Event()
 
     def spin_ros():
-        while rclpy.ok():
+        while rclpy.ok() and not ros_spin_stop.is_set():
             try:
                 executor.spin_once(timeout_sec=0.2)
             except Exception as error:
+                if ros_spin_stop.is_set():
+                    break
                 node.get_logger().error(f"ROS callback failed but UI remains active: {error}")
 
     spin_thread = threading.Thread(target=spin_ros, daemon=True)
@@ -1105,14 +1124,36 @@ def main(args=None):
     url = f"http://{host}:{port}/"
     node.get_logger().info(f"ROMO-B operator console: {url}")
     if open_browser:
-        threading.Timer(0.8, lambda: webbrowser.open(url)).start()
+        browser_timer = threading.Timer(0.8, lambda: webbrowser.open(url))
+        browser_timer.daemon = True
+        browser_timer.start()
+
+    http_server = make_server(host, port, app, threaded=True)
+    http_thread = threading.Thread(
+        target=http_server.serve_forever,
+        name="operator-ui-http",
+        daemon=True,
+    )
+    shutdown_requested = threading.Event()
+
+    def request_shutdown(_signum, _frame):
+        shutdown_requested.set()
+
+    signal.signal(signal.SIGINT, request_shutdown)
+    signal.signal(signal.SIGTERM, request_shutdown)
+    http_thread.start()
     try:
-        app.run(host=host, port=port, threaded=True, use_reloader=False)
+        while rclpy.ok() and not shutdown_requested.wait(0.25):
+            pass
     except KeyboardInterrupt:
         pass
     finally:
+        http_server.shutdown()
+        http_thread.join(timeout=1.0)
         node.stop_motion()
         node.shutdown_openarm()
+        ros_spin_stop.set()
+        spin_thread.join(timeout=1.0)
         executor.shutdown(timeout_sec=1.0)
         node.destroy_node()
         if rclpy.ok():

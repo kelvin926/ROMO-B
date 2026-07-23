@@ -10,6 +10,7 @@ from __future__ import annotations
 import copy
 import os
 import pathlib
+import re
 import signal
 import subprocess
 import threading
@@ -208,6 +209,17 @@ OPERATION_SPECS = {
         "빌드 및 데이터",
         "커밋하려는 파일에 대용량 생성물이 포함되지 않았는지 확인합니다.",
     ),
+    "openarm_auto_calibration": OperationSpec(
+        "OpenArm 자동 영점 보정",
+        "OpenArm",
+        "원본 OpenArm 기계 한계 자동 캘리브레이션을 선택한 한쪽 팔에서 실행합니다.",
+        primary=True,
+        discover_markers=("openarm-can-zero-position-calibration",),
+        caution=(
+            "팔이 여러 기계 한계까지 자동으로 움직입니다. 한쪽 팔씩 지지하고 "
+            "작업 반경을 비운 상태에서만 실행하세요."
+        ),
+    ),
 }
 
 
@@ -384,6 +396,22 @@ class OperationManager:
             return [self._script("prepare_autoware_map.sh"), str(self._map(payload))], env
         if operation_id == "tracked_sizes":
             return [self._script("check_tracked_file_sizes.sh")], env
+        if operation_id == "openarm_auto_calibration":
+            side = str(payload.get("side", ""))
+            interface = str(payload.get("interface", ""))
+            confirmation = str(payload.get("confirmation", ""))
+            if side not in ("left", "right"):
+                raise ValueError("자동 캘리브레이션 팔은 left 또는 right여야 합니다")
+            if not re.fullmatch(r"[A-Za-z0-9_.:-]{1,15}", interface):
+                raise ValueError("SocketCAN 인터페이스 이름 형식이 올바르지 않습니다")
+            if confirmation != "OPENARM AUTO CAL":
+                raise ValueError("자동 캘리브레이션 확인 문구가 일치하지 않습니다")
+            env["PYTHONUNBUFFERED"] = "1"
+            return [
+                self._script("run_openarm_auto_calibration.sh"),
+                side,
+                interface,
+            ], env
         raise ValueError(f"알 수 없는 작업입니다: {operation_id}")
 
     def _scan_processes(self) -> dict[str, list[int]]:
